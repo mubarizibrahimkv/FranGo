@@ -1,0 +1,31 @@
+export interface Investor{
+  _id: string;
+  userName: string;
+  email: string;
+  password: string;
+  role: "customer" | "admin" | "investor" | "company";
+  gender: "Male" | "Female" | "Other";
+  dateOfBirth: Date;
+  nationality: string;
+  phoneNumber: string;
+  location: string;
+  qualifications: string[];
+  ownProperty?: boolean;
+  floorArea?: string;
+  investmentRange?: string;
+  fundingSource?: string;
+  previousBusiness?: string[];
+  jobExperience?: string;
+  yearsOfExperience?: string;
+  numberOfEmployees?: number;
+  preferredFranchiseType?: string[];
+  reasonForSeeking?: string;
+  ownershipTimeframe?: string;
+  findingSource?: string;
+  profileImage?: string;
+  otp?: string | null;
+  otpExpires?: number | null;
+  isAdmin: boolean;
+  createdAt?: Date;
+  status?:"pending"|"approve"|"reject"
+}
