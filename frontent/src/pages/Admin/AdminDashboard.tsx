@@ -8,7 +8,7 @@ const AdminDashboard: React.FC = () => {
       <AdminSidebar />
 
       <div className="flex-1 flex flex-col">
-        <AdminNavbar heading="Dashboard"/>
+        <AdminNavbar heading="Dashboard" />
 
         <main className="flex-1 p-6 overflow-y-auto bg-[#F6F6F6]">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -32,10 +32,6 @@ const AdminDashboard: React.FC = () => {
             <h2 className="text-xl font-semibold mb-4">Reports</h2>
             <p className="text-gray-600">Coming soon..............</p>
           </div>
-
-
-
-          
         </main>
       </div>
     </div>

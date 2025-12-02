@@ -27,7 +27,7 @@ const CompanyDetails = () => {
       }
     };
     fetchInvestor();
-  }, []);
+  }, [id]);
 
   return (
     <div className="flex h-screen bg-[#F6F6F6]">
@@ -55,7 +55,7 @@ const CompanyDetails = () => {
                 <div>
                   <h1 className="text-2xl font-bold">{user.companyName}</h1>
                   <p className="text-sm text-gray-600">
-                    Owned by : {user.ownerName||"Not Provided"}
+                    Owned by : {user.ownerName || "Not Provided"}
                   </p>
                 </div>
               </div>
@@ -66,7 +66,7 @@ const CompanyDetails = () => {
                 <h2 className="text-xl font-semibold">About</h2>
               </div>
               <p className="text-gray-700 text-sm leading-relaxed">
-                {user.about||"Not Provided"}
+                {user.about || "Not Provided"}
               </p>
             </div>
 
@@ -81,36 +81,44 @@ const CompanyDetails = () => {
                 <div className="grid grid-cols-2 gap-6 text-sm">
                   <div>
                     <p className="text-gray-500">Brand Name</p>
-                    <p className="text-black font-medium">{user.brandName||"Not Provided"}</p>
+                    <p className="text-black font-medium">
+                      {user.brandName || "Not Provided"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Company Name</p>
-                    <p className="text-black font-medium">{user.companyName||"Not Provided"}</p>
+                    <p className="text-black font-medium">
+                      {user.companyName || "Not Provided"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Industry Category</p>
                     <p className="text-black font-medium">
-                      {user.industryCategory||"Not Provided"}
+                      {/* {user.industryCategory || "Not Provided"} */}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Industry Sub Category</p>
                     <p className="text-black font-medium">
-                      {user.industrySubCategory||"Not Provided"}
+                      {user.industrySubCategory || "Not Provided"}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Year Founded</p>
-                    <p className="text-black font-medium">{user.yearFounded||"Not Provided"}</p>
+                    <p className="text-black font-medium">
+                      {user.yearFounded || "Not Provided"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Country</p>
-                    <p className="text-black font-medium">{user.country||"Not Provided"}</p>
+                    <p className="text-black font-medium">
+                      {user.country || "Not Provided"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Year Commenced Franchising</p>
                     <p className="text-black font-medium">
-                      {user.yearCommencedFranchising||"Not Provided"}
+                      {user.yearCommencedFranchising || "Not Provided"}
                     </p>
                   </div>
                 </div>
@@ -126,24 +134,32 @@ const CompanyDetails = () => {
                   <div>
                     <p className="text-gray-500">Contact Person Name</p>
                     <p className="text-black font-medium">
-                      {user.contactPerson||"Not Provided"}
+                      {user.contactPerson || "Not Provided"}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Designation</p>
-                    <p className="text-black font-medium">{user.designation||"Not Provided"}</p>
+                    <p className="text-black font-medium">
+                      {user.designation || "Not Provided"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Email</p>
-                    <p className="text-black font-medium">{user.email||"Not Provided"}</p>
+                    <p className="text-black font-medium">
+                      {user.email || "Not Provided"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Phone Number</p>
-                    <p className="text-black font-medium">{user.phoneNumber||"Not Provided"}</p>
+                    <p className="text-black font-medium">
+                      {user.phoneNumber || "Not Provided"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Website</p>
-                    <p className="text-black font-medium">{user.website||"Not Provided"}</p>
+                    <p className="text-black font-medium">
+                      {user.website || "Not Provided"}
+                    </p>
                   </div>
                 </div>
               </div>

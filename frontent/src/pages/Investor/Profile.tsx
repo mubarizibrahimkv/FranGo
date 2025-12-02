@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Footer from "../../components/InvestorComponents/Footer";
 import Navbar from "../../components/InvestorComponents/Navbar";
 import { FaUser, FaCamera } from "react-icons/fa6";
@@ -30,7 +30,7 @@ const Profile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showChangePassModal, setShowChangePassModal] = useState(false);
   const dispatch = useDispatch();
-  const [categories,setCategories]=useState([]);
+  const [categories, setCategories] = useState([]);
 
   const handlePasswordChange = async (oldPass: string, newPass: string) => {
     try {
@@ -40,12 +40,13 @@ const Profile = () => {
         setShowChangePassModal(false);
         toast.success("Password Changed Successfully");
       }
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
+    } catch (error: unknown) {
+      const message =
+        (error instanceof AxiosError && error.response?.data?.message) ||
+        (error instanceof Error && error.message) ||
         "Something went wrong";
-      toast.error(errorMessage);
+
+      toast.error(message);
     }
   };
 
@@ -58,12 +59,13 @@ const Profile = () => {
           toast.success("Profile Updated Successfully");
         }
       }
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
+    } catch (error: unknown) {
+      const message =
+        (error instanceof AxiosError && error.response?.data?.message) ||
+        (error instanceof Error && error.message) ||
         "Something went wrong";
-      toast.error(errorMessage);
+
+      toast.error(message);
     }
   };
 
@@ -102,6 +104,7 @@ const Profile = () => {
         setReload((prev) => !prev);
       }
     } catch (error) {
+      console.log(error);
       toast.error("Upload failed");
     }
   };
@@ -116,7 +119,7 @@ const Profile = () => {
         if (err instanceof AxiosError) {
           toast.dismiss();
           toast.error(
-            err.response?.data?.message || "Unauthorized. Please login again."
+            err.response?.data?.message || "Unauthorized. Please login again.",
           );
         } else {
           toast.error((err as Error).message);
@@ -126,13 +129,11 @@ const Profile = () => {
     fetchProfile();
   }, [seekerId, reload]);
 
-
-
-  const handleReapply=async(investorId:string)=>{
+  const handleReapply = async (investorId: string) => {
     try {
-      const response=await reApply(investorId);
-      if(response.success){
-        setReload((prev)=>!prev);
+      const response = await reApply(investorId);
+      if (response.success) {
+        setReload((prev) => !prev);
         toast.success("Reapplied successfully");
       }
     } catch (err) {
@@ -205,18 +206,19 @@ const Profile = () => {
                   profile.status === "approve"
                     ? "bg-green-100 text-green-700"
                     : profile.status === "reject"
-                    ? "bg-red-100 text-red-700"
-                    : "bg-yellow-100 text-yellow-700"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-yellow-100 text-yellow-700"
                 }`}
               >
                 {profile?.status
-                  ? profile.status.charAt(0).toUpperCase() + profile.status.slice(1)
+                  ? profile.status.charAt(0).toUpperCase() +
+                    profile.status.slice(1)
                   : "Pending"}
               </span>
 
               {profile?.status === "reject" && (
                 <button
-                  onClick={() =>profile._id&& handleReapply(profile._id)}
+                  onClick={() => profile._id && handleReapply(profile._id)}
                   className="mt-1 px-3 py-1 text-sm font-semibold text-white bg-[#0C2340] rounded-lg hover:bg-[#1E3A8A] transition"
                 >
                   Reapply

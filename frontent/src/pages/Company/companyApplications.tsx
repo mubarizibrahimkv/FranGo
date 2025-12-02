@@ -17,7 +17,7 @@ const CompanyApplications = () => {
   const [reloead, setReload] = useState(false);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);    
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -33,11 +33,11 @@ const CompanyApplications = () => {
       }
     };
     fetchApplications();
-  }, [reloead, page]);
+  }, [reloead, page, company._id]);
 
   const handleStatusChange = async (
     applicationId: string,
-    status: "approved" | "rejected"
+    status: "approved" | "rejected",
   ) => {
     try {
       const res = await handleApplicationStatus(applicationId, status);
@@ -104,8 +104,8 @@ const CompanyApplications = () => {
                             application.status === "approved"
                               ? "bg-green-100 text-green-700"
                               : application.status === "rejected"
-                              ? "bg-red-100 text-red-700"
-                              : "bg-yellow-100 text-yellow-700"
+                                ? "bg-red-100 text-red-700"
+                                : "bg-yellow-100 text-yellow-700"
                           }`}
                         >
                           {(application.status || "pending")
@@ -127,7 +127,7 @@ const CompanyApplications = () => {
                             setOpenDropdownId(
                               openDropdownId === application._id
                                 ? null
-                                : application._id
+                                : application._id,
                             )
                           }
                         >
@@ -159,8 +159,6 @@ const CompanyApplications = () => {
                           </ul>
                         )}
                     </td>
-
-                   
                   </tr>
                 ))}
 

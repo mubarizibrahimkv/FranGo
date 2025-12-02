@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import { getConversation } from "../../services/messageService";
@@ -6,6 +6,7 @@ import { formatChatTimestamp } from "../../utils/formatTimeStamp";
 import ChatBox from "../../components/CommonComponents/ChatBox";
 import Navbar from "../../components/InvestorComponents/Navbar";
 import type { IconversationWithUser } from "../../types/common";
+import { socket } from "../../utils/socket";
 
 const Chat: React.FC = () => {
   const [convesation, setConversation] = useState<IconversationWithUser[]>([]);
@@ -13,25 +14,83 @@ const Chat: React.FC = () => {
   const investorId = user._id;
   const [senderIdChatBox, setSenderIdChatBox] = useState("");
   const [recieverIdChatBox, setRecieverIdChatBox] = useState("");
-  const [userName,setUserName]=useState("")
-  const [profileImage,setProfileImage]=useState("")
+  const [userName, setUserName] = useState("");
+  const [profileImage, setProfileImage] = useState("");
+  const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
+
+  const fetchConversations = useCallback(async () => {
+    try {
+      const res = await getConversation(investorId);
+      if (!res.success) return;
+
+      setConversation(res.conversations);
+
+      setUnreadCounts((prev) => {
+        const updated = { ...prev };
+        res.conversations.forEach((c: any) => {
+          if (!(c.channel in prev)) {
+            updated[c.channel] = c.unreadCount || 0;
+          }
+        });
+        return updated;
+      });
+    } catch (err) {
+      console.log("Error fetching conversations:", err);
+    }
+  }, [investorId]); // dependencies needed inside fetchConversations
+
+  // Fetch conversations when senderIdChatBox changes
   useEffect(() => {
-    const fetchConverstaions = async () => {
-      try {
-        const res = await getConversation(investorId);
-        if (res.success) {
-          setConversation(res.conversations);
-          console.log(res.conversations, "conversations");
-        }
-      } catch (error) {
-        console.log("Erro fetching conversation :", error);
-      }
+    fetchConversations();
+  }, [senderIdChatBox, fetchConversations]);
+
+  // Handle socket "conversation_changed" updates
+  useEffect(() => {
+    socket.connect();
+
+    const refresh = () => {
+      console.log("Parent: conversation update received");
+      fetchConversations();
     };
-    fetchConverstaions();
+
+    socket.on("conversation_changed", refresh);
+
+    return () => {
+      socket.off("conversation_changed", refresh);
+    };
+  }, [fetchConversations]);
+
+  // Join investor room
+  useEffect(() => {
+    socket.emit("join_room", investorId);
+  }, [investorId]);
+
+  // Handle unread_count_update event
+  useEffect(() => {
+    socket.connect();
+
+    const handleUnreadUpdate = ({ channel, unreadCount }: any) => {
+      console.log("CHANNEL:", channel, "COUNT:", unreadCount);
+      setUnreadCounts((prev) => ({
+        ...prev,
+        [channel]: unreadCount,
+      }));
+    };
+
+    socket.on("unread_count_update", handleUnreadUpdate);
+
+    return () => {
+      socket.off("unread_count_update", handleUnreadUpdate);
+    };
   }, []);
+
+  // Optional: Debug re-renders
+  useEffect(() => {
+    console.log("RERENDER — unreadCounts:", unreadCounts);
+  }, [unreadCounts]);
+
   return (
     <div className="flex min-h-screen bg-gray-100">
-
       <div className="flex-1 flex flex-col">
         <Navbar />
 
@@ -51,11 +110,11 @@ const Chat: React.FC = () => {
                     onClick={() => {
                       setSenderIdChatBox(investorId);
                       const receiver = u.participants.find(
-                        (p) => p.role === "company"
+                        (p) => p.role === "company",
                       );
                       setRecieverIdChatBox(receiver?.userId || "");
-                      setUserName(u.userName||"")
-                      setProfileImage(u.profileImage||"") 
+                      setUserName(u.userName || "");
+                      setProfileImage(u.profileImage || "");
                     }}
                     className="flex items-center justify-between bg-gray-50 hover:bg-gray-100 p-3 rounded-lg cursor-pointer"
                   >
@@ -90,7 +149,6 @@ const Chat: React.FC = () => {
                 profileImage={profileImage}
               />
             )}
-
           </div>
         </main>
       </div>

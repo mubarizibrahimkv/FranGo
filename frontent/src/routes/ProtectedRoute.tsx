@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store/store";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 
 interface ProtectedRouteProps {
-  allowedRoles: Array<"customer" | "company" | "investor" >;
+  allowedRoles: Array<"customer" | "company" | "investor">;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
   const { isAuthenticated, role, token, isAdmin } = useSelector(
-    (state: RootState) => state.user
+    (state: RootState) => state.user,
   );
   const [checkingAuth, setCheckingAuth] = useState(true);
   const navigate = useNavigate();
@@ -29,7 +29,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
       }
 
       const hasAccess =
-        isAdmin || (allowedRoles && allowedRoles.includes(role as any));
+        isAdmin ||
+        (allowedRoles &&
+          allowedRoles.includes(role as "customer" | "investor" | "company"));
 
       if (!hasAccess) {
         toast.info("Access denied for your role");

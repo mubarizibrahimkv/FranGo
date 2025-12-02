@@ -35,7 +35,7 @@ const ChatBox: React.FC<chatBoxProp> = ({
       }
     };
     getMessages();
-  }, [reload, senderId, , receiverId]);
+  }, [reload, senderId, receiverId]);
 
   useEffect(() => {
     if (!channel) return;
@@ -79,7 +79,7 @@ const ChatBox: React.FC<chatBoxProp> = ({
         message,
         senderId,
         "company",
-        receiverId
+        receiverId,
       );
       if (response.success) {
         socket.emit("send_message", {

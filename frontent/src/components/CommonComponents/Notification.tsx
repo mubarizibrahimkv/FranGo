@@ -28,17 +28,14 @@ const Notification: React.FC<notificationProp> = ({ onClose }) => {
       }
     };
     handleNotifications();
-  }, [userId]);
+  }, [userId, userRole]);
 
   const handeUpdate = async (notificationId: string) => {
-    console.log(notificationId,"notification id")
-    console.log(notificationId,"notification id")
+    console.log(notificationId, "notification id");
+    console.log(notificationId, "notification id");
     try {
-      const response = await updateNotification(
-        userRole,
-        notificationId
-      );
-      if(response.success){
+      const response = await updateNotification(userRole, notificationId);
+      if (response.success) {
         setNotifications(response.updatedNotification);
       }
     } catch (error) {
@@ -74,7 +71,7 @@ const Notification: React.FC<notificationProp> = ({ onClose }) => {
                   notification.message.startsWith("Your meeting")
                     ? `${notification.message.slice(
                         0,
-                        30
+                        30,
                       )}...\n${notification.message.slice(-47)}`
                     : notification.message}
                 </h1>

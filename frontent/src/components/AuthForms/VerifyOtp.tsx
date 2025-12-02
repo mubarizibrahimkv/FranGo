@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { resendOtpApi, verifyOtp } from "../../services/auth";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -14,7 +14,7 @@ const VerifyOtp = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { purpose, email,role } = location.state || {};
+  const { purpose, email, role } = location.state || {};
 
   useEffect(() => {
     if (timeLeft === 0) {
@@ -54,7 +54,7 @@ const VerifyOtp = () => {
     }
     try {
       setLoading(true);
-      const result = await verifyOtp({ otp, email,role });
+      const result = await verifyOtp({ otp, email, role });
       const { user, message } = result;
       console.log(purpose, "purose in frotntn");
       dispatch(
@@ -65,14 +65,14 @@ const VerifyOtp = () => {
           role: user.role,
           isAdmin: user.isAdmin,
           isAuthenticated: true,
-        })
+        }),
       );
 
       toast.success(message);
       console.log(result, "result in fonrnrrt");
       if (result) {
         if (purpose === "forgotPassword") {
-          navigate("/changePassword", { state: { email,role } });
+          navigate("/changePassword", { state: { email, role } });
         } else {
           if (role === "customer") {
             navigate("/customer", { replace: true });
@@ -98,7 +98,7 @@ const VerifyOtp = () => {
   const handleResendOtp = async () => {
     try {
       const email = location.state?.email;
-      const data = await resendOtpApi(email,role);
+      const data = await resendOtpApi(email, role);
       toast.success(data.message);
       setTimLeft(120);
       setOtpError("");

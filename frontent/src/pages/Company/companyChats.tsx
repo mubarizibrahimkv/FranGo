@@ -32,7 +32,7 @@ const Chat: React.FC = () => {
 
         res.conversations.forEach((c: any) => {
           if (!(c.channel in prev)) {
-            updated[c.channel] = c.unreadCount || 0; 
+            updated[c.channel] = c.unreadCount || 0;
           }
         });
 
@@ -45,7 +45,7 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     fetchConversations();
-  }, [senderIdChatBox]);
+  }, [senderIdChatBox, fetchConversations]);
 
   useEffect(() => {
     socket.connect();
@@ -60,11 +60,11 @@ const Chat: React.FC = () => {
     return () => {
       socket.off("conversation_changed", refresh);
     };
-  }, []);
+  }, [fetchConversations]);
 
   useEffect(() => {
     socket.emit("join_room", companyId);
-  }, []);
+  }, [companyId]);
 
   useEffect(() => {
     console.log("useeffect is working");
@@ -111,7 +111,7 @@ const Chat: React.FC = () => {
                       setSelectedChannel(u.channel);
                       setSenderIdChatBox(companyId);
                       const receiver = u.participants.find(
-                        (p) => p.role === "investor"
+                        (p) => p.role === "investor",
                       );
                       setUnreadCounts((prev) => ({
                         ...prev,

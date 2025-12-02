@@ -31,7 +31,7 @@ const ProductCategoryModal: React.FC<ProductCategoryModalProps> = ({
   error,
 }) => {
   const [selectedIndustry, setSelectedIndustry] = useState<string>(
-    industryCategories?._id || ""
+    industryCategories?._id || "",
   );
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>("");
   const [selectedSubSubCategory, setSelectedSubSubCategory] =
@@ -49,20 +49,20 @@ const ProductCategoryModal: React.FC<ProductCategoryModalProps> = ({
 
   useEffect(() => {
     const selectedSub = availableSubCategories.find(
-      (sub) => sub._id === selectedSubCategory
+      (sub) => sub._id === selectedSubCategory,
     );
     setAvailableSubSubCategories(
-      selectedSub ? selectedSub.subSubCategories : []
+      selectedSub ? selectedSub.subSubCategories : [],
     );
     setSelectedSubSubCategory("");
   }, [selectedSubCategory, availableSubCategories]);
 
   useEffect(() => {
     const selectedSub = availableSubCategories.find(
-      (sub) => sub._id === selectedSubCategory
+      (sub) => sub._id === selectedSubCategory,
     );
     setAvailableSubSubCategories(
-      selectedSub ? selectedSub.subSubCategories : []
+      selectedSub ? selectedSub.subSubCategories : [],
     );
     setSelectedSubSubCategory("");
   }, [selectedSubCategory, availableSubCategories]);
@@ -217,7 +217,7 @@ const ProductCategoryModal: React.FC<ProductCategoryModalProps> = ({
                     type="button"
                     onClick={() =>
                       setProductCategoryList((prev) =>
-                        prev.filter((_, i) => i !== index)
+                        prev.filter((_, i) => i !== index),
                       )
                     }
                     className="ml-2 text-red-500 hover:text-red-700 font-bold"

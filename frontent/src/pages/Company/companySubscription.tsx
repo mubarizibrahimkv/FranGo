@@ -31,7 +31,7 @@ const CompanySubscription: React.FC = () => {
               response.razorpay_payment_id,
               response.razorpay_order_id,
               response.razorpay_signature,
-              amount
+              amount,
             );
             toast.success("Subscription Activated!");
           } catch (error) {
@@ -175,7 +175,7 @@ const CompanySubscription: React.FC = () => {
           </div>
         </main>
       </div>
-    </div>  
+    </div>
   );
 };
 

@@ -45,7 +45,7 @@ const Navbar = () => {
               isAdmin: response.isAdmin || false,
               token: response.token,
               isAuthenticated: true,
-            })
+            }),
           );
         } else {
           navigate("/customer/login");
@@ -56,12 +56,15 @@ const Navbar = () => {
       }
     };
 
-    if(!customer.isAuthenticated)handleGoogleUser();
-  }, [dispatch, navigate]);
+    if (!customer.isAuthenticated) handleGoogleUser();
+  }, [dispatch, navigate, customer.isAuthenticated]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsClickedOpen(false);
       }
     };
@@ -79,6 +82,7 @@ const Navbar = () => {
         window.location.href = "/customer/login";
       }
     } catch (error) {
+      console.log("Error in logout :", error);
       toast.error("Logout failed");
     }
   };
@@ -140,7 +144,9 @@ const Navbar = () => {
                   <div className="font-semibold text-sm">
                     {customer.userName || "User"}
                   </div>
-                  <div className="text-xs text-gray-500">{customer.email || "Google"}</div>
+                  <div className="text-xs text-gray-500">
+                    {customer.email || "Google"}
+                  </div>
                 </div>
                 <ul className="text-sm">
                   <li>

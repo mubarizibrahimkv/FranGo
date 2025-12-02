@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { googleLogin, signupApi } from "../../services/auth";
@@ -20,7 +20,7 @@ const RegiserForm: React.FC<RegisterFormProps> = ({ role }) => {
   const [passwordError, setPasswordError] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
-  const [showLoginModal,setShowLoginModal]=useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -170,13 +170,15 @@ const RegiserForm: React.FC<RegisterFormProps> = ({ role }) => {
       </form>
       <h6 className="text-gray-500 text-center mt-2">
         You have accounts?
-        <div onClick={()=>setShowLoginModal(true)}>
+        <div onClick={() => setShowLoginModal(true)}>
           <span className="text-[#023430] font-semibold ml-1 cursor-pointer">
             Log in
           </span>
         </div>
       </h6>
-      {showLoginModal && <LoginChoiceModal onClose={() => setShowLoginModal(false)} />}{" "}
+      {showLoginModal && (
+        <LoginChoiceModal onClose={() => setShowLoginModal(false)} />
+      )}{" "}
     </div>
   );
 };

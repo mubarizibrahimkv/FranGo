@@ -8,10 +8,11 @@ const CustomerRegister = () => {
           <h6 className="text-3xl font-bold text-white mb-2">FranGo Shop</h6>
           <p className="text-sm text-white opacity-75 mb-6 font-serif text-center">
             Explore and shop the best products from your favorite franchises.
-            Create your account and start your seamless shopping experience today!
+            Create your account and start your seamless shopping experience
+            today!
           </p>
         </div>
-        <RegisterForm role="customer"/>
+        <RegisterForm role="customer" />
       </div>
     </div>
   );

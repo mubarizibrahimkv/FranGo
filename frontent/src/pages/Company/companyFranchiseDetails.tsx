@@ -6,7 +6,7 @@ import { getSpecificFranchise } from "../../services/company/companyProfile";
 import { useParams } from "react-router-dom";
 import Sidebar from "../../components/CompanyComponents/Sidebar";
 
-const companyFranchiseDetails = () => {
+const CompanyFranchiseDetails = () => {
   const [franchise, setFranchise] = useState<IFranchise>({});
   const { id } = useParams<{ id: string }>();
   useEffect(() => {
@@ -17,7 +17,7 @@ const companyFranchiseDetails = () => {
       }
     };
     fetchFranhise();
-  }, []);
+  }, [id]);
   return (
     <div className="flex min-h-screen bg-gray-100">
       <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-20">
@@ -37,4 +37,4 @@ const companyFranchiseDetails = () => {
   );
 };
 
-export default companyFranchiseDetails;
+export default CompanyFranchiseDetails;

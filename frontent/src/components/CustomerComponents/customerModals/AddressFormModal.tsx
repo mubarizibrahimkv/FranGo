@@ -10,9 +10,17 @@ interface AddressFormModalProps {
   onSubmit: (data: IAddress) => void;
   initialData?: {} | null;
 }
-const AddressFormModal: React.FC<AddressFormModalProps> = ({isOpen,onClose,onSubmit,initialData}) => {
-
-  const {register,handleSubmit,formState: { errors }} = useForm<AddressFormData>({
+const AddressFormModal: React.FC<AddressFormModalProps> = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  initialData,
+}) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AddressFormData>({
     resolver: zodResolver(addressSchema),
     defaultValues: initialData || {
       fullName: "",
@@ -25,7 +33,6 @@ const AddressFormModal: React.FC<AddressFormModalProps> = ({isOpen,onClose,onSub
       isDefault: false,
     },
   });
-
 
   if (!isOpen) return null;
 
@@ -52,7 +59,9 @@ const AddressFormModal: React.FC<AddressFormModalProps> = ({isOpen,onClose,onSub
                 className="w-full border rounded-lg p-2"
               />
               {errors.fullName && (
-                <p className="text-red-500 text-sm mt-1">{errors.fullName.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.fullName.message}
+                </p>
               )}
             </div>
 
@@ -66,7 +75,9 @@ const AddressFormModal: React.FC<AddressFormModalProps> = ({isOpen,onClose,onSub
                 className="w-full border rounded-lg p-2"
               />
               {errors.phoneNumber && (
-                <p className="text-red-500 text-sm mt-1">{errors.phoneNumber.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.phoneNumber.message}
+                </p>
               )}
             </div>
 
@@ -80,7 +91,9 @@ const AddressFormModal: React.FC<AddressFormModalProps> = ({isOpen,onClose,onSub
                 className="w-full border rounded-lg p-2"
               />
               {errors.city && (
-                <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.city.message}
+                </p>
               )}
             </div>
 
@@ -94,7 +107,9 @@ const AddressFormModal: React.FC<AddressFormModalProps> = ({isOpen,onClose,onSub
                 className="w-full border rounded-lg p-2"
               />
               {errors.state && (
-                <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.state.message}
+                </p>
               )}
             </div>
 
@@ -108,7 +123,9 @@ const AddressFormModal: React.FC<AddressFormModalProps> = ({isOpen,onClose,onSub
                 className="w-full border rounded-lg p-2"
               />
               {errors.pinCode && (
-                <p className="text-red-500 text-sm mt-1">{errors.pinCode.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.pinCode.message}
+                </p>
               )}
             </div>
 
@@ -122,7 +139,9 @@ const AddressFormModal: React.FC<AddressFormModalProps> = ({isOpen,onClose,onSub
                 className="w-full border rounded-lg p-2"
               />
               {errors.country && (
-                <p className="text-red-500 text-sm mt-1">{errors.country.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.country.message}
+                </p>
               )}
             </div>
           </div>
@@ -137,7 +156,9 @@ const AddressFormModal: React.FC<AddressFormModalProps> = ({isOpen,onClose,onSub
               className="w-full border rounded-lg p-2"
             />
             {errors.address && (
-              <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.address.message}
+              </p>
             )}
           </div>
 

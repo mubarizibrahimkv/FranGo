@@ -6,7 +6,7 @@ import { changePassword } from "../../services/auth";
 const ChangePasswordComponent: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { email,role } = location.state || {};
+  const { email, role } = location.state || {};
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",
@@ -20,7 +20,7 @@ const ChangePasswordComponent: React.FC = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  console.log(email,role,"email in chage passowrkd forntent");
+  console.log(email, role, "email in chage passowrkd forntent");
   const validate = () => {
     const newErrors: any = {};
     if (formData.password.length < 6) {
@@ -32,14 +32,14 @@ const ChangePasswordComponent: React.FC = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-    
+
     try {
-      console.log(email,role,"email in chage passowrkd forntent");
-      const res = await changePassword(email, formData.password,role);
+      console.log(email, role, "email in chage passowrkd forntent");
+      const res = await changePassword(email, formData.password, role);
       if (res.success) {
         if (role === "company") {
           navigate("/company/dashboard");

@@ -45,9 +45,7 @@ const ConfirmAlert: React.FC<ConfirmAlertProps> = ({
       >
         <div className="flex justify-center mb-4">{icons[type]}</div>
 
-        <h3 className="text-lg font-semibold mb-2 text-black">
-          {title}
-        </h3>
+        <h3 className="text-lg font-semibold mb-2 text-black">{title}</h3>
 
         <p className="text-gray-600 text-sm mb-6">{message}</p>
 

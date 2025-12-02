@@ -24,7 +24,11 @@ interface BlockProps {
 
 interface VerifyProps {
   actionType: "verify";
-  onAction: (id: string, status: "approve" | "reject",reason?:string) => void | Promise<void>;
+  onAction: (
+    id: string,
+    status: "approve" | "reject",
+    reason?: string,
+  ) => void | Promise<void>;
 }
 
 type Props = {
@@ -39,7 +43,9 @@ const EntityTable: React.FC<Props> = ({
   const [isConfirmationModal, setIsConfirmationModal] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [selectedAction, setSelectedAction] = useState<"approve" | "reject" | null>(null);
+  const [selectedAction, setSelectedAction] = useState<
+    "approve" | "reject" | null
+  >(null);
   const navigate = useNavigate();
 
   const handleActionClick = (user: User, action?: "approve" | "reject") => {
@@ -107,8 +113,8 @@ const EntityTable: React.FC<Props> = ({
                         user.status === "approved"
                           ? "bg-green-100 text-green-700"
                           : user.status === "rejected"
-                          ? "bg-red-100 text-red-700"
-                          : "bg-yellow-100 text-yellow-700"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-yellow-100 text-yellow-700"
                       }`}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -163,7 +169,7 @@ const EntityTable: React.FC<Props> = ({
                     }`}
                   >
                     {user.isBlocked ? "Unblock" : "Block"}
-                  </button> 
+                  </button>
                 )}
               </td>
             </tr>
@@ -187,7 +193,7 @@ const EntityTable: React.FC<Props> = ({
                 onAction as (
                   id: string,
                   status: "approve" | "reject",
-                  reason?: string
+                  reason?: string,
                 ) => void | Promise<void>
               )(selectedUser._id, "reject", reason);
 
@@ -204,22 +210,22 @@ const EntityTable: React.FC<Props> = ({
                 ? selectedAction === "approve"
                   ? "Approve Company?"
                   : selectedUser.isBlocked
+                    ? "Unblock Company?"
+                    : "Block Company?"
+                : selectedUser.isBlocked
                   ? "Unblock Company?"
                   : "Block Company?"
-                : selectedUser.isBlocked
-                ? "Unblock Company?"
-                : "Block Company?"
             }
             message={
               actionType === "verify"
                 ? selectedAction === "approve"
                   ? "Do you want to approve this company? They will gain access to their account and features."
                   : selectedAction === "reject"
-                  ? "Do you want to reject this company? They will not be able to access their account."
-                  : ""
+                    ? "Do you want to reject this company? They will not be able to access their account."
+                    : ""
                 : selectedUser.isBlocked
-                ? "Do you want to unblock this company? They will regain access to their account and features."
-                : "Are you sure you want to block this company? They will lose access to their account and related features."
+                  ? "Do you want to unblock this company? They will regain access to their account and features."
+                  : "Are you sure you want to block this company? They will lose access to their account and related features."
             }
             onConfirm={() => {
               if (!selectedUser) return;
@@ -228,14 +234,14 @@ const EntityTable: React.FC<Props> = ({
                 (
                   onAction as (
                     id: string,
-                    status: "approve" | "reject"
+                    status: "approve" | "reject",
                   ) => void | Promise<void>
                 )(selectedUser._id, selectedAction);
               } else if (actionType === "block") {
                 (
                   onAction as (
                     id: string,
-                    isBlocked: boolean
+                    isBlocked: boolean,
                   ) => void | Promise<void>
                 )(selectedUser._id, !selectedUser.isBlocked);
               }

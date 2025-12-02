@@ -26,7 +26,6 @@ const PersonalInfoModal: React.FC<ModalProps> = ({
     if (!form?.userName?.trim()) newErrors.userName = "Full name is required";
     if (!form?.gender) newErrors.gender = "Gender is required";
 
-
     if (!form?.dateOfBirth) {
       newErrors.dateOfBirth = "Date of birth is required";
     } else {
@@ -75,7 +74,7 @@ const PersonalInfoModal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -281,8 +280,8 @@ const PersonalInfoModal: React.FC<ModalProps> = ({
                 form?.ownProperty
                   ? "yes"
                   : form?.ownProperty === false
-                  ? "no"
-                  : ""
+                    ? "no"
+                    : ""
               }
               onChange={(e) =>
                 setForm((prev) => ({
@@ -291,8 +290,8 @@ const PersonalInfoModal: React.FC<ModalProps> = ({
                     e.target.value === "yes"
                       ? true
                       : e.target.value === "no"
-                      ? false
-                      : undefined,
+                        ? false
+                        : undefined,
                 }))
               }
               className="w-full border rounded-md px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#1F3C58]"
@@ -356,7 +355,7 @@ const PersonalInfoModal: React.FC<ModalProps> = ({
             </label>
             <div className="grid grid-cols-2 gap-2">
               {categories
-                .filter((cate) => cate._id) 
+                .filter((cate) => cate._id)
                 .map((cate) => (
                   <label
                     key={cate._id?.toString() || cate.categoryName}
@@ -365,9 +364,9 @@ const PersonalInfoModal: React.FC<ModalProps> = ({
                     <input
                       type="checkbox"
                       name="previousBusiness"
-                      value={cate._id?.toString() || ""} 
+                      value={cate._id?.toString() || ""}
                       checked={form?.previousBusiness?.includes(
-                        cate._id?.toString() || ""
+                        cate._id?.toString() || "",
                       )}
                       onChange={(e) => {
                         const { value, checked } = e.target;
@@ -453,7 +452,7 @@ const PersonalInfoModal: React.FC<ModalProps> = ({
                     name="preferredFranchiseType"
                     value={cate._id && cate._id.toString()}
                     checked={form?.preferredFranchiseType?.includes(
-                      cate._id?.toString() || ""
+                      cate._id?.toString() || "",
                     )}
                     onChange={(e) => {
                       const { value, checked } = e.target;

@@ -26,7 +26,7 @@ const CompanyProducts = () => {
   const company = useSelector((state: RootState) => state.user);
   const [reload, setReload] = useState(false);
   const [productCategories, setProductCategories] = useState<ProductCategory[]>(
-    []
+    [],
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -37,7 +37,7 @@ const CompanyProducts = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const CompanyProducts = () => {
       setProductCategories(res.data);
     };
     fetchCompanyProductCategories();
-  }, [page]);
+  }, [page, company._id]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -56,7 +56,7 @@ const CompanyProducts = () => {
       setTotalPages(response.totalPages);
     };
     fetchProducts();
-  }, [page, reload]);
+  }, [page, reload, company._id]);
 
   const handleAddProduct = () => {
     setSelectedProduct(null);
@@ -80,7 +80,7 @@ const CompanyProducts = () => {
 
   const handleModalSubmit = async (
     formData: IProductForm,
-    editing: boolean
+    editing: boolean,
   ) => {
     try {
       setIsSubmitting(true);
@@ -101,7 +101,7 @@ const CompanyProducts = () => {
 
             data.append(
               "removedImages",
-              JSON.stringify(formData.removedImages || [])
+              JSON.stringify(formData.removedImages || []),
             );
 
             const res = await editProduct(company._id, productId, data);

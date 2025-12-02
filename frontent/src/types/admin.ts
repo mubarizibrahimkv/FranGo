@@ -2,9 +2,9 @@ import type { Company } from "./company";
 import type { Investor } from "./investor";
 
 export interface IIndustryCategory {
-  _id?: string
+  _id?: string;
   categoryName: string;
-  image?:string|File
+  image?: string | File;
   subCategories: {
     name: string;
     subSubCategories: { name: string }[];
@@ -12,12 +12,12 @@ export interface IIndustryCategory {
 }
 
 export interface ISubSubCategory {
-  _id:string
+  _id: string;
   name: string;
 }
 
 export interface ISubCategory {
-  _id?:string
+  _id?: string;
   name: string;
   subSubCategories: ISubSubCategory[];
 }
@@ -28,13 +28,12 @@ export interface ICategory {
   subCategories: ISubCategory[];
 }
 
-
 export interface IReport {
-    _id?: string;
-    reportedBy:Investor;
-    reportedAgainst: Company;
-    status: "pending" | "resolved" | "rejected";
-    reason:string;
-    createdAt?: Date;
-    updatedAt?: Date;
+  _id?: string;
+  reportedBy: Investor;
+  reportedAgainst: Company;
+  status: "pending" | "resolved" | "rejected";
+  reason: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

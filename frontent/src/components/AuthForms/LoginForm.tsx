@@ -1,6 +1,6 @@
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import React, { useState } from "react";
 import { googleLogin, loginApi } from "../../services/auth";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
@@ -46,14 +46,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) {
       return;
     }
     try {
-      const user = await loginApi(formData.email, formData.password,role);
+      const user = await loginApi(formData.email, formData.password, role);
       dispatch(
         setUser({
           userName: user.userName || user.companyName,
@@ -61,11 +60,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
           _id: user._id,
           role: user.role,
           isAuthenticated: true,
-          status:user.status,
-          profileImage:user.companyLogo
-        })
+          status: user.status,
+          profileImage: user.companyLogo,
+        }),
       );
-      if(user.isAdmin){
+      if (user.isAdmin) {
         navigate("/admin/dashboard");
         return;
       }
@@ -93,14 +92,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-
   return (
     <div className="w-1/2 p-7">
       <h2 className="text-2xl font-semibold text-start">Welcome Back</h2>
       <h6 className="text-sm text-gray-500 mb-4 font-serif">
         Welcome Back ! Please enter your details
       </h6>
-      <form onSubmit={handleSubmit}  className="space-y-4 mt-8">
+      <form onSubmit={handleSubmit} className="space-y-4 mt-8">
         <div>
           <label className="block mb-1 text-sm font-medium">Email</label>
           <input
@@ -130,15 +128,19 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
           )}
         </div>
         <Link
-         to={"/forgot-password"} 
-         state={{ role }}         
+          to={"/forgot-password"}
+          state={{ role }}
           className="text-end hover:cursor-pointer"
         >
           Forgot password?
         </Link>
 
         <div className="flex justify-between px-15 gap-4 mt-9">
-          <button onClick={()=>googleLogin(role)} type="button" className="w-1/2 border rounded-md hover:bg-gray-100 flex items-center justify-center gap-1">
+          <button
+            onClick={() => googleLogin(role)}
+            type="button"
+            className="w-1/2 border rounded-md hover:bg-gray-100 flex items-center justify-center gap-1"
+          >
             {" "}
             <FcGoogle className="w-5 h-5" />
             Google
@@ -160,7 +162,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
           Register
         </span>
       </h6>
-      {showModal && <RegisterChoiceModal onClose={() => setShowModal(false)} />}{" "}
+      {showModal && (
+        <RegisterChoiceModal onClose={() => setShowModal(false)} />
+      )}{" "}
     </div>
   );
 };

@@ -15,43 +15,43 @@ const ChatModal = ({
   isOpen: boolean;
   onClose: () => void;
   companyName: string;
-  ids: { senderId: string; recieverId: string }; 
+  ids: { senderId: string; recieverId: string };
 }) => {
-  if (!isOpen) return null;
   const [message, setMessage] = useState("");
-  const channel=[ids.senderId,ids.recieverId].sort().join("_")
-  const user=useSelector((state:RootState)=>state.user)
+  const channel = [ids.senderId, ids.recieverId].sort().join("_");
+  const user = useSelector((state: RootState) => state.user);
 
-
-  
-    useEffect(() => {
-    if (!channel) return; 
+  useEffect(() => {
+    if (!channel) return;
+    if (!isOpen) return;
     socket.emit("join_channel", channel);
     console.log("Joined channel:", channel);
-  
-  }, [channel]); 
-  
-  
-    useEffect(() => {
-      socket.connect();
-      
-      return () => {
-        socket.disconnect();
-      };
-    }, []);
+  }, [channel]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    socket.connect();
 
-    
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const handleQuickMessage = async () => {
     try {
-      const response = await sendMessage("", message, ids.senderId,user.role,ids.recieverId);
+      const response = await sendMessage(
+        "",
+        message,
+        ids.senderId,
+        user.role,
+        ids.recieverId,
+      );
       if (response.success) {
-        onClose()
+        onClose();
         socket.emit("send_message", {
           channel,
           senderId: ids.senderId,
-          message, 
+          message,
         });
       }
     } catch (error) {

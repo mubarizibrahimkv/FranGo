@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
 import Footer from "../../components/InvestorComponents/Footer";
 import Navbar from "../../components/InvestorComponents/Navbar";
-import { getAApplication, payAdvance, verifyPayAdvanceOrder } from "../../services/invstor";
+import {
+  getAApplication,
+  payAdvance,
+  verifyPayAdvanceOrder,
+} from "../../services/invstor";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import type { IApplication } from "../../types/company";
 import { toast } from "react-toastify";
 import type { Payment } from "../../types/common";
+import type {
+  RazorpayInstance,
+  RazorpayOptions,
+  RazorpayResponse,
+} from "../../types/global";
 
 const MyApplication = () => {
   const investor = useSelector((state: RootState) => state.user);
@@ -25,7 +34,7 @@ const MyApplication = () => {
       }
     };
     fetchApplications();
-  }, [reload, page]);
+  }, [reload, page, investor._id]);
 
   const handlePayAdvance = async (applicationId: string, amount: number) => {
     const data: Payment = {
@@ -33,39 +42,51 @@ const MyApplication = () => {
       type: "advance",
       method: "razorpay",
     };
+
     try {
       const res = await payAdvance(investor._id, applicationId, data);
       const { order, key } = res;
 
-      const options = {
+      const options: RazorpayOptions = {
         key,
         amount: order.amount,
         currency: "INR",
         name: "FranGo",
         description: "Advance payment",
         order_id: order.id,
-        handler: async function (response: any) {
-                try {
-                  await verifyPayAdvanceOrder(investor._id,applicationId,response.razorpay_payment_id,response.razorpay_order_id,response.razorpay_signature,amount)
-                  setReload((prev)=>!prev)
-                  toast.success("Advance is Paid!");
-                } catch (error) {
-                  console.error("Verification failed:", error);
-                  toast.error("Verification failed. Please contact support.");
-                }
-              },
+
+        handler: async (response: RazorpayResponse) => {
+          try {
+            await verifyPayAdvanceOrder(
+              investor._id,
+              applicationId,
+              response.razorpay_payment_id,
+              response.razorpay_order_id,
+              response.razorpay_signature,
+              amount,
+            );
+
+            setReload((prev) => !prev);
+            toast.success("Advance is Paid!");
+          } catch (error: unknown) {
+            console.error("Verification failed:", error);
+            toast.error("Verification failed. Please contact support.");
+          }
+        },
+
         prefill: {
           name: investor.userName,
-          email: investor.email,  
+          email: investor.email,
         },
+
         theme: {
           color: "#0C2340",
         },
       };
 
-      const razor = new (window as any).Razorpay(options);
+      const razor: RazorpayInstance = new window.Razorpay(options);
       razor.open();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Payment failed:", error);
     }
   };
@@ -130,8 +151,8 @@ const MyApplication = () => {
                           application.status === "approved"
                             ? "bg-green-100 text-green-700"
                             : application.status === "rejected"
-                            ? "bg-red-100 text-red-700"
-                            : "bg-yellow-100 text-yellow-700"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-yellow-100 text-yellow-700"
                         }`}
                       >
                         {(application.status || "pending")
@@ -149,10 +170,10 @@ const MyApplication = () => {
                         application.status === "rejected"
                           ? "bg-gray-400 text-gray-200 cursor-not-allowed"
                           : application.status === "pending"
-                          ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                          : application.paymentStatus === "paid"
-                          ? "bg-green-800 text-white cursor-default"
-                          : "bg-[#0C2340] text-white hover:bg-[#1A365D]"
+                            ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                            : application.paymentStatus === "paid"
+                              ? "bg-green-800 text-white cursor-default"
+                              : "bg-[#0C2340] text-white hover:bg-[#1A365D]"
                       }`}
                       disabled={
                         application.status === "rejected" ||
@@ -164,17 +185,17 @@ const MyApplication = () => {
                         application.franchise.advancefee &&
                         handlePayAdvance(
                           application._id,
-                          application.franchise.advancefee
+                          application.franchise.advancefee,
                         )
                       }
                     >
                       {application.status === "pending"
                         ? "Pending"
                         : application.status === "rejected"
-                        ? "Rejected"
-                        : application.paymentStatus === "paid"
-                        ? "Paid"
-                        : "Pay Advance"}
+                          ? "Rejected"
+                          : application.paymentStatus === "paid"
+                            ? "Paid"
+                            : "Pay Advance"}
                     </button>
                   </td>
                 </tr>

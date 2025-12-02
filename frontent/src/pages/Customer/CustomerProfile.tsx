@@ -79,7 +79,10 @@ const ProfilePage: React.FC = () => {
               <hr className="my-2" />
               <p className="text-gray-500">{customer.email}</p>
             </div>
-            <button onClick={()=>setShowChangePassModal(true)} className=" text-black px-4 py-2 rounded-2xl border self-end mt-4 hover:bg-black hover:text-white ">
+            <button
+              onClick={() => setShowChangePassModal(true)}
+              className=" text-black px-4 py-2 rounded-2xl border self-end mt-4 hover:bg-black hover:text-white "
+            >
               Change Password
             </button>
             {showChangePassModal && (

@@ -16,7 +16,7 @@ const ApplyModal: React.FC<ApplyModalProps> = ({
   onApply,
 }) => {
   const [formData, setFormData] = useState<Partial<Investor>>(
-    investorData || {}
+    investorData || {},
   );
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -66,7 +66,7 @@ const ApplyModal: React.FC<ApplyModalProps> = ({
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };

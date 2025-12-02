@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { Company } from "../../../types/company";
 import type { IIndustryCategory } from "../../../types/admin";
 
@@ -88,7 +88,7 @@ const ProfileEditModal: React.FC<ModalProps> = ({
   }, [initialData]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value, type } = e.target;
     setForm((prev) => ({
@@ -212,7 +212,6 @@ const ProfileEditModal: React.FC<ModalProps> = ({
                   industryCategory: selectedId,
                   industrySubCategory: "",
                 }));
-
               }}
               className={`w-full border rounded-md px-3 py-2 text-sm outline-none focus:ring-2 ${
                 errors.industryCategory

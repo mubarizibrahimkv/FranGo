@@ -7,7 +7,11 @@ interface RejectModalProps {
   onSubmit: (reason: string) => void;
 }
 
-const RejectModal: React.FC<RejectModalProps> = ({ isOpen, onClose, onSubmit }) => {
+const RejectModal: React.FC<RejectModalProps> = ({
+  isOpen,
+  onClose,
+  onSubmit,
+}) => {
   const [reason, setReason] = useState("");
 
   if (!isOpen) return null;

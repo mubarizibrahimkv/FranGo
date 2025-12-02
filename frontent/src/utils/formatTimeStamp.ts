@@ -2,7 +2,7 @@ export const formatChatTimestamp = (dateInput: string | Date) => {
   const date = new Date(dateInput);
   const today = new Date();
   const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  
+
   const isYesterday =
     date.getDate() === yesterday.getDate() &&
     date.getMonth() === yesterday.getMonth() &&

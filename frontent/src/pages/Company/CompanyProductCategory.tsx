@@ -16,7 +16,7 @@ import type { IIndustryCategory } from "../../types/admin";
 import { Edit } from "lucide-react";
 import { FaTrashAlt } from "react-icons/fa";
 
-export interface ProductCategory {     
+export interface ProductCategory {
   _id: string;
   name: string;
   status: string;
@@ -31,7 +31,7 @@ const AdminProductCategory = () => {
   const [industryCategories, setIndustryCategories] =
     useState<IIndustryCategory>();
   const [productCategories, setProductCategories] = useState<ProductCategory[]>(
-    []
+    [],
   );
   const [isOpenModal, setIsModal] = useState(false);
   const company = useSelector((state: RootState) => state.user);
@@ -39,7 +39,7 @@ const AdminProductCategory = () => {
   const [selectedCategory, setSelectedCategory] =
     useState<ProductCategory | null>(null);
   const [editedName, setEditedName] = useState("");
-  const [error,setError]=useState("")
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const getCategory = async () => {
@@ -49,7 +49,7 @@ const AdminProductCategory = () => {
       }
     };
     getCategory();
-  }, []);
+  }, [company._id]);
 
   useEffect(() => {
     const getProductCategory = async () => {
@@ -59,7 +59,7 @@ const AdminProductCategory = () => {
       }
     };
     getProductCategory();
-  }, []);
+  }, [company._id]);
 
   const handleProductCategory = async (data: {
     industryCategoryId: string;
@@ -70,10 +70,10 @@ const AdminProductCategory = () => {
     try {
       const res = await addProductCategories(company._id, data);
       if (res.success) {
-        setIsModalOpen(false)
+        setIsModalOpen(false);
         toast.success("Categories Added");
-      }else{
-        setError(res.message)
+      } else {
+        setError(res.message);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -92,25 +92,23 @@ const AdminProductCategory = () => {
   const handleUpdate = async () => {
     if (!selectedCategory) return;
     try {
-      const res=await editProductCategories(
+      const res = await editProductCategories(
         company._id,
         selectedCategory._id,
-        editedName
+        editedName,
       );
-      if(res.success){
-           toast.success("Edited");
-      setIsModalOpen(false);
-      }else{
-        setError(res.message)
+      if (res.success) {
+        toast.success("Edited");
+        setIsModalOpen(false);
+      } else {
+        setError(res.message);
       }
     } catch (error: unknown) {
-    const err = error as any;
-    const msg =
-      err?.response?.data?.message ||
-      err?.message ||
-      "Something went wrong";
-      setError(msg)
-  }
+      const err = error as any;
+      const msg =
+        err?.response?.data?.message || err?.message || "Something went wrong";
+      setError(msg);
+    }
   };
 
   const handleDelete = async (categoryId: string) => {
@@ -209,8 +207,9 @@ const AdminProductCategory = () => {
                             placeholder="Enter new category name"
                           />
 
-                          {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
-
+                          {error && (
+                            <p className="text-xs text-red-500 mt-1">{error}</p>
+                          )}
 
                           <div className="flex justify-end gap-3">
                             <button
@@ -239,7 +238,6 @@ const AdminProductCategory = () => {
                 </tr>
               )}
             </tbody>
-            
           </table>
         </main>
       </div>

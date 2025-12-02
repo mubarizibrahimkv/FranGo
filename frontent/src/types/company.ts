@@ -3,7 +3,7 @@ import type { IIndustryCategory } from "./admin";
 import type { Investor } from "./investor";
 
 export interface Company {
-  _id?: string
+  _id?: string;
   brandName?: string;
   companyName?: string;
   ownerName?: string;
@@ -22,16 +22,14 @@ export interface Company {
   companyLogo?: string;
   franchiseManager?: string;
   companyRegistrationProof?: string;
-  googleId?: string
+  googleId?: string;
   about?: string;
-  isBlocked?: string
-  status?: "approve" | "reject" | "pending"
+  isBlocked?: string;
+  status?: "approve" | "reject" | "pending";
 }
 
-
-
 export interface IFranchise {
-  _id?: string
+  _id?: string;
   franchiseName?: string;
   industryCategory?: string;
   monthlyRevenue?: number;
@@ -43,11 +41,11 @@ export interface IFranchise {
     companyName?: string;
     companyLogo?: string;
     description?: string;
-    brandName?: string
-    yearFounded?: string
-    ownerName?: string
-    about?: string
-    numberOfRetailOutlets?: string
+    brandName?: string;
+    yearFounded?: string;
+    ownerName?: string;
+    about?: string;
+    numberOfRetailOutlets?: string;
     industryCategory?: {
       _id?: string;
       categoryName?: string;
@@ -84,16 +82,14 @@ export interface IFranchise {
 }
 
 export type IApplication = {
-  _id: string
-  investor: Investor
+  _id: string;
+  investor: Investor;
   franchise: IFranchise;
   status: "pending" | "approved" | "rejected";
-  paymentStatus: "paid" | "unpaid"
+  paymentStatus: "paid" | "unpaid";
   createdAt?: Date;
   updatedAt?: Date;
-}
-
-
+};
 
 export interface IProduct {
   _id?: string;

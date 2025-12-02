@@ -40,7 +40,7 @@ const Investors: React.FC = () => {
       }
     };
     loadCompanies();
-  }, [refresh,page]);
+  }, [refresh, page]);
 
   const blockInvestor = async (investorId: string, isBlocked: boolean) => {
     try {
@@ -51,8 +51,8 @@ const Investors: React.FC = () => {
 
         setInvestors((prev) =>
           prev.map((investor) =>
-            investor._id === investorId ? { ...investor, isBlocked } : investor
-          )
+            investor._id === investorId ? { ...investor, isBlocked } : investor,
+          ),
         );
       }
     } catch (error: any) {
@@ -84,8 +84,6 @@ const Investors: React.FC = () => {
             onAction={blockInvestor}
             actionType="block"
           />
-
-
 
           <div className="flex justify-center items-center gap-2 mb-4">
             {page > 1 && (

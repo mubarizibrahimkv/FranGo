@@ -15,7 +15,7 @@
 
 //     useEffect(()=>{
 //         const fetchProductCateogories=async()=>{
-            
+
 //         }
 //     })
 //   return (

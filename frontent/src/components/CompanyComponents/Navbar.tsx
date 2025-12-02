@@ -15,10 +15,10 @@ const Navbar: React.FC<prop> = ({ heading }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const company = useSelector((state: RootState) => state.user);
-  const [isOpenNotification,setIsOpenNotification]=useState(false)
-  const closeNotificationComponent=()=>{
-    setIsOpenNotification(false)
-  }
+  const [isOpenNotification, setIsOpenNotification] = useState(false);
+  const closeNotificationComponent = () => {
+    setIsOpenNotification(false);
+  };
   useEffect(() => {
     const handleGoogleUser = async () => {
       try {
@@ -35,7 +35,7 @@ const Navbar: React.FC<prop> = ({ heading }) => {
               token: response.token,
               isAuthenticated: true,
               status: response.status,
-            })
+            }),
           );
         } else {
           navigate("/company/login");
@@ -61,11 +61,16 @@ const Navbar: React.FC<prop> = ({ heading }) => {
             <Home className="w-6 h-6" />
           </a>
 
-          <button onClick={()=>setIsOpenNotification(true)} className="p-2 text-gray-600 hover:text-gray-900">
+          <button
+            onClick={() => setIsOpenNotification(true)}
+            className="p-2 text-gray-600 hover:text-gray-900"
+          >
             <Bell className="w-6 h-6" />
           </button>
 
-          {isOpenNotification&&<Notification onClose={closeNotificationComponent}/>}
+          {isOpenNotification && (
+            <Notification onClose={closeNotificationComponent} />
+          )}
 
           <div
             onClick={() => navigate("/company/profile")}

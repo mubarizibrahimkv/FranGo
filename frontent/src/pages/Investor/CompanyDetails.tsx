@@ -24,8 +24,11 @@ const CompanyDetails: React.FC = () => {
       }
     };
     fetchFranhise();
-  }, []);
-  const ids = {senderId: investor._id,recieverId: franchise.company?._id || ""};
+  }, [id]);
+  const ids = {
+    senderId: investor._id,
+    recieverId: franchise.company?._id || "",
+  };
   return (
     <div>
       <Navbar />

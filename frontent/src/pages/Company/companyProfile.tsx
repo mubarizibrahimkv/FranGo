@@ -2,7 +2,7 @@ import { Pencil } from "lucide-react";
 import Sidebar from "../../components/CompanyComponents/Sidebar";
 import Navbar from "../../components/CompanyComponents/Navbar";
 import { FaUser, FaCamera } from "react-icons/fa6";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TiTick } from "react-icons/ti";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
@@ -70,7 +70,7 @@ export default function Profile() {
         if (err instanceof AxiosError) {
           toast.dismiss();
           toast.error(
-            err.response?.data?.message || "Unauthorized. Please login again."
+            err.response?.data?.message || "Unauthorized. Please login again.",
           );
         } else {
           toast.error((err as Error).message);
@@ -119,7 +119,7 @@ export default function Profile() {
       if (err instanceof AxiosError) {
         toast.dismiss();
         toast.error(
-          err.response?.data?.message || "Unauthorized. Please login again."
+          err.response?.data?.message || "Unauthorized. Please login again.",
         );
       } else {
         toast.error((err as Error).message);
@@ -240,8 +240,8 @@ export default function Profile() {
                         profile.status === "approve"
                           ? "bg-green-50 text-green-700 border-green-200"
                           : profile.status === "reject"
-                          ? "bg-red-50 text-red-700 border-red-200"
-                          : "bg-yellow-50 text-yellow-700 border-yellow-200 animate-pulse"
+                            ? "bg-red-50 text-red-700 border-red-200"
+                            : "bg-yellow-50 text-yellow-700 border-yellow-200 animate-pulse"
                       }`}
                     >
                       {profile.status
@@ -325,7 +325,7 @@ export default function Profile() {
                       {displayValue(
                         typeof profile?.industryCategory === "object"
                           ? profile.industryCategory?.categoryName
-                          : ""
+                          : "",
                       )}
                     </p>
                   </div>

@@ -1,4 +1,4 @@
-export interface Investor{
+export interface Investor {
   _id: string;
   userName: string;
   email: string;
@@ -27,5 +27,5 @@ export interface Investor{
   otpExpires?: number | null;
   isAdmin: boolean;
   createdAt?: Date;
-  status?:"pending"|"approve"|"reject"
+  status?: "pending" | "approve" | "reject";
 }

@@ -16,18 +16,18 @@ import { GrDocumentText } from "react-icons/gr";
 
 const Home = () => {
   const isAuthenticated = useSelector(
-    (state: RootState) => state.user.isAuthenticated
+    (state: RootState) => state.user.isAuthenticated,
   );
   const role = useSelector((state: RootState) => state.user.role);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (role!=="customer") {
+    if (role !== "customer") {
       navigate("/");
     } else {
       navigate("/customer");
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, role]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -111,7 +111,7 @@ const Home = () => {
               alt=""
               className="w-30 h-30 object-contain rounded-full mb-8 shadow"
             />
-            <hr className="w-full border-t-1  my-2" /> 
+            <hr className="w-full border-t-1  my-2" />
             <p className="text-base font-bold text-[#023430]">Allen Solly</p>
             <p className="text-gray-500 text-xs italic mb-1">
               The fun side of formal

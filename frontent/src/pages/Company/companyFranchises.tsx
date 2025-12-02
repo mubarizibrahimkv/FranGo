@@ -25,16 +25,16 @@ const CompanyFranchises: React.FC = () => {
   const [reload, setReload] = useState(false);
   const [category, setCategory] = useState([]);
   const company = useSelector((state: RootState) => state.user);
-    const [page, setPage] = useState(1);
+  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
   const [industryCategoryId, setIndustryCategoryId] = useState<string>("");
   const [selectedFranchise, setSelectedFranchise] = useState<IFranchise | null>(
-    null
+    null,
   );
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [franchiseToDelete, setFranchiseToDelete] = useState<string | null>(
-    null
+    null,
   );
   const navigate = useNavigate();
 
@@ -46,17 +46,17 @@ const CompanyFranchises: React.FC = () => {
   useEffect(() => {
     const getFranchises = async () => {
       try {
-        const res = await getFranchise(company._id,page);
+        const res = await getFranchise(company._id, page);
         setFranchises(res.franchises);
         setCategory(res.companyIndustryCategory.subCategories || []);
         setIndustryCategoryId(res.companyIndustryCategory._id || "");
-         setPage(res.currentPage);
+        setPage(res.currentPage);
         setTotalPages(res.totalPages);
       } catch (err) {
         if (err instanceof AxiosError) {
           toast.dismiss();
           toast.error(
-            err.response?.data?.message || "Unauthorized. Please login again."
+            err.response?.data?.message || "Unauthorized. Please login again.",
           );
         } else {
           toast.error((err as Error).message);
@@ -64,7 +64,7 @@ const CompanyFranchises: React.FC = () => {
       }
     };
     getFranchises();
-  }, [reload,page]);  
+  }, [reload, page, company._id]);
 
   const handleSubmit = async (data: IFranchise) => {
     try {
@@ -91,7 +91,7 @@ const CompanyFranchises: React.FC = () => {
       if (err instanceof AxiosError) {
         toast.dismiss();
         toast.error(
-          err.response?.data?.message || "Unauthorized. Please login again."
+          err.response?.data?.message || "Unauthorized. Please login again.",
         );
       } else {
         toast.error((err as Error).message);
@@ -110,7 +110,7 @@ const CompanyFranchises: React.FC = () => {
       if (err instanceof AxiosError) {
         toast.dismiss();
         toast.error(
-          err.response?.data?.message || "Unauthorized. Please login again."
+          err.response?.data?.message || "Unauthorized. Please login again.",
         );
       } else {
         toast.error((err as Error).message);
@@ -237,7 +237,7 @@ const CompanyFranchises: React.FC = () => {
               </tbody>
             </table>
           </div>
-           <div className="flex justify-center items-center gap-2 mb-4">
+          <div className="flex justify-center items-center gap-2 mb-4">
             {page > 1 && (
               <div
                 onClick={() => setPage(page - 1)}

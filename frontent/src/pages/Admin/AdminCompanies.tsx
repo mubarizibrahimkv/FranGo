@@ -21,14 +21,14 @@ interface User {
 
 const AdminDashboard: React.FC = () => {
   const [companies, setCompanies] = useState<User[]>([]);
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
   const role = "company";
 
   const fetchCompanies = async () => {
     try {
-      const response = await getUsersAPI(role,page);
+      const response = await getUsersAPI(role, page);
       setCompanies(response.companies);
       setPage(response.currentPage);
       setTotalPages(response.totalPages);
@@ -39,7 +39,7 @@ const AdminDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchCompanies();
-  }, [page]);
+  }, [page, fetchCompanies]);
 
   const blockCompany = async (companyId: string, isBlocked: boolean) => {
     try {
@@ -49,8 +49,8 @@ const AdminDashboard: React.FC = () => {
 
         setCompanies((prev) =>
           prev.map((company) =>
-            company._id === companyId ? { ...company, isBlocked } : company
-          )
+            company._id === companyId ? { ...company, isBlocked } : company,
+          ),
         );
       }
     } catch (error: any) {

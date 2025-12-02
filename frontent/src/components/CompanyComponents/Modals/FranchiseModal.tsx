@@ -20,16 +20,16 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
   const [form, setForm] = useState<Partial<IFranchise>>(initialData);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [subSubCategories, setSubSubCategories] = useState<ISubSubCategory[]>(
-    []
+    [],
   );
 
   const [platformFeeAccepted, setPlatformFeeAccepted] = useState(false);
   const [locationInput, setLocationInput] = useState(
-    (initialData?.preferedLocation as string[])?.join(", ") || ""
+    (initialData?.preferedLocation as string[])?.join(", ") || "",
   );
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value, type } = e.target;
 
@@ -39,7 +39,7 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
       const select = e.target as HTMLSelectElement;
       updatedValue = Array.from(
         select.selectedOptions,
-        (option) => option.value
+        (option) => option.value,
       );
     }
 
@@ -82,7 +82,7 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
         error = "Fee cannot be negative";
       } else if (name === "royaltyfee" && Number(value) > 100) {
         error = "Royalty fee cannot exceed 100%";
-      } 
+      }
     }
 
     if (name === "monthlyRevenue") {
@@ -105,7 +105,7 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
   useEffect(() => {
     if (form.industrySubCategory) {
       const selectedSub = category.find(
-        (sub) => sub._id === form.industrySubCategory
+        (sub) => sub._id === form.industrySubCategory,
       );
       setSubSubCategories(selectedSub?.subSubCategories || []);
     }
@@ -256,7 +256,7 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
 
                 // find the selected subcategory directly from the array
                 const selectedObj = category.find(
-                  (sub) => sub._id === selectedSubId
+                  (sub) => sub._id === selectedSubId,
                 );
 
                 setSubSubCategories(selectedObj?.subSubCategories || []);
@@ -308,7 +308,7 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
                         const updated = checked
                           ? [...(prev.industrySubSubCategory || []), value]
                           : prev.industrySubSubCategory?.filter(
-                              (id) => id !== value
+                              (id) => id !== value,
                             ) || [];
                         return { ...prev, industrySubSubCategory: updated };
                       });
@@ -557,7 +557,7 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
                         value={opt}
                         checked={
                           (form as Record<string, any>)[field.name]?.includes(
-                            opt
+                            opt,
                           ) || false
                         }
                         onChange={(e) => {

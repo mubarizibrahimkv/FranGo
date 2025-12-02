@@ -1,9 +1,5 @@
 const MyFranchises = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  return <div></div>;
+};
 
-export default MyFranchises
+export default MyFranchises;

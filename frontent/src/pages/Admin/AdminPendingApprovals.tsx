@@ -23,35 +23,40 @@ interface User {
 const AdminPendingApproval: React.FC = () => {
   const [companies, setCompanies] = useState<User[]>([]);
   const { role } = useParams<{ role: string }>();
-  
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
+
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   if (!role) return null;
-
   const fetchCompanies = async () => {
     try {
-      const response = await getPendingUsersAPI(role,page);
+      const response = await getPendingUsersAPI(role, page);
       setCompanies(response.users);
-      
-        setPage(response.currentPage);
-        setTotalPages(response.totalPages);
+
+      setPage(response.currentPage);
+      setTotalPages(response.totalPages);
     } catch (error: any) {
       toast.error(error.message || "Failed to fetch companies");
     }
   };
 
   useEffect(() => {
+    if (!role) return;
     fetchCompanies();
-  }, [role,page]);
+  }, [role, page, fetchCompanies]);
 
   const verifyCompany = async (
     companyId: string,
     selectedAction: "reject" | "approve",
-    reason?:string
+    reason?: string,
   ) => {
     try {
-      const response = await changeStatusUsersAPI(companyId, role, selectedAction,reason);
+      const response = await changeStatusUsersAPI(
+        companyId,
+        role,
+        selectedAction,
+        reason,
+      );
       if (response.success) {
         toast.success("Company Verified Successfully");
         setCompanies((prev) => prev.filter((c) => c._id !== companyId));
@@ -75,12 +80,11 @@ const AdminPendingApproval: React.FC = () => {
             <EntityTable
               users={companies}
               actionType="verify"
-              onAction={(id, action,reason) =>
-                verifyCompany(id, action as "approve" | "reject",reason)
+              onAction={(id, action, reason) =>
+                verifyCompany(id, action as "approve" | "reject", reason)
               }
             />
           )}
-
 
           <div className="flex justify-center items-center gap-2 mb-4">
             {page > 1 && (

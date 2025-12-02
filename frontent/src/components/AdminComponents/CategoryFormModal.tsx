@@ -3,7 +3,7 @@ import type { IIndustryCategory } from "../../types/admin";
 
 interface ModalProps {
   onClose: () => void;
-  onsubmit: (data:FormData) => Promise<void>;
+  onsubmit: (data: FormData) => Promise<void>;
   initialData?: IIndustryCategory;
 }
 
@@ -22,7 +22,7 @@ const CategoryFormModal: React.FC<ModalProps> = ({
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-  };  
+  };
 
   const handleAddSubCategory = () => {
     if (!subInput.trim()) return;
@@ -107,7 +107,6 @@ const CategoryFormModal: React.FC<ModalProps> = ({
     onsubmit(formData);
     onClose();
   };
-
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50">

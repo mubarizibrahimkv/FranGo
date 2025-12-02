@@ -64,9 +64,9 @@ const AdminSidebar: React.FC = () => {
         error instanceof Error
           ? error.message
           : typeof error === "object" && error !== null && "response" in error
-          ? // @ts-ignore
-            error.response?.data?.message || "Something went wrong"
-          : "Something went wrong";
+            ? // @ts-ignore
+              error.response?.data?.message || "Something went wrong"
+            : "Something went wrong";
 
       toast.error(errorMessage);
     }

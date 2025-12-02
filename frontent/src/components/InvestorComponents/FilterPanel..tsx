@@ -16,19 +16,18 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   appliedFilters,
 }) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    appliedFilters?.selectedCategories || []
+    appliedFilters?.selectedCategories || [],
   );
   const [selectedLocations, setSelectedLocations] = useState<string[]>(
-    appliedFilters?.selectedLocations || []
+    appliedFilters?.selectedLocations || [],
   );
   const [selectedOwnership, setSelectedOwnership] = useState<string[]>(
-    appliedFilters?.selectedOwnership || []
+    appliedFilters?.selectedOwnership || [],
   );
   const [minFee, setMinFee] = useState(appliedFilters?.minFee || "");
   const [maxFee, setMaxFee] = useState(appliedFilters?.maxFee || "");
   const [newLocation, setNewLocation] = useState("");
   const [categories, setCategories] = useState<IIndustryCategory[]>([]);
-
 
   const handleReset = () => {
     setSelectedCategories([]);
@@ -57,7 +56,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   useEffect(() => {
     const fetchCategory = async () => {
       const res = await getCategories();
-      console.log(res.industries)
+      console.log(res.industries);
       setCategories(res.industries);
     };
     fetchCategory();
@@ -75,12 +74,12 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   const toggleSelection = (
     value: string,
     state: string[],
-    setter: React.Dispatch<React.SetStateAction<string[]>>
+    setter: React.Dispatch<React.SetStateAction<string[]>>,
   ) => {
     setter(
       state.includes(value)
         ? state.filter((v) => v !== value)
-        : [...state, value]
+        : [...state, value],
     );
   };
 
@@ -132,7 +131,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                       toggleSelection(
                         cat._id,
                         selectedCategories,
-                        setSelectedCategories
+                        setSelectedCategories,
                       )
                     }
                     className={`px-3 py-1 text-sm rounded-full border ${
@@ -143,7 +142,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                   >
                     {cat.categoryName}
                   </button>
-                )
+                ),
             )}
           </div>
         </div>
@@ -199,7 +198,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                   toggleSelection(
                     model,
                     selectedOwnership,
-                    setSelectedOwnership
+                    setSelectedOwnership,
                   )
                 }
                 className={`px-3 py-1 text-sm rounded-full border ${

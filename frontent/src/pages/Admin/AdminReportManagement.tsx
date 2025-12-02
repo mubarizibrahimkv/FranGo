@@ -95,7 +95,7 @@ const AdminReportManagement = () => {
                           report.reportedAgainst._id &&
                           blockInvestor(
                             report.reportedAgainst._id,
-                            !report.reportedAgainst.isBlocked
+                            !report.reportedAgainst.isBlocked,
                           )
                         }
                       >

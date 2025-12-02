@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -35,7 +35,13 @@ const CompanyRegister = () => {
     setConfirmPasswordError("");
     setError("");
 
-    if (!companyName || !email || !password || !confirmPassword || !registrationProof) {
+    if (
+      !companyName ||
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !registrationProof
+    ) {
       setError("All fields are required");
       setLoading(false);
       return;
@@ -72,18 +78,22 @@ const CompanyRegister = () => {
       formData.append("email", email);
       formData.append("password", password);
       formData.append("role", role);
-      if (registrationProof) formData.append("registrationProof", registrationProof);
+      if (registrationProof)
+        formData.append("registrationProof", registrationProof);
       if (companyLogo) formData.append("companyLogo", companyLogo);
 
       const data = await companySignupApi(formData);
       if (data.success) {
         setError("");
-        navigate("/company/verifyEmail", { state: { email, purpose: "register" } });
+        navigate("/company/verifyEmail", {
+          state: { email, purpose: "register" },
+        });
       } else {
         toast.error("Signup failed. Please try again.");
       }
     } catch (err: any) {
-      const errMsg = err?.response?.data?.message || err.message || "Something went wrong";
+      const errMsg =
+        err?.response?.data?.message || err.message || "Something went wrong";
       toast.error(errMsg);
       setError(errMsg);
     } finally {
@@ -100,7 +110,11 @@ const CompanyRegister = () => {
             Connect with customers. Grow your franchise. <br />
             FranGo is your launchpad.
           </p>
-          <img src={registerImage} alt="register" className="w-72 object-contain" />
+          <img
+            src={registerImage}
+            alt="register"
+            className="w-72 object-contain"
+          />
         </div>
 
         <div className="w-full md:w-1/2 p-8">
@@ -115,7 +129,9 @@ const CompanyRegister = () => {
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <label className="block mb-1 text-sm font-medium">Company Name *</label>
+              <label className="block mb-1 text-sm font-medium">
+                Company Name *
+              </label>
               {companyNameError && (
                 <p className="text-red-600 text-sm">{companyNameError}</p>
               )}
@@ -130,7 +146,9 @@ const CompanyRegister = () => {
 
             <div>
               <label className="block mb-1 text-sm font-medium">Email *</label>
-              {emailError && <p className="text-red-600 text-sm">{emailError}</p>}
+              {emailError && (
+                <p className="text-red-600 text-sm">{emailError}</p>
+              )}
               <input
                 type="email"
                 value={email}
@@ -141,8 +159,12 @@ const CompanyRegister = () => {
             </div>
 
             <div>
-              <label className="block mb-1 text-sm font-medium">Password *</label>
-              {passwordError && <p className="text-red-600 text-sm">{passwordError}</p>}
+              <label className="block mb-1 text-sm font-medium">
+                Password *
+              </label>
+              {passwordError && (
+                <p className="text-red-600 text-sm">{passwordError}</p>
+              )}
               <input
                 type="password"
                 value={password}
@@ -153,7 +175,9 @@ const CompanyRegister = () => {
             </div>
 
             <div>
-              <label className="block mb-1 text-sm font-medium">Confirm Password *</label>
+              <label className="block mb-1 text-sm font-medium">
+                Confirm Password *
+              </label>
               {confirmPasswordError && (
                 <p className="text-red-600 text-sm">{confirmPasswordError}</p>
               )}
@@ -181,7 +205,9 @@ const CompanyRegister = () => {
             </div>
 
             <div>
-              <label className="block mb-1 text-sm font-medium">Company Logo *</label>
+              <label className="block mb-1 text-sm font-medium">
+                Company Logo *
+              </label>
               <input
                 type="file"
                 accept=".jpg,.jpeg,.png"

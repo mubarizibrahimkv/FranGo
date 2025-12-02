@@ -1,6 +1,6 @@
 export interface IAddress {
   _id?: string;
-  fullName:string;
+  fullName: string;
   phoneNumber: string;
   address: string;
   city: string;
@@ -10,8 +10,7 @@ export interface IAddress {
   isDefault?: boolean;
 }
 
-
-export interface Customer{
+export interface Customer {
   _id: string;
   userName: string;
   email: string;

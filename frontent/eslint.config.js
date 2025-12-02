@@ -1,37 +1,48 @@
 import js from "@eslint/js";
 import globals from "globals";
-import tseslint from "typescript-eslint";
+import tsPlugin from "@typescript-eslint/eslint-plugin";
+import tsParser from "@typescript-eslint/parser";
 import pluginReact from "eslint-plugin-react";
 import pluginReactHooks from "eslint-plugin-react-hooks";
+import prettierPlugin from "eslint-plugin-prettier";
 
-export default tseslint.config([
+export default [
   js.configs.recommended,
-  ...tseslint.configs.recommended,
-  pluginReact.configs.flat.recommended,
+
   {
-    files: ["**/*.{ts,tsx,js,jsx}"],
+    files: ["**/*.{ts,tsx}"],
     languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
       globals: {
         ...globals.browser,
         ...globals.es2021,
       },
-      parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
-      },
     },
     plugins: {
+      "@typescript-eslint": tsPlugin,
       react: pluginReact,
       "react-hooks": pluginReactHooks,
+      prettier: prettierPlugin,
     },
     rules: {
       "react/react-in-jsx-scope": "off",
-      "react/prop-types": "off",
-      "no-unused-vars": "warn",
-      semi: ["error", "always"],
-      quotes: ["error", "double"],
+
+      "@typescript-eslint/no-unused-vars": ["warn"],
+
+      "react/prop-types": "off", 
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
+
+      semi: ["error", "always"],
+      quotes: ["error", "double"],
+      "prettier/prettier": ["error"],
     },
     settings: {
       react: {
@@ -39,4 +50,22 @@ export default tseslint.config([
       },
     },
   },
-]);
+
+  {
+    plugins: {
+      "react-hooks": pluginReactHooks,
+    },
+    rules: {
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
+    },
+  },
+
+  {
+    files: ["**/*.d.ts"],
+    rules: {
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+    },
+  },
+];

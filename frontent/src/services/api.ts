@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import type { InternalAxiosRequestConfig } from "axios";
+import type { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 import { store } from "../redux/store/store";
 import { logoutUser } from "../redux/slice/authSlice";
 import { CUSTOMER_BASE_ROUTE } from "../constants/apiRoutes";
@@ -11,26 +11,32 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// ✅ Fix: Only add JSON header if not sending FormData
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     if (!(config.data instanceof FormData)) {
       config.headers["Content-Type"] = "application/json";
     } else {
-      delete config.headers["Content-Type"]; // let browser set boundary
+      delete config.headers["Content-Type"];
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 api.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError & { config?: any }) => {
+  async (
+    error: AxiosError & { config?: AxiosRequestConfig & { _retry?: boolean } },
+  ) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
+
       try {
         await api.post("/auth/refresh");
         return api(originalRequest);
@@ -47,7 +53,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

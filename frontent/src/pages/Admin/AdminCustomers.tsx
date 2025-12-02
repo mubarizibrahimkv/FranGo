@@ -46,8 +46,8 @@ const AdminDashboard: React.FC = () => {
 
         setCustomers((prev) =>
           prev.map((customer) =>
-            customer._id === investorId ? { ...customer, isBlocked } : customer
-          )
+            customer._id === investorId ? { ...customer, isBlocked } : customer,
+          ),
         );
       }
     } catch (error: any) {
@@ -70,13 +70,14 @@ const AdminDashboard: React.FC = () => {
           />
 
           <div className="flex justify-center items-center gap-2 mb-4">
-            {page>1&&<div
-              onClick={() => setPage(page - 1)}
-              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-            >
-              {"<"}
-            </div>}
-            
+            {page > 1 && (
+              <div
+                onClick={() => setPage(page - 1)}
+                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+              >
+                {"<"}
+              </div>
+            )}
 
             {[...Array(totalPages)].map((_, i) => (
               <button
@@ -90,13 +91,14 @@ const AdminDashboard: React.FC = () => {
               </button>
             ))}
 
-
-            {page<totalPages&&<div
-              onClick={() => setPage(page + 1)}
-              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-            >
-              {">"}
-            </div>}
+            {page < totalPages && (
+              <div
+                onClick={() => setPage(page + 1)}
+                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+              >
+                {">"}
+              </div>
+            )}
           </div>
         </main>
       </div>

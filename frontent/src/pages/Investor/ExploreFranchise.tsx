@@ -1,13 +1,13 @@
 import { ArrowDown, ArrowUp, Search } from "lucide-react";
 import { FaChartLine, FaMapMarkerAlt, FaTags } from "react-icons/fa";
 import Navbar from "../../components/InvestorComponents/Navbar";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   applyAApplication,
   applyReport,
   getFranchises,
 } from "../../services/invstor";
-import type {  IFranchise } from "../../types/company";
+import type { IFranchise } from "../../types/company";
 import { useNavigate } from "react-router-dom";
 import { FaDollarSign } from "react-icons/fa6";
 import FilterPanel from "../../components/InvestorComponents/FilterPanel.";
@@ -62,10 +62,10 @@ const ExploreFranchise = () => {
   const investorId = useSelector((state: RootState) => state.user._id);
   const [selectedReason, setSelectedReason] = useState("");
   const investorIsAuthenticated = useSelector(
-    (state: RootState) => state.user.isAuthenticated
+    (state: RootState) => state.user.isAuthenticated,
   );
   const [selectedFranchise, setSelectedFranchise] = useState<IFranchise | null>(
-    null
+    null,
   );
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -88,10 +88,10 @@ const ExploreFranchise = () => {
       const res = await applyReport(
         selectedFranchiseId?._id,
         investorId,
-        selectedReason
+        selectedReason,
       );
-      if(res.success){
-        toast.success("Thank you! Your report has been received.")
+      if (res.success) {
+        toast.success("Thank you! Your report has been received.");
         setReportModalOpen(false);
       }
     }
@@ -126,7 +126,7 @@ const ExploreFranchise = () => {
       setInvestor(res.seeker);
     };
     fetchInvestor();
-  }, []);
+  }, [investorId]);
 
   const handleApplyClick = (franchise: IFranchise) => {
     if (investorIsAuthenticated) {
@@ -190,7 +190,7 @@ const ExploreFranchise = () => {
         const res = await applyAApplication(
           formData as Investor,
           selectedFranchise._id,
-          investorId
+          investorId,
         );
         if (res.success) {
           toast.success("Application applied successfully");

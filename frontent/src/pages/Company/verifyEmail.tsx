@@ -42,13 +42,15 @@ const VerifyEmailPage = () => {
                 isAdmin: company.isAdmin,
                 isAuthenticated: true,
                 profileImage: company.companyLogo,
-              })
+              }),
             );
 
             toast.success(res.message);
 
             if (purpose === "forgotPassword") {
-              navigate("/changePassword", { state: { email: company.user.email,role:company.user.role } });
+              navigate("/changePassword", {
+                state: { email: company.user.email, role: company.user.role },
+              });
             } else {
               setTimeout(() => {
                 navigate("/company/dashboard", {
@@ -87,7 +89,7 @@ const VerifyEmailPage = () => {
             isAdmin: company.isAdmin,
             isAuthenticated: true,
             profileImage: company.companyLogo,
-          })
+          }),
         );
         toast.info("A new verification email has been sent to your inbox");
       }

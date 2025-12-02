@@ -78,5 +78,3 @@ const SortFilter: React.FC = () => {
 };
 
 export default SortFilter;
-
-

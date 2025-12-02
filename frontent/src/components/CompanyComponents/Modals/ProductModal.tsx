@@ -30,7 +30,7 @@ interface ProductModalProps {
   productCategories: ProductCategory[];
   initialData?: IProduct | null;
   isEditing?: boolean;
-  isSubmitting?:boolean
+  isSubmitting?: boolean;
 }
 
 const ProductModal: React.FC<ProductModalProps> = ({
@@ -40,7 +40,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
   productCategories,
   initialData = null,
   isEditing = false,
-  isSubmitting=false
+  isSubmitting = false,
 }) => {
   const [form, setForm] = useState<IProduct>({
     category: "",
@@ -63,7 +63,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
   useEffect(() => {
     if (initialData) {
       const existingUrls = initialData.images.filter(
-        (img): img is string => typeof img === "string"
+        (img): img is string => typeof img === "string",
       );
 
       setPreviewUrls(existingUrls);
@@ -304,7 +304,11 @@ const ProductModal: React.FC<ProductModalProps> = ({
               type="submit"
               className="px-4 py-2 bg-[#0C2340] text-white rounded-lg"
             >
-               {isSubmitting ? "Saving..." : isEditing ? "Update Product" : "Add Product"}
+              {isSubmitting
+                ? "Saving..."
+                : isEditing
+                  ? "Update Product"
+                  : "Add Product"}
             </button>
           </div>
         </form>
