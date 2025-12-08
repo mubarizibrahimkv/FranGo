@@ -4,12 +4,12 @@ import { BaseRepository } from "./baseRepository";
 
 export class NotificationRepo extends BaseRepository<INotification> implements INotificationRepo{
     constructor(){
-        super(Notification)
+        super(Notification);
     }
     async findByUserId(userId:string){
-       return await Notification.find({userId}).sort({createdAt:-1})
+       return await Notification.find({userId}).sort({createdAt:-1});
     }
     async updateIsRead(notificationId:string){
-       return await Notification.findByIdAndUpdate(notificationId,{isRead:true},{ new: true })
+       return await Notification.findByIdAndUpdate(notificationId,{isRead:true},{ new: true });
     }
 }

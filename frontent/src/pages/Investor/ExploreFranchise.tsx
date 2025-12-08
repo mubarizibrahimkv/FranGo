@@ -526,6 +526,10 @@ const ExploreFranchise = () => {
             />
           )}
         </div>
+
+
+
+        
         <div className="flex justify-center mt-8 items-center gap-2 mb-4">
           {page > 1 && (
             <div

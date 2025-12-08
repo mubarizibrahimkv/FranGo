@@ -60,6 +60,20 @@ export const getAApplication = async (investorId: string, page: number) => {
     }
   }
 };
+export const getMyFranchises = async (investorId: string) => {
+  try {
+    console.log(investorId,'invevestori in my franshi')
+    const res = await api.get(
+      `${INVESTOR_BASE_ROUTE}/myFranchises/${investorId}`,
+    );
+    return res.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.error("Get myfranchises", error?.response?.data);
+      throw error;
+    }
+  }
+};
 export const payAdvance = async (
   investorId: string,
   applicationId: string,
@@ -110,7 +124,6 @@ export const applyReport = async (
   investorId: string,
   reason: string,
 ) => {
-  console.log("apply report service ");
   try {
     const res = await api.post(
       `/${INVESTOR_BASE_ROUTE}/report/franchise/${investorId}`,

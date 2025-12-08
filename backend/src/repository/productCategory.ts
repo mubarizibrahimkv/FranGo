@@ -93,9 +93,9 @@ export class ProductCategoryRepo implements IProductCategoryRepo {
     }
   }
   async findById(categoryId:string){
-    return await ProductCategory.findById(categoryId)
+    return await ProductCategory.findById(categoryId);
   }
   async findByProductCategory(productCategoryId:string){
-      return await ProductCategory.findOne({})
+      return await ProductCategory.findOne({});
   }
 }

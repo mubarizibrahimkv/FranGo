@@ -16,4 +16,5 @@ export interface IInvestorService {
     applyReport(franchiseId: string, investorId: string,reason:string): Promise<IReport>
     getNotification( investorId: string): Promise<INotification[]>
     updateNotification( notificationId: string): Promise<INotification>
+    getMyFranchises( investorId: string): Promise<(IApplication&{franchise:IFranchise})[]|null>
 }

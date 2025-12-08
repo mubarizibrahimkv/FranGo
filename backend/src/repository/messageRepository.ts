@@ -4,15 +4,15 @@ import { BaseRepository } from "./baseRepository";
 
 export class MessageRepo extends BaseRepository<IChatMessage> implements IMessageRepo{
    constructor(){
-    super(ChatMessage)
+    super(ChatMessage);
    }
    async findByChannel(channel:string){
-      return ChatMessage.find({channel}).sort({createdAt:-1})
+      return ChatMessage.find({channel}).sort({createdAt:-1});
    }
    async markMessagesRead(channelId:string,senderId:string){
-      return await ChatMessage.updateMany({channel:channelId,senderId,read:false},{$set:{read:true}})
+      return await ChatMessage.updateMany({channel:channelId,senderId,read:false},{$set:{read:true}});
    }
    async unreadCount(channel:string,senderId:string){
-      return await ChatMessage.countDocuments({channel,senderId,read:false})
+      return await ChatMessage.countDocuments({channel,senderId,read:false});
    }
 }

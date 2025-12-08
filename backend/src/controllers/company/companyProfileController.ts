@@ -5,8 +5,8 @@ import HttpStatus from "../../utils/httpStatusCode";
 import { Messages } from "../../constants/messages";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import Razorpay from "razorpay";
-import dotenv from "dotenv"
-dotenv.config()
+import dotenv from "dotenv";
+dotenv.config();
 
 export class ProfileController implements IcompanyProfileController {
   constructor(private _companyService: IcompanyService) { }
@@ -195,9 +195,9 @@ export class ProfileController implements IcompanyProfileController {
 
   changeApplicationStatus = async (req: Request, res: Response): Promise<void> => {
     const { applicationId } = req.params;
-    const { status } = req.body
+    const { status } = req.body;
     try {
-      const application = await this._companyService.changeApplicationStatus(applicationId, status)
+      const application = await this._companyService.changeApplicationStatus(applicationId, status);
       res.status(HttpStatus.OK).json({ success: true });
     } catch (error: unknown) {
       if (typeof error === "object" && error !== null && "message" in error) {
@@ -216,7 +216,7 @@ export class ProfileController implements IcompanyProfileController {
 
   createSubscription = async (req: Request, res: Response) => {
     const { companyId } = req.params;
-    const { amount } = req.body
+    const { amount } = req.body;
     try {
       const razorpay = new Razorpay({
         key_id: process.env.RAZORPAY_KEY_ID,
@@ -255,7 +255,7 @@ export class ProfileController implements IcompanyProfileController {
 
       if (!verified) {
         res.status(HttpStatus.BAD_REQUEST).json({ message: "Payment verification failed" });
-        return
+        return;
       }
 
       res.status(HttpStatus.OK).json({ success: true, message: "Subscription activated" });
@@ -268,7 +268,7 @@ export class ProfileController implements IcompanyProfileController {
     }
   };
   getNotifications = async (req: Request, res: Response) => {
-    const { userId } = req.params
+    const { userId } = req.params;
     try {
       const notifications = await this._companyService.getNotification(userId);
       res.status(HttpStatus.OK).json({ success: true, notifications });
@@ -279,9 +279,9 @@ export class ProfileController implements IcompanyProfileController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
       return;
     }
-  }
+  };
   updateNotification = async (req: Request, res: Response) => {
-    const { notificationId } = req.params
+    const { notificationId } = req.params;
     try {
       await this._companyService.updateNotification(notificationId);
       res.status(HttpStatus.OK).json({ success: true });
@@ -292,5 +292,5 @@ export class ProfileController implements IcompanyProfileController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
       return;
     }
-  }
+  };
 }

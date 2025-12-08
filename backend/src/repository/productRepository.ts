@@ -13,10 +13,10 @@ export class ProductRepo extends BaseRepository<IProduct> implements IProductRep
       .lean();
   }
   async findByCompanyId(companyId:string,skip:number,limit:number){
-    return await Product.find({company:companyId}).populate("productCategory").skip(skip).limit(limit).sort({ createdAt: -1 })
+    return await Product.find({company:companyId}).populate("productCategory").skip(skip).limit(limit).sort({ createdAt: -1 });
   }
   async countByCompanyId(companyId:string){
-    return await Product.countDocuments({company:companyId})
+    return await Product.countDocuments({company:companyId});
   }
   async findDuplicateProduct(
     productId: string | null,

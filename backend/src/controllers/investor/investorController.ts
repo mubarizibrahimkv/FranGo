@@ -132,18 +132,18 @@ export class InvestorController {
   };
 
   applyReport = async (req: Request, res: Response) => {
-    console.log("applyreport working constroller")
+    console.log("applyreport working constroller");
     try {
       const { investorId } = req.params;
       const { franchiseId, reason } = req.body;
-      await this._investorService.applyReport(franchiseId, investorId, reason)
+      await this._investorService.applyReport(franchiseId, investorId, reason);
       res.status(HttpStatus.OK).json({ success: true });
     } catch (error: unknown) {
       this.handleError(res, error, "Apply Report");
     }
-  }
+  };
   getNotifications = async (req: Request, res: Response) => {
-    const { userId } = req.params
+    const { userId } = req.params;
     try {
       const notifications = await this._investorService.getNotification(userId);
       res.status(HttpStatus.OK).json({ success: true, notifications });
@@ -154,9 +154,9 @@ export class InvestorController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
       return;
     }
-  }
+  };
   updateNotification = async (req: Request, res: Response) => {
-    const { notificationId } = req.params
+    const { notificationId } = req.params;
     try {
       await this._investorService.updateNotification(notificationId);
       res.status(HttpStatus.OK).json({ success: true });
@@ -167,5 +167,19 @@ export class InvestorController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
       return;
     }
-  }
+  };
+  getMyFranchises = async (req: Request, res: Response) => {
+    const { investorId } = req.params;
+    try {
+      const franchises = await this._investorService.getMyFranchises(investorId);
+      res.status(HttpStatus.OK).json({ success: true, franchises });
+      return;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error("getting my franchises error:", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
+      return;
+    }
+  };
 }
+ 

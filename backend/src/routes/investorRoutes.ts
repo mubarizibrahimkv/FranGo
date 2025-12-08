@@ -23,13 +23,13 @@ const authController = new AuthController(authService);
 
 const industryCategoryRepo=new IndustryCategoryRepo();
 const profileRepo = new ProfileRepository();
-const notificationRepo=new NotificationRepo()
+const notificationRepo=new NotificationRepo();
 const profileService = new ProfileService(authRepo, profileRepo,industryCategoryRepo,notificationRepo);
 const profileController = new ProfileController(profileService);
  
-const reportRepo=new ReportRepo()
+const reportRepo=new ReportRepo();
 const franchiseRepo=new FranchiseRepo();
-const applicationRepo=new ApplicationRepo()
+const applicationRepo=new ApplicationRepo();
 const investorService=new InvestorService(franchiseRepo,profileRepo,applicationRepo,reportRepo,notificationRepo);
 const investorController=new InvestorController(investorService);
 
@@ -53,11 +53,13 @@ router.post("/auth/logout/:id", authController.logoutUser);
 router.get("/franchises",investorController.getFranchises);
 router.get("/franchise/:franchiseId",investorController.getFranchiseDetails);
 router.post("/franchise/:investorId/:franchiseId",investorAuth,investorController.createApplication);
-router.route("/applications/:investorId").get(investorController.getApplications)
-router.post("/applications/payAdvance/:investorId/:applicationId",investorController.payAdvance)
-router.post("/application/verifyPayAdvance/:investorId/:applicationId",investorController.verifyPayAdvance)
-router.post("/report/franchise/:investorId",investorController.applyReport)
-router.get("/:userId/notifications",investorController.getNotifications)
-router.put("/notifications/:notificationId", investorController.updateNotification)
+router.route("/applications/:investorId").get(investorController.getApplications);
+router.post("/applications/payAdvance/:investorId/:applicationId",investorController.payAdvance);
+router.post("/application/verifyPayAdvance/:investorId/:applicationId",investorController.verifyPayAdvance);
+router.post("/report/franchise/:investorId",investorController.applyReport);
+router.get("/:userId/notifications",investorController.getNotifications);
+router.put("/notifications/:notificationId", investorController.updateNotification);
+router.get("/myFranchises/:investorId",investorController.getMyFranchises);
+
 
 export default router;

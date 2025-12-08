@@ -73,6 +73,7 @@ const Navbar: React.FC = () => {
     { name: "Explore Franchises", path: "/explore" },
     { name: "About Us", path: "/about" },
     { name: "My Applications", path: "/applications" },
+    { name: "My Franchises", path: "/franchises" },
   ];
 
   const handleLogout = async () => {

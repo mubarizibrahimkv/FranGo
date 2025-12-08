@@ -66,7 +66,7 @@ export class ProfileService implements IProfileService {
             }
             const investor = await this._profileRepo.updateProfile(investorId, updatedData);
             if (!investor) throw { status: HttpStatus.BAD_REQUEST, message: Messages.INVESTOR_NOT_FOUND };
-            const adminId = "$2b$10$fRCoV5J/OXDVA2wGEPLPL.NLeAlt8wnUpyKygCDC31K5B4xfGh.em"
+            const adminId = "$2b$10$fRCoV5J/OXDVA2wGEPLPL.NLeAlt8wnUpyKygCDC31K5B4xfGh.em";
             await this._notificationRepo.create({
                 userId: new mongoose.Types.ObjectId(adminId),
                 message: "A investor has completed its profile. Please review and verify.",

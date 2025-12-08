@@ -52,7 +52,7 @@ app.use("/api/customer", customerRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/message", messageRouter);
 
-setupSocket(server)
+setupSocket(server);
 
 const PORT = process.env.PORT;
 

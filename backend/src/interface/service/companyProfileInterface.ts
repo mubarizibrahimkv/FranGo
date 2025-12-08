@@ -21,4 +21,4 @@ export default interface IcompanyService{
     getNotification(userId:string): Promise<INotification[]>
     updateNotification(notificationId:string): Promise<INotification>
     verifyPayment(companyId:string,razorpayOrderId: string,razorpayPaymentId: string,razorpaySignature: string,amount:string): Promise<{message:string}>
-}
+};;;;;;;;;;

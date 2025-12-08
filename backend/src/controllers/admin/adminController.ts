@@ -38,7 +38,7 @@ export class Admincontroller implements IAdminControler {
 
             console.log(data);  // ❌ Before → {}   ✔ Now → real object
 
-            console.log(data, "iuytfdxnjuytrdcvbutfvtfvytg")
+            console.log(data, "iuytfdxnjuytrdcvbutfvtfvytg");
             const response = await this._adminService.editIndustryCategory(data);
             res.status(HttpStatus.OK).json({ success: true });
             return;
@@ -73,7 +73,7 @@ export class Admincontroller implements IAdminControler {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
             return;
         }
-    }
+    };
     getReports = async (req: Request, res: Response) => {
         try {
             const reports = await this._adminService.getReports();
@@ -85,9 +85,9 @@ export class Admincontroller implements IAdminControler {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
             return;
         }
-    }
+    };
     getNotifications = async (req: Request, res: Response) => {
-        const {userId}=req.params
+        const {userId}=req.params;
         try {
             const notifications = await this._adminService.getNotification(userId);
             res.status(HttpStatus.OK).json({ success: true, notifications });
@@ -98,9 +98,9 @@ export class Admincontroller implements IAdminControler {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
             return;
         }
-    }
+    };
     updateNotification = async (req: Request, res: Response) => {
-    const { notificationId } = req.params
+    const { notificationId } = req.params;
         try {
             await this._adminService.updateNotification(notificationId);
             res.status(HttpStatus.OK).json({ success: true });
@@ -111,5 +111,5 @@ export class Admincontroller implements IAdminControler {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
             return;
         }
-    }
+    };
 }

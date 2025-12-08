@@ -51,11 +51,11 @@ export class AdminCompanyService implements IAdminCompanyService {
       }
       company.status = status;
       if (reason) {
-        company.rejectionReason = reason.trim()
+        company.rejectionReason = reason.trim();
       }
       await company.save();
       
-      const notificationMessage=status==="approve"?"Your company registration has been approved!":"Your company registration has been rejected!"
+      const notificationMessage=status==="approve"?"Your company registration has been approved!":"Your company registration has been rejected!";
      
       await this._notificationRepo.create({
         userId: new mongoose.Types.ObjectId(companyId),

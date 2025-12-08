@@ -64,7 +64,7 @@ export class CommpanyProfileService implements IcompanyService {
             }
             const updated = await this._companyProfileRepo.updateProfile(companyData, companyId);
             if (!updated) throw new Error(Messages.UPDATE_FAILED);
-            const adminId = "$2b$10$fRCoV5J/OXDVA2wGEPLPL.NLeAlt8wnUpyKygCDC31K5B4xfGh.em"
+            const adminId = "$2b$10$fRCoV5J/OXDVA2wGEPLPL.NLeAlt8wnUpyKygCDC31K5B4xfGh.em";
             await this._notificationRepo.create({
                 userId: new mongoose.Types.ObjectId(adminId),
                 message: "A company has completed its profile. Please review and verify.",
@@ -165,12 +165,12 @@ export class CommpanyProfileService implements IcompanyService {
                 ...data,
                 company: new mongoose.Types.ObjectId(companyId),
             };
-            let totalInvestement
+            let totalInvestement;
             if (data.franchisefee && data.advertisingfee) {
-                totalInvestement = Number(data.franchisefee) + Number(data.advertisingfee)
+                totalInvestement = Number(data.franchisefee) + Number(data.advertisingfee);
             }
 
-            franchiseData.totalInvestement = totalInvestement
+            franchiseData.totalInvestement = totalInvestement;
 
             const franchise = await this._franchiseRepo.create(franchiseData);
 
@@ -196,12 +196,12 @@ export class CommpanyProfileService implements IcompanyService {
                 throw { status: HttpStatus.BAD_REQUEST, message: Messages.FRANCHISE_NOT_FOUND } as IError;
             }
 
-            let totalInvestement
+            let totalInvestement;
             if (data.franchisefee && data.advertisingfee) {
-                totalInvestement = Number(data.franchisefee) + Number(data.advertisingfee)
+                totalInvestement = Number(data.franchisefee) + Number(data.advertisingfee);
             }
 
-            data.totalInvestement = totalInvestement
+            data.totalInvestement = totalInvestement;
 
             const updated = await this._franchiseRepo.update(franchiseId, data);
             if (!updated) {
@@ -256,14 +256,14 @@ export class CommpanyProfileService implements IcompanyService {
         const limit = 10;
         const skip = (page - 1) * limit;
         try {
-            const company = this._companyProfileRepo.findById(companyId)
+            const company = this._companyProfileRepo.findById(companyId);
             if (!company) {
                 throw new Error(Messages.COMPANY_NOT_FOUND);
             }
-            const application = await this._applicationRepo.findByCompanyId(companyId, skip, limit)
-            const totalApplications = await this._applicationRepo.countByCompanyId(companyId)
+            const application = await this._applicationRepo.findByCompanyId(companyId, skip, limit);
+            const totalApplications = await this._applicationRepo.countByCompanyId(companyId);
             const totalPages = Math.ceil(totalApplications / limit);
-            return { application, totalPages }
+            return { application, totalPages };
         } catch (error: unknown) {
             if (error instanceof Error) {
                 console.error("Error fetching franchise details:", error.message);
@@ -272,22 +272,22 @@ export class CommpanyProfileService implements IcompanyService {
             }
             throw new Error("Failed to fetch franchise details");
         }
-    }
+    };
     changeApplicationStatus = async (applicationId: string, status: "approved" | "rejected" | "pending") => {
         try {
-            const application = await this._applicationRepo.findById(applicationId)
+            const application = await this._applicationRepo.findById(applicationId);
             if (!application) {
                 throw new Error(Messages.APPLICATION_NOT_FOUND);
             }
-            application.status = status
-            await application.save()
-            const message = status === "approved" ? "Your application has been approved by the company." : "Your application has been rejected by the company."
+            application.status = status;
+            await application.save();
+            const message = status === "approved" ? "Your application has been approved by the company." : "Your application has been rejected by the company.";
             await this._notificationRepo.create({
                 userId: application.investor,
                 message,
                 isRead: false,
             });
-            return application
+            return application;
         } catch (error: unknown) {
             if (error instanceof Error) {
                 console.error("Error fetching franchise details:", error.message);
@@ -296,7 +296,7 @@ export class CommpanyProfileService implements IcompanyService {
             }
             throw new Error("Failed to fetch franchise details");
         }
-    }
+    };
     verifyPayment = async (
         companyId: string,
         razorpayPaymentId: string,
@@ -327,22 +327,22 @@ export class CommpanyProfileService implements IcompanyService {
         });
 
         return { message: "Subscription activated successfully" };
-    }
+    };
     getNotification = async (userId: string) => {
         try {
-            const notifications = await this._notificationRepo.findByUserId(userId)
-            return notifications || []
+            const notifications = await this._notificationRepo.findByUserId(userId);
+            return notifications || [];
         } catch (error) {
             throw error;
         }
     };
     updateNotification = async (notificationId: string) => {
         try {
-            const notification = await this._notificationRepo.updateIsRead(notificationId)
+            const notification = await this._notificationRepo.updateIsRead(notificationId);
             if (!notification) {
                 throw ({ success: false, message: Messages.NOTIFICATION_NOT_FOUND });
             }
-            return notification
+            return notification;
         } catch (error) {
             throw error;
         }

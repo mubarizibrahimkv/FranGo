@@ -29,7 +29,7 @@ const ChatMessageSchema= new Schema<IChatMessage>({
         type: Date, 
         default: Date.now 
     }
-})
+});
 
-const ChatMessage= mongoose.model<IChatMessage>("ChatMessage", ChatMessageSchema)
-export default ChatMessage
+const ChatMessage= mongoose.model<IChatMessage>("ChatMessage", ChatMessageSchema);
+export default ChatMessage;

@@ -24,16 +24,16 @@ const authController=new CompanyAuthController(companyAuthService);
 
 const companyRepo=new CompanyProfileRepository();
 const franchiseRepo=new FranchiseRepo();
-const applicationRepo=new ApplicationRepo()
-const notificationRepo=new NotificationRepo()
+const applicationRepo=new ApplicationRepo();
+const notificationRepo=new NotificationRepo();
 const companyService=new CommpanyProfileService(companyRepo,franchiseRepo,applicationRepo,notificationRepo);
 const profileController=new ProfileController(companyService);
 
-const productCategoryRepo=new ProductCategoryRepo()
-const productRepo=new ProductRepo()
-const industryCategoryRepo=new IndustryCategoryRepo()
-const productManagementService=new ProductManagementService(productCategoryRepo,industryCategoryRepo,productRepo)
-const productManagementController=new ProductManagementController(productManagementService)
+const productCategoryRepo=new ProductCategoryRepo();
+const productRepo=new ProductRepo();
+const industryCategoryRepo=new IndustryCategoryRepo();
+const productManagementService=new ProductManagementService(productCategoryRepo,industryCategoryRepo,productRepo);
+const productManagementController=new ProductManagementController(productManagementService);
 
 setupGoogleStrategy("company");
 
@@ -59,17 +59,17 @@ router
   .get(profileController.getProfile)
   .put(companyAuth,profileController.updateProfile);
 router.put("/profile/:companyId/changeLogo",companyAuth,upload.single("companyLogo"), profileController.updateLogo);
-router.route("/application/:companyId").get(profileController.getApplications)
-router.put("/application/:applicationId",profileController.changeApplicationStatus)
-router.route("/productCategory/:companyId").post(productManagementController.addProductCategory).get(productManagementController.getAllProductCategories)
-router.route("/productCategory/:companyId/:categoryId").put(productManagementController.editProductCategories).delete(productManagementController.deleteProductCategories)
-router.post("/subscription/:companyId",profileController.createSubscription)
-router.post("/subscription/verify/:companyId",profileController.verifySubscription)
-router.route("/product/:companyId").post(upload.array("images", 3),productManagementController.addProduct)
-router.route("/product/:companyId/:productId").put(upload.array("images", 3),productManagementController.editProduct)
-router.delete("/product/:productId",productManagementController.deleteProduct)
-router.get("/product/:companyId",productManagementController.getProducts)
-router.get("/:userId/notifications",profileController.getNotifications)
-router.put("/notifications/:notificationId", profileController.updateNotification)
+router.route("/application/:companyId").get(profileController.getApplications);
+router.put("/application/:applicationId",profileController.changeApplicationStatus);
+router.route("/productCategory/:companyId").post(productManagementController.addProductCategory).get(productManagementController.getAllProductCategories);
+router.route("/productCategory/:companyId/:categoryId").put(productManagementController.editProductCategories).delete(productManagementController.deleteProductCategories);
+router.post("/subscription/:companyId",profileController.createSubscription);
+router.post("/subscription/verify/:companyId",profileController.verifySubscription);
+router.route("/product/:companyId").post(upload.array("images", 3),productManagementController.addProduct);
+router.route("/product/:companyId/:productId").put(upload.array("images", 3),productManagementController.editProduct);
+router.delete("/product/:productId",productManagementController.deleteProduct);
+router.get("/product/:companyId",productManagementController.getProducts);
+router.get("/:userId/notifications",profileController.getNotifications);
+router.put("/notifications/:notificationId", profileController.updateNotification);
 
 export default router; 

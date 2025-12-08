@@ -12,12 +12,8 @@ export const setupSocket = (server: HttpServer) => {
     },
   });
 
-  console.log("Socket is running");
 
-  // Store who is currently viewing which channel
   const userCurrentChannel: Record<string, string> = {};
-
-  // Store unread counts for each channel
   const unreadCounts: Record<string, number> = {};
 
   io.on("connection", (socket) => {
@@ -39,10 +35,8 @@ export const setupSocket = (server: HttpServer) => {
 
       userCurrentChannel[socket.id] = channel;
 
-      // Reset unread count on open
       unreadCounts[channel] = 0;
 
-      // Notify UI
       io.emit("unread_count_update", { channel, unreadCount: 0 });
     });
 
@@ -54,7 +48,6 @@ export const setupSocket = (server: HttpServer) => {
 
       console.log("Sending message:", data);
 
-      // Broadcast message to that room
       io.to(channel).emit("receive_message", {
         channel,
         senderId,
@@ -67,7 +60,7 @@ export const setupSocket = (server: HttpServer) => {
       // -------------------------
       let receiverIsViewing = false;
 
-      for (let id in userCurrentChannel) {
+      for (const id in userCurrentChannel) {
         if (userCurrentChannel[id] === channel) {
           receiverIsViewing = true;
           break;
@@ -85,7 +78,6 @@ export const setupSocket = (server: HttpServer) => {
         unreadCounts[channel] = 0;
       }
 
-      // send unread update
       io.emit("unread_count_update", {
         channel,
         unreadCount: unreadCounts[channel],

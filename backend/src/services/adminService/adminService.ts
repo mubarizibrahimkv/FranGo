@@ -35,7 +35,7 @@ export class AdminService implements IAdminService {
     getIndustryCategory = async () => {
         try {
             const industries = await this._IndustryCategoryRepo.findAll();
-            console.log(industries)
+            console.log(industries);
             return industries;
         } catch (error) {
             throw error;
@@ -58,27 +58,27 @@ export class AdminService implements IAdminService {
     };
     getReports = async () => {
         try {
-            const reports=await this._reportRepo.findAllWithCompanyAndInvestor()
-            return reports
+            const reports=await this._reportRepo.findAllWithCompanyAndInvestor();
+            return reports;
         } catch (error) {
             throw error;
         }
     };
     getNotification = async (userId:string) => {
         try {
-            const notifications=await this._notificationRepo.findByUserId(userId)
-            return notifications||[]
+            const notifications=await this._notificationRepo.findByUserId(userId);
+            return notifications||[];
         } catch (error) {
             throw error;
         }
     };
     updateNotification = async (notificationId:string) => {
         try {
-            const notification=await this._notificationRepo.updateIsRead(notificationId)
+            const notification=await this._notificationRepo.updateIsRead(notificationId);
             if(!notification){
                 throw ({ success: false, message: Messages.NOTIFICATION_NOT_FOUND });
             }
-            return notification
+            return notification;
         } catch (error) {
             throw error;
         }

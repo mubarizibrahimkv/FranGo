@@ -1,4 +1,5 @@
-import { IApplication } from "../../models/applicationModel"
+import { IApplication } from "../../models/applicationModel";
+import { IFranchise } from "../../models/franchiseModel";
 
 export interface IApplicationRepo {
     create(data: Partial<IApplication>): Promise<IApplication>;
@@ -8,4 +9,5 @@ export interface IApplicationRepo {
     countByCompanyId(companyId: string):Promise<number> 
     countByInvestorId(investoId: string):Promise<number> 
     findByInvestorAndFranchise(investoId: string,franchiseId:string):Promise<IApplication|null> 
+    getApprovedFranchisesByInvestor(investorId:string):Promise<(IApplication&{franchise:IFranchise})[]|null> 
 }   

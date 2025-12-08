@@ -54,9 +54,9 @@ export class AdminInvestorService implements IAdminInvestorService {
             }
             investor.status = status;
             if(reason){
-                investor.rejectionReason=reason.trim()
+                investor.rejectionReason=reason.trim();
             }
-            const notificationMessage=status==="approve"?"Your registration has been approved!":"Your registration has been rejected!"
+            const notificationMessage=status==="approve"?"Your registration has been approved!":"Your registration has been rejected!";
                  
                   await this._notificationRepo.create({
                     userId: new mongoose.Types.ObjectId(investorId),

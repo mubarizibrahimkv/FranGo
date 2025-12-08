@@ -3,7 +3,6 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 
-// Lazy-loaded pages
 const VerifyOtp = lazy(() => import("../pages/Investor/verify-otp"));
 const Register = lazy(() => import("../pages/Investor/Register"));
 const InvestorLogin = lazy(() => import("../pages/Investor/Login"));
@@ -67,6 +66,9 @@ const AdminReportManagement = lazy(
 );
 const CompanyChats = lazy(() => import("../pages/Company/companyChats"));
 const InvestorChats = lazy(() => import("../pages/Investor/Messages"));
+const InvestorMyFranchises = lazy(
+  () => import("../pages/Investor/MyFranchises"),
+);
 
 const AppRoutes = () => {
   return (
@@ -127,6 +129,7 @@ const AppRoutes = () => {
             <Route path="/profile" element={<Profile />} />
             <Route path="/applications" element={<InvestorApplication />} />
             <Route path="/messages" element={<InvestorChats />} />
+            <Route path="/franchises" element={<InvestorMyFranchises />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={["customer"]} />}>

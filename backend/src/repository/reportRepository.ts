@@ -4,7 +4,7 @@ import { BaseRepository } from "./baseRepository";
 
 export class ReportRepo extends BaseRepository<ReportDocument> implements IRepoortRepo {
     constructor() {
-        super(Report)
+        super(Report);
     }
     findAllWithCompanyAndInvestor() {
         return Report.find()

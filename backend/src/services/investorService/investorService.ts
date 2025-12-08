@@ -21,7 +21,6 @@ dotenv.config();
 
 export class InvestorService implements IInvestorService {
     constructor(private _FranchiseRepo: IFranchiseRepo, private _profileRepo: IProfileRepo, private _applicationRepo: IApplicationRepo, private _reportRepo: IRepoortRepo, private _notificationRepo: INotificationRepo) { }
-
     getFranchises = async (filters: IFilters, page: number) => {
         const limit = 10;
         const skip = (page - 1) * limit;
@@ -126,7 +125,7 @@ export class InvestorService implements IInvestorService {
                 }
             );
 
-            const franchises = await Franchise.aggregate(pipeline).skip(skip).limit(limit)
+            const franchises = await Franchise.aggregate(pipeline).skip(skip).limit(limit);
             const countPipeline = [...pipeline, { $count: "total" }];
             const countResult = await Franchise.aggregate(countPipeline);
             const totalFranchises = countResult.length > 0 ? countResult[0].total : 0;
@@ -139,10 +138,9 @@ export class InvestorService implements IInvestorService {
             throw error;
         }
     };
-
     createApplication = async (formData: IInvestor, investorId: string, franchiseId: string) => {
         try {
-            const investor = await this._profileRepo.updateProfile(investorId, formData)
+            const investor = await this._profileRepo.updateProfile(investorId, formData);
 
             if (!investor) {
                 throw {
@@ -153,7 +151,7 @@ export class InvestorService implements IInvestorService {
                 throw { status: HttpStatus.BAD_REQUEST, message: "Your account is not verified yet." };
             }
 
-            const franchise = await this._FranchiseRepo.findById(franchiseId)
+            const franchise = await this._FranchiseRepo.findById(franchiseId);
             if (!franchise) {
                 throw {
                     status: HttpStatus.BAD_REQUEST, message: Messages.FRANCHISE_NOT_FOUND
@@ -171,7 +169,7 @@ export class InvestorService implements IInvestorService {
                 investor: new mongoose.Types.ObjectId(investorId),
                 franchise: new mongoose.Types.ObjectId(franchiseId)
             };
-            const apply = await this._applicationRepo.create(application)
+            const apply = await this._applicationRepo.create(application);
             const companyId =
                 franchise.company instanceof mongoose.Types.ObjectId
                     ? franchise.company
@@ -192,8 +190,6 @@ export class InvestorService implements IInvestorService {
             throw error;
         }
     };
-
-
     getFranchiseDetails = async (franchiseId: string) => {
         try {
             const franchise = await this._FranchiseRepo.findByIdWithComapny(franchiseId);
@@ -212,7 +208,7 @@ export class InvestorService implements IInvestorService {
         const skip = (page - 1) * limit;
         try {
             const application = await this._applicationRepo.findByInvestorId(investorId, skip, limit);
-            const totalApplications = await this._applicationRepo.countByInvestorId(investorId)
+            const totalApplications = await this._applicationRepo.countByInvestorId(investorId);
             if (!application) {
                 throw {
                     status: HttpStatus.BAD_REQUEST, message: Messages.APPLICATION_NOT_FOUND
@@ -243,7 +239,6 @@ export class InvestorService implements IInvestorService {
         const order = await razorpay.orders.create(options);
         return { order, key: process.env.RAZORPAY_KEY_ID! };
     };
-
     verifyPayAdvance = async (investorId: string, applicationId: string, paymentId: string, orderId: string, signature: string, amount: number) => {
         const application = await this._applicationRepo.findById(applicationId);
         if (!application) throw { status: HttpStatus.BAD_REQUEST, message: Messages.APPLICATION_NOT_FOUND };
@@ -266,14 +261,13 @@ export class InvestorService implements IInvestorService {
             type: "advance",
             status: "success"
         });
-        application.paymentStatus = "paid"
-        application.save()
-        return payment
+        application.paymentStatus = "paid";
+        application.save();
+        return payment;
     };
-
     applyReport = async (franchiseId: string, investorId: string, reason: string) => {
         try {
-            const franchise = await this._FranchiseRepo.findByIdWithComapny(franchiseId)
+            const franchise = await this._FranchiseRepo.findByIdWithComapny(franchiseId);
             if (!franchise || !franchise.company) {
                 throw {
                     status: HttpStatus.BAD_REQUEST, message: Messages.COMPANY_NOT_FOUND
@@ -285,35 +279,50 @@ export class InvestorService implements IInvestorService {
                 reportedAgainst: companyId,
                 reason,
                 status: "pending"
-            }
-            const createdReport = await this._reportRepo.create(data)
-            const adminId = "$2b$10$fRCoV5J/OXDVA2wGEPLPL.NLeAlt8wnUpyKygCDC31K5B4xfGh.em"
+            };
+            const createdReport = await this._reportRepo.create(data);
+            const adminId = "$2b$10$fRCoV5J/OXDVA2wGEPLPL.NLeAlt8wnUpyKygCDC31K5B4xfGh.em";
             await this._notificationRepo.create({
                 userId: new mongoose.Types.ObjectId(adminId),
                 message: "An investor has applied a report. Please review it.",
                 isRead: false,
             });
-            return createdReport
+            return createdReport;
         } catch (error) {
             throw error;
         }
-    }
+    };
     getNotification = async (userId: string) => {
         try {
-            const notifications = await this._notificationRepo.findByUserId(userId)
-            return notifications || []
+            const notifications = await this._notificationRepo.findByUserId(userId);
+            return notifications || [];
         } catch (error) {
             throw error;
         }
     };
     updateNotification = async (notificationId: string) => {
         try {
-            const notification = await this._notificationRepo.updateIsRead(notificationId)
+            const notification = await this._notificationRepo.updateIsRead(notificationId);
             if (!notification) {
                 throw ({ success: false, message: Messages.NOTIFICATION_NOT_FOUND });
             }
-            return notification
+            return notification;
         } catch (error) {
+            throw error;
+        }
+    };
+    getMyFranchises=async(investorId:string)=>{
+        try {
+            const investor=await this._profileRepo.findById(investorId);
+            if (!investor) {
+                throw {
+                    status: HttpStatus.BAD_REQUEST, message: Messages.INVESTOR_NOT_FOUND
+                };
+            };
+            const franchises=await this._applicationRepo.getApprovedFranchisesByInvestor(investorId);
+            return franchises;
+        } catch (error) {
+            console.log("Error get approved fanchises ",error);
             throw error;
         }
     };

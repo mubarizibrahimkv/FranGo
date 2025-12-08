@@ -79,11 +79,11 @@ export class ProductManagementService implements ICompanyProductManagementServic
         } catch (error) {
             throw error;
         }
-    }
+    };
     async getAllProductCategories(companyId: string) {
         try {
             const products = await this._productCategoryRepo.findAllWithCategoryHierarchy(companyId);
-            return products
+            return products;
         } catch (error) {
             throw error;
         }
@@ -99,7 +99,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
                 existingCategory.subSubCategoryId.toString(),
                 companyId
             );
-            console.log(duplicate)
+            console.log(duplicate);
             if (duplicate?._id && duplicate._id.toString() !== categoryId) {
                 throw { success: false, message: "A category with this name already exists" };
             }
@@ -146,7 +146,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
             if (!Types.ObjectId.isValid(companyId)) throw new Error("Invalid companyId");
             if (!Types.ObjectId.isValid(category)) throw new Error("Invalid categoryId");
 
-            const productCategory = await this._productCategoryRepo.findById(category)
+            const productCategory = await this._productCategoryRepo.findById(category);
             if (!productCategory) throw new Error("Product category not found");
 
             const duplicate = await this._productRepo.findDuplicateProduct(
@@ -169,7 +169,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
                 description,
                 images: imagePaths || [],
                 isListed: true,
-                status: "active" as "active",
+                status: "active" as const,
             };
             const product = await this._productRepo.create(data);
 
@@ -177,7 +177,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
         } catch (error) {
             throw error;
         }
-    }
+    };
 
     editProduct = async (
         companyId: string,
@@ -234,30 +234,30 @@ export class ProductManagementService implements ICompanyProductManagementServic
 
     deleteProduct = async (productId: string) => {
         try {
-            const product = await this._productRepo.delete(productId)
+            const product = await this._productRepo.delete(productId);
             if (!product) {
                 throw new Error("Product not found");
-            } return product
+            } return product;
         } catch (error) {
-            throw error
+            throw error;
         }
-    }
+    };
 
 
     getProducts = async (companyId: string, page: number) => {
         const limit = 10;
         const skip = (page - 1) * limit;
         try {
-            const totalProducts = await this._productRepo.countByCompanyId(companyId)
-            const products = await this._productRepo.findByCompanyId(companyId, skip, limit)
+            const totalProducts = await this._productRepo.countByCompanyId(companyId);
+            const products = await this._productRepo.findByCompanyId(companyId, skip, limit);
             if (!products) {
                 throw { status: HttpStatus.BAD_REQUEST, message: "Cannot find Products" };
             }
             const totalPages = Math.ceil(totalProducts / limit);
-            return { products, totalPages }
+            return { products, totalPages };
         } catch (error) {
             console.error("Add Product Error:", error);
             throw error;
         }
-    }
+    };
 }

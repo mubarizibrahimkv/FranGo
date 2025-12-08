@@ -19,7 +19,7 @@ import { NotificationRepo } from "../repository/notificationRepository";
 const router = express.Router();
 
 const companyRepo=new AdminCompanyRepo();
-const notificationRepo=new NotificationRepo()
+const notificationRepo=new NotificationRepo();
 const companyService=new AdminCompanyService(companyRepo,notificationRepo);
 const companyController=new AdminConmpanyController(companyService);
 
@@ -27,8 +27,8 @@ const customerRepo=new AdminCustomerRepo();
 const customerService=new AdminCustomerService(customerRepo);
 const customerController=new AdminCustomerController(customerService);
 
-const reportRepo=new ReportRepo()
-const productCategoryRepo=new ProductCategoryRepo()
+const reportRepo=new ReportRepo();
+const productCategoryRepo=new ProductCategoryRepo();
 const industryCategoryRepo=new IndustryCategoryRepo();
 const adminService=new AdminService(industryCategoryRepo,productCategoryRepo,reportRepo,notificationRepo);
 const adminController=new Admincontroller(adminService);
@@ -54,9 +54,9 @@ router.get("/customer",adminAuth,customerController.getCustomers);
 router.put("/customer/block/:customerId",adminAuth,customerController.blockCustomer);
 router.route("/industryCategory").post(adminAuth,upload.single("image"),adminController.addIndustryCategory).get(adminController.getIndustryCategory).put(adminAuth,upload.single("image"),adminController.editIndustryCategory);
 router.route("/industryCategory/:categoryId").delete(adminController.deleteIndustryCategory);
-router.route("/report").get(adminController.getReports)
-router.get("/:userId/notifications",adminController.getNotifications)
-router.put("/notifications/:notificationId", adminController.updateNotification)
+router.route("/report").get(adminController.getReports);
+router.get("/:userId/notifications",adminController.getNotifications);
+router.put("/notifications/:notificationId", adminController.updateNotification);
 
 
 export default router;  

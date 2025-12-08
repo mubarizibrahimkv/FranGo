@@ -6,10 +6,10 @@ import { ERROR_MESSAGES } from "../../constants/errorMessages";
 export class ProductManagementController {
     constructor(private _productManagementService: ICompanyProductManagementService) { }
     addProductCategory = async (req: Request, res: Response) => {
-        const { companyId } = req.params
-        const { data } = req.body
+        const { companyId } = req.params;
+        const { data } = req.body;
         try {
-            const { success, createdProducts, message } = await this._productManagementService.addProductCategory(companyId, data)
+            const { success, createdProducts, message } = await this._productManagementService.addProductCategory(companyId, data);
             res.status(HttpStatus.OK).json({ success, message });
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -18,7 +18,7 @@ export class ProductManagementController {
                 res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
             }
         }
-    }
+    };
 
     getAllProductCategories = async (req: Request, res: Response) => {
         const { companyId } = req.params;
@@ -32,7 +32,7 @@ export class ProductManagementController {
                 res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
             }
         }
-    }
+    };
     deleteProductCategories = async (req: Request, res: Response) => {
         const { companyId, categoryId } = req.params;
         try {
@@ -45,10 +45,10 @@ export class ProductManagementController {
                 res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
             }
         }
-    }
+    };
     editProductCategories = async (req: Request, res: Response) => {
         const { companyId, categoryId } = req.params;
-        const { newName } = req.body
+        const { newName } = req.body;
         try {
             const data = await this._productManagementService.editProductCategory(companyId, categoryId, newName);
             res.status(HttpStatus.OK).json({ success: true, data });
@@ -70,7 +70,7 @@ export class ProductManagementController {
 
             res.status(status).json({ success: false, message });
         }
-    }
+    };
     addProduct = async (req: Request, res: Response) => {
         try {
             const { companyId } = req.params;
@@ -86,7 +86,7 @@ export class ProductManagementController {
                 res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
             }
         }
-    }
+    };
     getProducts = async (req: Request, res: Response) => {
         const page = parseInt(req.query.page as string);
         try {
@@ -100,7 +100,7 @@ export class ProductManagementController {
                 res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
             }
         }
-    }
+    };
 
     editProduct = async (req: Request, res: Response) => {
         try {
@@ -161,5 +161,5 @@ export class ProductManagementController {
                 res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
             }
         }
-    }
+    };
 }
