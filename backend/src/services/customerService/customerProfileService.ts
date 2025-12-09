@@ -20,6 +20,7 @@ export class CustomerProfileService implements ICustomerProfileService {
             const newAddress = await this._addressRepo.addAddress(addressData);
             return newAddress;
         } catch (error) {
+            console.log("Error in crate address", error);
             throw error;
         }
     };
@@ -32,6 +33,7 @@ export class CustomerProfileService implements ICustomerProfileService {
 
             return customer;
         } catch (error) {
+            console.log("Error in get customer", error);
             throw error;
         }
     };
@@ -40,6 +42,7 @@ export class CustomerProfileService implements ICustomerProfileService {
             const addresses = await this._addressRepo.getAddressesByCustomer(customerId);
             return addresses;
         } catch (error) {
+            console.log("Error in get address ", error);
             throw error;
         }
     };
@@ -53,6 +56,7 @@ export class CustomerProfileService implements ICustomerProfileService {
             if (!updatedAddress) throw { status: HttpStatus.NOT_FOUND, message: Messages.ADDRESS_NOT_FOUND };
             return updatedAddress;
         } catch (error) {
+            console.log("Error in edit address", error);
             throw error;
         }
     };
@@ -62,33 +66,34 @@ export class CustomerProfileService implements ICustomerProfileService {
             if (!deleted) throw { status: HttpStatus.NOT_FOUND, message: "Address not found" };
             return deleted;
         } catch (error) {
+            console.log("Error in delete address ", error);
             throw error;
         }
     };
     changePassword = async (userId: string, oldPassword: string, newPassword: string) => {
-            const user = await this._customerRepo.findById(userId);
-            if (!user) {
-                throw new Error(Messages.USER_NOT_FOUND);
-            }
-            if (!user.password) {
-                throw new Error("User password not found");
-            }
-    
-            const isMatch = await bcrypt.compare(oldPassword, user.password);
-            if (!isMatch) throw new Error("Current password is incorrect");
-    
-    
-            const isSamePassword = await bcrypt.compare(newPassword, user.password);
-            if (isSamePassword) {
-                throw new Error("New password cannot be same as current password");
-            }
-    
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
-            user.password = hashedPassword;
-    
-    
-            await user.save();
-            return true;
-        };
+        const user = await this._customerRepo.findById(userId);
+        if (!user) {
+            throw new Error(Messages.USER_NOT_FOUND);
+        }
+        if (!user.password) {
+            throw new Error("User password not found");
+        }
+
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isMatch) throw new Error("Current password is incorrect");
+
+
+        const isSamePassword = await bcrypt.compare(newPassword, user.password);
+        if (isSamePassword) {
+            throw new Error("New password cannot be same as current password");
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+
+
+        await user.save();
+        return true;
+    };
 
 }

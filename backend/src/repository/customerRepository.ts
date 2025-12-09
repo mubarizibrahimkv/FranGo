@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { ICustomerRepo } from "../interface/ṛepository/customerRepositoryInterface";
-import Address, { IAddress } from "../models/addressModel";
+import Address from "../models/addressModel";
 import { IAddressInput } from "../types/addressInput";
 
 export class CustomerAddressRepo implements ICustomerRepo {

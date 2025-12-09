@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import Footer from "../../components/InvestorComponents/Footer";
 import Navbar from "../../components/InvestorComponents/Navbar";
 import {
+  applyAApplication,
+  deleteApplication,
   getAApplication,
   payAdvance,
   verifyPayAdvanceOrder,
 } from "../../services/invstor";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
-import type { IApplication } from "../../types/company";
+import type { IApplication, IFranchise } from "../../types/company";
 import { toast } from "react-toastify";
 import type { Payment } from "../../types/common";
 import type {
@@ -16,6 +18,11 @@ import type {
   RazorpayOptions,
   RazorpayResponse,
 } from "../../types/global";
+import ApplyModal from "../../components/InvestorComponents/ApplyModal";
+import type { Investor } from "../../types/investor";
+import { AxiosError } from "axios";
+import { FaTrashAlt } from "react-icons/fa";
+import ConfirmAlert from "../../components/CommonComponents/ConfirmationModal";
 
 const MyApplication = () => {
   const investor = useSelector((state: RootState) => state.user);
@@ -23,6 +30,42 @@ const MyApplication = () => {
   const [reload, setReload] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedFranchise, setSelectedFranchise] = useState<IFranchise | null>(
+    null,
+  );
+  const [showAlert, setShowAlert] = useState(false);
+  const [selectedApp, setSelectedApp] = useState("");
+
+  const handleApply = async (formData: Partial<Investor>) => {
+    try {
+      if (selectedFranchise?._id) {
+        const res = await applyAApplication(
+          formData as Investor,
+          selectedFranchise._id,
+          investor._id,
+        );
+        if (res.success) {
+          toast.success("Application applied successfully");
+        } else {
+          toast.error("Failed to apply for franchise");
+        }
+      } else {
+        console.log("Didnt select franchise");
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const message =
+          error.response?.data?.message || "Server error occurred";
+        toast.error(message);
+        console.log("Axios error:", message);
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+        console.log("Error:", error.message);
+      } else {
+        toast.error("Unexpected error occurred");
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -88,6 +131,20 @@ const MyApplication = () => {
       razor.open();
     } catch (error: unknown) {
       console.error("Payment failed:", error);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await deleteApplication(id);
+      if (response.success) {
+        setSelectedApp("");
+        toast.success("Application deleted successfully!");
+      }
+      return response;
+    } catch (error) {
+      console.log("Error delete application ", error);
+      toast.error("Something went wrong!");
     }
   };
 
@@ -164,39 +221,42 @@ const MyApplication = () => {
                   </td>
 
                   <td className="px-5 py-3 flex items-center justify-center gap-5">
-                    <button
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition duration-200
-                      ${
-                        application.status === "rejected"
-                          ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                          : application.status === "pending"
-                            ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                            : application.paymentStatus === "paid"
-                              ? "bg-green-800 text-white cursor-default"
-                              : "bg-[#0C2340] text-white hover:bg-[#1A365D]"
-                      }`}
-                      disabled={
-                        application.status === "rejected" ||
-                        application.status === "pending" ||
-                        application.paymentStatus === "paid"
-                      }
-                      onClick={() =>
-                        application._id &&
-                        application.franchise.advancefee &&
-                        handlePayAdvance(
-                          application._id,
-                          application.franchise.advancefee,
-                        )
-                      }
-                    >
-                      {application.status === "pending"
-                        ? "Pending"
-                        : application.status === "rejected"
-                          ? "Rejected"
-                          : application.paymentStatus === "paid"
-                            ? "Paid"
-                            : "Pay Advance"}
-                    </button>
+                    {application.status === "pending" && (
+                      <button
+                        onClick={() => {
+                          setSelectedApp(application._id);
+                          setShowAlert(true);
+                        }}
+                        className="text-red-600 hover:underline flex items-center gap-1"
+                      >
+                        <FaTrashAlt size={18} />
+                      </button>
+                    )}
+
+                    {application.status === "rejected" && (
+                      <span className="text-red-600 font-medium">Rejected</span>
+                    )}
+
+                    {application.paymentStatus === "paid" && (
+                      <span className="text-green-700 font-medium">Paid</span>
+                    )}
+
+                    {application.status === "approved" &&
+                      application.paymentStatus !== "paid" && (
+                        <button
+                          className="px-4 py-2 rounded-lg text-sm font-medium bg-[#0C2340] text-white hover:bg-[#1A365D]"
+                          onClick={() =>
+                            application._id &&
+                            application.franchise.advancefee &&
+                            handlePayAdvance(
+                              application._id,
+                              application.franchise.advancefee,
+                            )
+                          }
+                        >
+                          Pay Advance
+                        </button>
+                      )}
                   </td>
                 </tr>
               ))}
@@ -211,6 +271,29 @@ const MyApplication = () => {
             </tbody>
           </table>
         </div>
+
+        {showAlert && (
+          <ConfirmAlert
+            type="warning"
+            title="Are you sure?"
+            message="Deleting this application cannot be undone. Do you want to continue?"
+            onClose={() => setShowAlert(false)}
+            onConfirm={() => {
+              handleDelete(selectedApp);
+              setShowAlert(false);
+            }}
+          />
+        )}
+
+        {selectedFranchise && (
+          <ApplyModal
+            onClose={() => setSelectedFranchise(null)}
+            onApply={handleApply}
+            franchiseData={selectedFranchise}
+            investorData={investor}
+          />
+        )}
+
         <div className="flex justify-center mt-8 items-center gap-2 mb-4">
           {page > 1 && (
             <div

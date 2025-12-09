@@ -115,6 +115,7 @@ export class CompanyAuthService implements ICompanyAuthService {
             await company.save();
             return company;
         } catch (error) {
+            console.error("Resend Link Error:", error);
             throw error;
         }
     };
@@ -129,6 +130,7 @@ export class CompanyAuthService implements ICompanyAuthService {
             company.verificationToken = verificationToken;
             return await this._authRepo.saveUser(company);
         } catch (error) {
+            console.error("Forgot password Error:", error);
             throw error;
         }
     };
@@ -180,6 +182,7 @@ export class CompanyAuthService implements ICompanyAuthService {
     
           return investor;
         } catch (error) {
+            console.error("Forgot password Error:", error);
           throw error;
         }
       };

@@ -1,4 +1,3 @@
-import { populate } from "dotenv";
 import { IApplicationRepo } from "../interface/ṛepository/applicationRepoInterface";
 import Application, { IApplication } from "../models/applicationModel";
 import { BaseRepository } from "./baseRepository";

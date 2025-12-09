@@ -1,5 +1,5 @@
 import { IChatMessage } from "../../models/chat";
-import { IConversation, IconversationWithUser } from "../../models/conversationsModel";
+import { IconversationWithUser } from "../../models/conversationsModel";
 
 export interface IMessageService{
     generateChannel(u1:string,u2:string):string

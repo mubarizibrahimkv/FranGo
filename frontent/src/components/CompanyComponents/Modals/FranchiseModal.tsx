@@ -33,7 +33,7 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
   ) => {
     const { name, value, type } = e.target;
 
-    let updatedValue: any = value;
+    let updatedValue: string | number | string[] = value;
 
     if (type === "select-multiple") {
       const select = e.target as HTMLSelectElement;
@@ -49,7 +49,7 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
     validateField(name, updatedValue);
   };
 
-  const validateField = (name: string, value: any) => {
+  const validateField = (name: string, value: string | number | string[]) => {
     let error = "";
 
     const requiredFields = [
@@ -95,7 +95,10 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
       }
     }
 
-    if (name === "industrySubSubCategory" && (!value || value.length === 0)) {
+    if (
+      name === "industrySubSubCategory" &&
+      (Array.isArray(value) ? value.length === 0 : true)
+    ) {
       error = "Please select at least one Sub-Sub Category";
     }
 
@@ -123,7 +126,8 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
     ];
 
     requiredFields.forEach((field) => {
-      if (!(formData as Record<string, any>)[field]) {
+      const key = field as keyof IFranchise;
+      if (!formData[key]) {
         newErrors[field] = "This field is required";
       }
     });
@@ -146,7 +150,8 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
     ];
 
     feeFields.forEach((field) => {
-      const rawValue = (formData as Record<string, any>)[field];
+      const key = field as keyof IFranchise;
+      const rawValue = formData[key];
       const value = Number(rawValue);
 
       if (rawValue === undefined || rawValue === null || rawValue === "") {
@@ -222,7 +227,7 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
               <input
                 type={field.type || "text"}
                 name={field.name}
-                value={(form as Record<string, any>)[field.name] || ""}
+                value={(form as Record<string, string>)[field.name] || ""}
                 onChange={handleChange}
                 placeholder={`Enter ${field.label}`}
                 className={`w-full border rounded-md px-3 py-2 text-sm outline-none focus:ring-2 ${
@@ -352,7 +357,7 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
                   <input
                     type="number"
                     name={name}
-                    value={(form as Record<string, any>)[name] || ""}
+                    value={(form as Record<string, number>)[name] || ""}
                     onChange={handleChange}
                     placeholder={
                       isRoyalty
@@ -415,7 +420,7 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
               {field.options ? (
                 <select
                   name={field.name}
-                  value={(form as Record<string, any>)[field.name] || ""}
+                  value={(form as Record<string, string>)[field.name] || ""}
                   onChange={handleChange}
                   className={`w-full border rounded-md px-3 py-2 text-sm outline-none focus:ring-2 ${
                     errors[field.name]
@@ -455,7 +460,7 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
                   type={field.type === "number" ? "number" : "text"}
                   min={field.type === "number" ? 1 : undefined}
                   name={field.name}
-                  value={(form as Record<string, any>)[field.name] || ""}
+                  value={(form as Record<string, string>)[field.name] || ""}
                   onChange={handleChange}
                   placeholder={
                     field.name === "minimumSpace"
@@ -530,7 +535,7 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
               {field.type === "select" && field.options ? (
                 <select
                   name={field.name}
-                  value={(form as Record<string, any>)[field.name] || ""}
+                  value={(form as Record<string, string>)[field.name] || ""}
                   onChange={handleChange}
                   className={`w-full border rounded-md px-3 py-2 text-sm outline-none focus:ring-2 ${
                     errors[field.name]
@@ -556,9 +561,9 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
                         type="checkbox"
                         value={opt}
                         checked={
-                          (form as Record<string, any>)[field.name]?.includes(
-                            opt,
-                          ) || false
+                          (form as Record<string, string>)[
+                            field.name
+                          ]?.includes(opt) || false
                         }
                         onChange={(e) => {
                           const checked = e.target.checked;
@@ -586,7 +591,7 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
                   type={field.type === "number" ? "number" : "text"}
                   min={field.type === "number" ? 1 : undefined}
                   name={field.name}
-                  value={(form as Record<string, any>)[field.name] || ""}
+                  value={(form as Record<string, string>)[field.name] || ""}
                   onChange={handleChange}
                   placeholder={`Enter ${field.label}`}
                   className={`w-full border rounded-md px-3 py-2 text-sm outline-none focus:ring-2 ${
@@ -633,7 +638,7 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
                   type="number"
                   min={1}
                   name={field.name}
-                  value={(form as Record<string, any>)[field.name] || ""}
+                  value={(form as Record<string, string>)[field.name] || ""}
                   onChange={handleChange}
                   placeholder={`Enter ${field.label}`}
                   className={`w-full border rounded-md px-3 py-2 text-sm outline-none focus:ring-2 ${

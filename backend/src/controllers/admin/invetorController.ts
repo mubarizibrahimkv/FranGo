@@ -4,6 +4,11 @@ import { IAdminInvestorService } from "../../interface/service/adminInvestorServ
 import HttpStatus from "../../utils/httpStatusCode";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 
+interface IServiceError {
+  message: string;
+  status?: number;
+}
+
 export class AdminInvestorController implements IAdminInvestorController {
     constructor(private _companyService: IAdminInvestorService) {}
 
@@ -13,13 +18,13 @@ export class AdminInvestorController implements IAdminInvestorController {
         try {
             const { investor, totalPages } = await this._companyService.getPendingInvestors(page);
             res.status(HttpStatus.OK).json({ success: true, users: investor, currentPage: page, totalPages });
-        } catch (error) {
-            if (error instanceof Error && "status" in error) {
-                res.status((error as any).status || HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-            } else {
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
-            }
-        }
+        } catch (error: unknown) {
+    const serviceError = error as IServiceError;
+    const message = serviceError.message || ERROR_MESSAGES.SERVER_ERROR;
+    const status = serviceError.status || HttpStatus.INTERNAL_SERVER_ERROR;
+
+    res.status(status).json({ message });
+  }
     };
 
     getApprovedInvestors = async (req: Request, res: Response) => {
@@ -28,13 +33,13 @@ export class AdminInvestorController implements IAdminInvestorController {
         try {
             const { investor, totalPages } = await this._companyService.getApprovedInvestors(page);
             res.status(HttpStatus.OK).json({ success: true, investors: investor, currentPage: page, totalPages });
-        } catch (error) {
-            if (error instanceof Error && "status" in error) {
-                res.status((error as any).status || HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-            } else {
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
-            }
-        }
+        } catch (error: unknown) {
+    const serviceError = error as IServiceError;
+    const message = serviceError.message || ERROR_MESSAGES.SERVER_ERROR;
+    const status = serviceError.status || HttpStatus.INTERNAL_SERVER_ERROR;
+
+    res.status(status).json({ message });
+  }
     };
 
     changeStatusInvestor = async (req: Request, res: Response) => {
@@ -44,13 +49,13 @@ export class AdminInvestorController implements IAdminInvestorController {
         try {
             const investor = await this._companyService.changeStatusInvestor(investorId, status,reason);
             res.status(HttpStatus.OK).json({ success: true, investor });
-        } catch (error) {
-            if (error instanceof Error && "status" in error) {
-                res.status((error as any).status || HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-            } else {
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
-            }
-        }
+        }catch (error: unknown) {
+    const serviceError = error as IServiceError;
+    const message = serviceError.message || ERROR_MESSAGES.SERVER_ERROR;
+    const status = serviceError.status || HttpStatus.INTERNAL_SERVER_ERROR;
+
+    res.status(status).json({ message });
+  }
     };
 
     blockInvestor = async (req: Request, res: Response) => {
@@ -60,13 +65,13 @@ export class AdminInvestorController implements IAdminInvestorController {
         try {
             const investor = await this._companyService.blockInvestor(investorId, block);
             res.status(HttpStatus.OK).json({ success: true, investor });
-        } catch (error) {
-            if (error instanceof Error && "status" in error) {
-                res.status((error as any).status || HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-            } else {
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
-            }
-        }
+        } catch (error: unknown) {
+    const serviceError = error as IServiceError;
+    const message = serviceError.message || ERROR_MESSAGES.SERVER_ERROR;
+    const status = serviceError.status || HttpStatus.INTERNAL_SERVER_ERROR;
+
+    res.status(status).json({ message });
+  }
     };
 
     getInvestorDetails = async (req: Request, res: Response) => {
@@ -75,12 +80,12 @@ export class AdminInvestorController implements IAdminInvestorController {
         try {
             const investor = await this._companyService.getInvestorDetails(id);
             res.status(HttpStatus.OK).json({ success: true, investor });
-        } catch (error) {
-            if (error instanceof Error && "status" in error) {
-                res.status((error as any).status || HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-            } else {
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
-            }
-        }
+        }catch (error: unknown) {
+    const serviceError = error as IServiceError;
+    const message = serviceError.message || ERROR_MESSAGES.SERVER_ERROR;
+    const status = serviceError.status || HttpStatus.INTERNAL_SERVER_ERROR;
+
+    res.status(status).json({ message });
+  }
     };
 }

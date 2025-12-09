@@ -1,5 +1,5 @@
 import passport from "passport";
-import { Strategy as GoogleStrategy, Profile, VerifyCallback } from "passport-google-oauth20";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import dotenv from "dotenv";
 import Investor from "../models/investorModel";
 import Customer from "../models/customerModel";
@@ -10,6 +10,17 @@ dotenv.config();
 interface RoleModelMap {
     [key: string]: any;
 }
+
+
+export type AuthenticatedUser = {
+  id: string;
+  userName?: string;
+  companyName?: string;
+  profileImage?: string;
+  email: string;
+  isAdmin?: boolean;
+  role: "customer" | "investor" | "company";
+};
 
 const roleModelMap: RoleModelMap = {
     investor: Investor,

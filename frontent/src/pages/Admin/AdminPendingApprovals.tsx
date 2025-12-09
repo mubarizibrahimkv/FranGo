@@ -35,8 +35,9 @@ const AdminPendingApproval: React.FC = () => {
 
       setPage(response.currentPage);
       setTotalPages(response.totalPages);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to fetch companies");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 
@@ -61,8 +62,9 @@ const AdminPendingApproval: React.FC = () => {
         toast.success("Company Verified Successfully");
         setCompanies((prev) => prev.filter((c) => c._id !== companyId));
       }
-    } catch (error: any) {
-      toast.error(error.message || "Failed to verify company");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 

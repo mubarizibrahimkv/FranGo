@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/slice/authSlice";
 import RegisterChoiceModal from "../CommonComponents/RegisterChoiceModal";
 
-export interface LoginForm {
+export interface LoginFormType {
   email: string;
   password: string;
 }
@@ -17,17 +17,17 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
-  const [formData, setFormData] = useState<LoginForm>({
+  const [formData, setFormData] = useState<LoginFormType>({
     email: "",
     password: "",
   });
-  const [errors, setErrors] = useState<Partial<LoginForm>>({});
+  const [errors, setErrors] = useState<Partial<LoginFormType>>({});
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const validate = (): boolean => {
-    const newErrors: Partial<LoginForm> = {};
+    const newErrors: Partial<LoginFormType> = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!formData.email) {
@@ -78,12 +78,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
         toast.success("Login Successsfully Completed");
         navigate("/customer");
       }
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Something went wrong";
-      toast.error(errorMessage);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 

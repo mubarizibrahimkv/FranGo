@@ -33,6 +33,7 @@ export class CustomerAuthService implements ICustomerAuthService {
 
             return { user, token, refreshToken };
         } catch (error) {
+            console.log("Error in register customer ", error);
             throw error;
         }
     }
@@ -139,6 +140,7 @@ export class CustomerAuthService implements ICustomerAuthService {
 
             return customer;
         } catch (error) {
+            console.log("Error in customer forgot password", error);
             throw error;
         }
     };
@@ -158,6 +160,7 @@ export class CustomerAuthService implements ICustomerAuthService {
 
             return customer;
         } catch (error) {
+            console.log("Error in customer change password", error);
             throw error;
         }
     };

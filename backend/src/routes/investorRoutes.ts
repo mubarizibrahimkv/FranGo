@@ -60,6 +60,7 @@ router.post("/report/franchise/:investorId",investorController.applyReport);
 router.get("/:userId/notifications",investorController.getNotifications);
 router.put("/notifications/:notificationId", investorController.updateNotification);
 router.get("/myFranchises/:investorId",investorController.getMyFranchises);
+router.delete("/applications/:applicationId",investorController.deleteApplication);
 
 
 export default router;

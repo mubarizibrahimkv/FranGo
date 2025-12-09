@@ -23,6 +23,14 @@ export interface ProductFormData {
   images: File[];
 }
 
+type ProductFormErrors = {
+  category?: string;
+  name?: string;
+  price?: string;
+  description?: string;
+  images?: string;
+};
+
 interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -52,13 +60,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [removedImages, setRemovedImages] = useState<string[]>([]);
-  const [errors, setErrors] = useState({
-    category: "",
-    name: "",
-    price: "",
-    description: "",
-    images: "",
-  });
+  const [errors, setErrors] = useState<ProductFormErrors>({});
 
   useEffect(() => {
     if (initialData) {
@@ -123,7 +125,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newErrors: any = {};
+    const newErrors: ProductFormErrors = {};
 
     if (!form.category) newErrors.category = "Category is required.";
     if (!form.name.trim()) newErrors.name = "Product name is required.";

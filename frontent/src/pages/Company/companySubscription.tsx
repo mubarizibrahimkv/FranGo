@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Sidebar from "../../components/CompanyComponents/Sidebar";
 import Navbar from "../../components/CompanyComponents/Navbar";
 import { toast } from "react-toastify";
@@ -9,8 +9,15 @@ import {
   verifySubscriptionOrder,
 } from "../../services/company/companyProfile";
 
+export interface RazorpayPaymentResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+}
+
 const CompanySubscription: React.FC = () => {
   const company = useSelector((state: RootState) => state.user);
+  useEffect(() => {});
 
   const handleSubscriptionPayment = async (amount: number) => {
     try {
@@ -24,7 +31,7 @@ const CompanySubscription: React.FC = () => {
         name: "Cyclore",
         description: "Subscription Payment",
         order_id: order.id,
-        handler: async function (response: any) {
+        handler: async function (response: RazorpayPaymentResponse) {
           try {
             await verifySubscriptionOrder(
               company._id,
@@ -64,7 +71,6 @@ const CompanySubscription: React.FC = () => {
         <main className="flex-1 p-6 overflow-y-auto">
           <div className="flex flex-col items-center justify-center px-6 py-10 w-full">
             <div className="w-full max-w-7xl">
-              {/* Optional: Your Plan Section */}
               {/* 
           <section>
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Your Plan</h2>
@@ -128,42 +134,6 @@ const CompanySubscription: React.FC = () => {
                     </ul>
                     <button
                       onClick={() => handleSubscriptionPayment(500)}
-                      className="w-full bg-[#e7f0f8] text-[#1F3C58] py-2.5 rounded-4xl font-medium hover:bg-[#1F3C58] hover:text-white transition"
-                    >
-                      Subscribe
-                    </button>
-                  </div>
-
-                  {/* CARD 2 */}
-                  <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-8 pt-10 flex flex-col items-center text-center relative hover:shadow-lg transition duration-200 flex-grow min-w-[250px] max-w-[300px]">
-                    <div className="absolute top-0 left-0 w-full h-3 bg-[#1F3C58] rounded-t-2xl"></div>
-                    <p className="text-lg font-semibold text-[#1F3C58] mt-2">
-                      Enterprise
-                    </p>
-                    <p className="text-4xl font-bold text-gray-900 mt-3">
-                      500 Rs
-                      <span className="text-base font-medium text-gray-400">
-                        {" "}
-                        / Year
-                      </span>
-                    </p>
-                    <ul className="text-gray-600 text-sm space-y-3 mt-6 mb-8 w-full">
-                      {[
-                        "Unlimted Chat",
-                        "Video call",
-                        "Dashboard Analytics",
-                        "Catelog Management",
-                      ].map((item, index) => (
-                        <li key={index} className="flex items-center gap-2">
-                          <span className="w-4 h-4 flex items-center justify-center rounded-full bg-indigo-300 text-white text-xs">
-                            ✓
-                          </span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                    <button
-                      onClick={() => handleSubscriptionPayment(180)}
                       className="w-full bg-[#e7f0f8] text-[#1F3C58] py-2.5 rounded-4xl font-medium hover:bg-[#1F3C58] hover:text-white transition"
                     >
                       Subscribe

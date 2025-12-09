@@ -114,13 +114,8 @@ const CompanyProducts = () => {
             }
           }
         } catch (error) {
-          let message = "Something went wrong.";
-
-          if (typeof error === "object" && error !== null) {
-            const err = error as Record<string, any>;
-
-            message = err?.response?.data?.message || err?.message || message;
-          }
+          const message =
+            error instanceof Error ? error.message : String(error);
 
           toast.error(message);
         } finally {
@@ -150,13 +145,7 @@ const CompanyProducts = () => {
       }
       setReload((prev) => !prev);
     } catch (error) {
-      let message = "Something went wrong.";
-
-      if (typeof error === "object" && error !== null) {
-        const err = error as Record<string, any>;
-
-        message = err?.response?.data?.message || err?.message || message;
-      }
+      const message = error instanceof Error ? error.message : String(error);
 
       toast.error(message);
     } finally {

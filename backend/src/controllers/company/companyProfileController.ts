@@ -197,7 +197,7 @@ export class ProfileController implements IcompanyProfileController {
     const { applicationId } = req.params;
     const { status } = req.body;
     try {
-      const application = await this._companyService.changeApplicationStatus(applicationId, status);
+      await this._companyService.changeApplicationStatus(applicationId, status);
       res.status(HttpStatus.OK).json({ success: true });
     } catch (error: unknown) {
       if (typeof error === "object" && error !== null && "message" in error) {
@@ -215,7 +215,6 @@ export class ProfileController implements IcompanyProfileController {
 
 
   createSubscription = async (req: Request, res: Response) => {
-    const { companyId } = req.params;
     const { amount } = req.body;
     try {
       const razorpay = new Razorpay({

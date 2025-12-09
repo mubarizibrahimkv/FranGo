@@ -9,5 +9,6 @@ export interface IApplicationRepo {
     countByCompanyId(companyId: string):Promise<number> 
     countByInvestorId(investoId: string):Promise<number> 
     findByInvestorAndFranchise(investoId: string,franchiseId:string):Promise<IApplication|null> 
+    delete(id:string):Promise<IApplication|null> 
     getApprovedFranchisesByInvestor(investorId:string):Promise<(IApplication&{franchise:IFranchise})[]|null> 
 }   

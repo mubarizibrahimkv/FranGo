@@ -42,12 +42,9 @@ export default function Profile() {
         setShowChangePassModal(false);
         toast.success("Password Changed Successfully");
       }
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Something went wrong";
-      toast.error(errorMessage);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 
@@ -139,12 +136,9 @@ export default function Profile() {
           toast.success("Profile Updated Successfully");
         }
       }
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Something went wrong";
-      toast.error(errorMessage);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 
@@ -160,7 +154,7 @@ export default function Profile() {
     }
   };
 
-  const displayValue = (value: any) =>
+  const displayValue = (value: string | number | null | undefined) =>
     value && value.toString().trim() ? value : "Not Provided";
 
   return (

@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import HttpStatus from "../utils/httpStatusCode";
 import { ERROR_MESSAGES } from "../constants/errorMessages";
 import { Messages } from "../constants/messages";
+import { AuthenticatedUser } from "../config/passport";
 dotenv.config();
 
 
@@ -197,9 +198,9 @@ export class AuthController implements IAuthController {
       return;
     }
 
-    const user = req.user as any;
-    const accessToken = generateToken(user.id, user.isAdmin);
-    const refreshToken = generateRefreshToken(user.id, user.isAdmin);
+    const user = req.user as AuthenticatedUser;
+    const accessToken = generateToken(user.id, user.role);
+    const refreshToken = generateRefreshToken(user.id, user.role);
 
     res.cookie("access_token", accessToken, {
       httpOnly: true,
@@ -223,7 +224,7 @@ export class AuthController implements IAuthController {
         return;
       }
 
-      const user = req.user as any;
+      const user = req.user as AuthenticatedUser;
       res.json({
         _id: user.id,
         userName: user.companyName || user.userName,

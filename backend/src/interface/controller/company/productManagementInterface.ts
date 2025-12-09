@@ -1,3 +1,3 @@
-export interface ICompanyProductManagementController{
+// export interface ICompanyProductManagementController{
     
-}
+// }

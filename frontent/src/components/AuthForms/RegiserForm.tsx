@@ -65,13 +65,10 @@ const RegiserForm: React.FC<RegisterFormProps> = ({ role }) => {
       } else {
         setError("Signup failed.Please try again");
       }
-    } catch (error: any) {
-      const errMsg =
-        error?.response?.data?.message ||
-        error.message ||
-        "Something went wrong";
-      setError(errMsg);
-      toast.error(errMsg);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
+      setError(message);
     }
   };
 

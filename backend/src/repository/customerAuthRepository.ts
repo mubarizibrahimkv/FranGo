@@ -24,7 +24,7 @@ export class CustomerAuthRepo extends BaseRepository<ICustomer> implements ICust
         });
         return await customer.save();
     }
-    async saveUser(user: any) {
+    async saveUser(user: ICustomer) {
         return await user.save();
     }
 

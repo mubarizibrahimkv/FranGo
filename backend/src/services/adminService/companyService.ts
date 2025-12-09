@@ -1,10 +1,9 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 import { Messages } from "../../constants/messages";
 import { IAdminCompanyService } from "../../interface/service/adminCompanyServiceInterface";
 import { IAdminCompanyRepo } from "../../interface/ṛepository/adminCompanyRepoInterface";
 import { INotificationRepo } from "../../interface/ṛepository/notificationRepoInterface";
 import Company from "../../models/companyModel";
-import { INotification } from "../../models/notificationModel";
 
 export class AdminCompanyService implements IAdminCompanyService {
   constructor(private _companyRepo: IAdminCompanyRepo, private _notificationRepo: INotificationRepo) { }

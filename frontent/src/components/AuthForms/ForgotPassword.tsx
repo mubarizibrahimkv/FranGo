@@ -47,12 +47,9 @@ const ForgotPassword: React.FC = () => {
       } else {
         toast.error("Failed.Please try again");
       }
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Something went wrong";
-      toast.error(errorMessage);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

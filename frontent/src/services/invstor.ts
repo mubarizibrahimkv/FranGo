@@ -62,7 +62,7 @@ export const getAApplication = async (investorId: string, page: number) => {
 };
 export const getMyFranchises = async (investorId: string) => {
   try {
-    console.log(investorId,'invevestori in my franshi')
+    console.log(investorId, "invevestori in my franshi");
     const res = await api.get(
       `${INVESTOR_BASE_ROUTE}/myFranchises/${investorId}`,
     );
@@ -70,6 +70,19 @@ export const getMyFranchises = async (investorId: string) => {
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Get myfranchises", error?.response?.data);
+      throw error;
+    }
+  }
+};
+export const deleteApplication = async (applicationId: string) => {
+  try {
+    const res = await api.delete(
+      `${INVESTOR_BASE_ROUTE}/applications/${applicationId}`,
+    );
+    return res.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.error("Delete Applications", error?.response?.data);
       throw error;
     }
   }

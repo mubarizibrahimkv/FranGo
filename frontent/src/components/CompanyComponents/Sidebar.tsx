@@ -56,12 +56,9 @@ const Sidebar: React.FC = () => {
           navigate("/company/login", { replace: true });
         }, 500);
       }
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Something went wrong";
-      toast.error(errorMessage);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 

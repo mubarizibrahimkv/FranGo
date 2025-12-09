@@ -6,7 +6,7 @@ import { ERROR_MESSAGES } from "../../constants/errorMessages";
 export class InvestorController {
   constructor(private _investorService: IInvestorService) { }
 
-  private handleError(res: Response, error: unknown, context: string) {
+  private handleError(res: Response, error: unknown) {
 
     const err =
       typeof error === "object" &&
@@ -59,7 +59,7 @@ export class InvestorController {
         totalFranchises,
       });
     } catch (error: unknown) {
-      this.handleError(res, error, "getFranchises");
+      this.handleError(res, error);
     }
   };
 
@@ -69,7 +69,7 @@ export class InvestorController {
       const franchise = await this._investorService.getFranchiseDetails(franchiseId);
       res.status(HttpStatus.OK).json({ success: true, franchise });
     } catch (error: unknown) {
-      this.handleError(res, error, "getFranchiseDetails");
+      this.handleError(res, error);
     }
   };
 
@@ -86,7 +86,7 @@ export class InvestorController {
 
       res.status(HttpStatus.OK).json({ success: true, application });
     } catch (error: unknown) {
-      this.handleError(res, error, "createApplication");
+      this.handleError(res, error);
     }
   };
 
@@ -103,7 +103,7 @@ export class InvestorController {
         .status(HttpStatus.OK)
         .json({ success: true, application, currentPage: page, totalPages });
     } catch (error: unknown) {
-      this.handleError(res, error, "getApplications");
+      this.handleError(res, error);
     }
   };
   payAdvance = async (req: Request, res: Response): Promise<void> => {
@@ -114,7 +114,7 @@ export class InvestorController {
       const { order, key } = await this._investorService.payAdvance(investorId, applicationId, data);
       res.status(HttpStatus.OK).json({ success: true, order, key });
     } catch (error) {
-      this.handleError(res, error, "payAdvance");
+      this.handleError(res, error);
     }
   };
 
@@ -127,7 +127,7 @@ export class InvestorController {
       const result = await this._investorService.verifyPayAdvance(investorId, applicationId, paymentId, orderId, signature, amount);
       res.status(HttpStatus.OK).json({ success: true, result });
     } catch (error) {
-      this.handleError(res, error, "verifyPayAdvance");
+      this.handleError(res, error);
     }
   };
 
@@ -139,7 +139,7 @@ export class InvestorController {
       await this._investorService.applyReport(franchiseId, investorId, reason);
       res.status(HttpStatus.OK).json({ success: true });
     } catch (error: unknown) {
-      this.handleError(res, error, "Apply Report");
+      this.handleError(res, error);
     }
   };
   getNotifications = async (req: Request, res: Response) => {
@@ -173,6 +173,19 @@ export class InvestorController {
     try {
       const franchises = await this._investorService.getMyFranchises(investorId);
       res.status(HttpStatus.OK).json({ success: true, franchises });
+      return;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error("getting my franchises error:", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
+      return;
+    }
+  };
+  deleteApplication = async (req: Request, res: Response) => {
+    const { applicationId } = req.params;
+    try {
+      await this._investorService.deleteAplication(applicationId);
+      res.status(HttpStatus.OK).json({ success: true });
       return;
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);

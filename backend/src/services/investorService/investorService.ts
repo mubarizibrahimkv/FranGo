@@ -1,4 +1,4 @@
-import mongoose, { ObjectId, Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { Messages } from "../../constants/messages";
 import { IInvestorService } from "../../interface/service/investorServiceInterface";
 import { IFranchiseRepo } from "../../interface/ṛepository/franchiseRepoInterface";
@@ -187,6 +187,7 @@ export class InvestorService implements IInvestorService {
             });
             return apply;
         } catch (error) {
+            console.log("Error in create application ", error);
             throw error;
         }
     };
@@ -200,6 +201,7 @@ export class InvestorService implements IInvestorService {
             }
             return franchise;
         } catch (error) {
+            console.log("Error in franchise details ", error);
             throw error;
         }
     };
@@ -217,6 +219,7 @@ export class InvestorService implements IInvestorService {
             const totalPages = Math.ceil(totalApplications / limit);
             return { application, totalPages };
         } catch (error) {
+            console.log("Error in get applications", error);
             throw error;
         }
     };
@@ -289,6 +292,7 @@ export class InvestorService implements IInvestorService {
             });
             return createdReport;
         } catch (error) {
+            console.log("Error in apply report", error);
             throw error;
         }
     };
@@ -297,6 +301,7 @@ export class InvestorService implements IInvestorService {
             const notifications = await this._notificationRepo.findByUserId(userId);
             return notifications || [];
         } catch (error) {
+            console.log("Error in get notification", error);
             throw error;
         }
     };
@@ -308,6 +313,7 @@ export class InvestorService implements IInvestorService {
             }
             return notification;
         } catch (error) {
+            console.log("Error update notification ",error);
             throw error;
         }
     };
@@ -322,7 +328,21 @@ export class InvestorService implements IInvestorService {
             const franchises=await this._applicationRepo.getApprovedFranchisesByInvestor(investorId);
             return franchises;
         } catch (error) {
-            console.log("Error get approved fanchises ",error);
+            console.log("Error get my franchises ",error);
+            throw error;
+        }
+    };
+    deleteAplication=async(applicationId:string)=>{
+        try {
+            const deleted=await this._applicationRepo.delete(applicationId);
+            if(!deleted){
+                throw {
+                    status: HttpStatus.BAD_REQUEST, message: Messages.APPLICATION_NOT_FOUND
+                };
+            }
+            return deleted;
+        } catch (error) {
+            console.log("Error delete application ",error);
             throw error;
         }
     };

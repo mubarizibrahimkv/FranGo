@@ -13,6 +13,7 @@ export class AdminService implements IAdminService {
             const industry = await this._IndustryCategoryRepo.create(data);
             return industry;
         } catch (error) {
+            console.error("Add Industry category Error:", error);
             throw error;
         }
     };
@@ -29,6 +30,7 @@ export class AdminService implements IAdminService {
             }
             return updated;
         } catch (error) {
+            console.error("Edit Industry category Error:", error);
             throw error;
         }
     };
@@ -38,6 +40,7 @@ export class AdminService implements IAdminService {
             console.log(industries);
             return industries;
         } catch (error) {
+            console.error("Get Industry category Error:", error);
             throw error;
         }
     };
@@ -53,6 +56,7 @@ export class AdminService implements IAdminService {
             }
             return deleted;
         } catch (error) {
+            console.error("Delete Industry category Error:", error);
             throw error;
         }
     };
@@ -61,6 +65,7 @@ export class AdminService implements IAdminService {
             const reports=await this._reportRepo.findAllWithCompanyAndInvestor();
             return reports;
         } catch (error) {
+            console.error("Get Reports Error:", error);
             throw error;
         }
     };
@@ -69,6 +74,7 @@ export class AdminService implements IAdminService {
             const notifications=await this._notificationRepo.findByUserId(userId);
             return notifications||[];
         } catch (error) {
+            console.error("Get admin Notification Error:", error);
             throw error;
         }
     };
@@ -80,6 +86,7 @@ export class AdminService implements IAdminService {
             }
             return notification;
         } catch (error) {
+            console.error("Edit admin Notification Error:", error);
             throw error;
         }
     };

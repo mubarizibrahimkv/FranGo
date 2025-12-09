@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { IIndustryCategoryRepo } from "../interface/ṛepository/adminIndustryCategoryInterface";
 import IndustryCategory, { IIndustryCategory } from "../models/industryCategoryModel";
 import { BaseRepository } from "./baseRepository";

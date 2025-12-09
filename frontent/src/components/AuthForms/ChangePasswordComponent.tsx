@@ -3,6 +3,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { changePassword } from "../../services/auth";
 
+interface FormErrors {
+  password?: string;
+  confirmPassword?: string;
+}
+
 const ChangePasswordComponent: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -20,9 +25,8 @@ const ChangePasswordComponent: React.FC = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  console.log(email, role, "email in chage passowrkd forntent");
   const validate = () => {
-    const newErrors: any = {};
+    const newErrors: FormErrors = {};
     if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
@@ -54,8 +58,9 @@ const ChangePasswordComponent: React.FC = () => {
       } else {
         toast.error("Failed to change password");
       }
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 

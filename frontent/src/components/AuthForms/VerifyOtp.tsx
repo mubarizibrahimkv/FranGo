@@ -84,12 +84,9 @@ const VerifyOtp = () => {
       if (!user) {
         setOtpError("OTP verification is failed.Please try again");
       }
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Something went wrong";
-      toast.error(errorMessage);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -102,9 +99,9 @@ const VerifyOtp = () => {
       toast.success(data.message);
       setTimLeft(120);
       setOtpError("");
-    } catch (error: any) {
-      const errorMsg = error?.response?.data?.message || "Failed to resend OTP";
-      toast.error(errorMsg);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 

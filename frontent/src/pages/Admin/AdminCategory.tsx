@@ -39,9 +39,9 @@ const AdminCategory = () => {
       } else {
         toast.error(result.error || "Something went wrong");
       }
-    } catch (error: any) {
-      console.error(error);
-      toast.error(error.message);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 

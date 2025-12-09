@@ -35,8 +35,9 @@ const Investors: React.FC = () => {
         setInvestors(response.investors);
         setPage(response.currentPage);
         setTotalPages(response.totalPages);
-      } catch (error: any) {
-        toast.error(error.message || "Failed to fetch companies");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        toast.error(message);
       }
     };
     loadCompanies();
@@ -55,8 +56,9 @@ const Investors: React.FC = () => {
           ),
         );
       }
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update company status");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 

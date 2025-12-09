@@ -63,7 +63,7 @@ const VerifyEmailPage = () => {
             setLoading(false);
           }
         })
-        .catch((err: any) => {
+        .catch((err) => {
           toast.error(err?.response?.data?.message || "Verification failed");
           setLoading(false);
         });
@@ -93,9 +93,9 @@ const VerifyEmailPage = () => {
         );
         toast.info("A new verification email has been sent to your inbox");
       }
-    } catch (err: any) {
-      console.error("Error in resend:", err);
-      toast.error(err?.response?.data?.message || "Verifications failed");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     } finally {
       setIsResending(false);
       setEmailSent(true);

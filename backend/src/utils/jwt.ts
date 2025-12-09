@@ -1,5 +1,12 @@
 import jwt from "jsonwebtoken";
 
+
+export interface JwtPayload {
+  id: string;
+  role: string;
+}
+
+
 export const generateToken = (id: string, role: string | undefined): string => {
 
     // logger.info(`Generating Access Token - id: ${id}, isAdmin: ${isAdmin}`);

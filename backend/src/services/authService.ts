@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { generateRefreshToken, generateToken, verifyRefreshToken } from "../utils/jwt";
+import { generateRefreshToken, generateToken, JwtPayload, verifyRefreshToken } from "../utils/jwt";
 import { IInvestor } from "../models/investorModel";
 import { IAuthService, IError } from "../interface/service/authInterface";
 import { IAuthRepo } from "../interface/ṛepository/authRepositoryInterface";
@@ -34,6 +34,7 @@ export class AuthService implements IAuthService {
 
       return { user, token, refreshToken };
     } catch (error) {
+      console.log("Error in register", error);
       throw error;
     }
   }
@@ -120,13 +121,13 @@ export class AuthService implements IAuthService {
 
 
   async refreshToken(refreshToken: string) {
-    if (!refreshToken) throw new Error(Messages.NO_REFRESH_TOKEN);
+  if (!refreshToken) throw new Error(Messages.NO_REFRESH_TOKEN);
 
-    const decoded: any = verifyRefreshToken(refreshToken);
-    const newAccessToken = generateToken(decoded.id, decoded.role);
+  const decoded = verifyRefreshToken(refreshToken) as JwtPayload; 
+  const newAccessToken = generateToken(decoded.id, decoded.role);
 
-    return newAccessToken;
-  }
+  return newAccessToken;
+}
 
   forgotPassword = async (email: string) => {
     try {
@@ -146,6 +147,7 @@ export class AuthService implements IAuthService {
 
       return investor;
     } catch (error) {
+      console.log("Error in forgot password", error);
       throw error;
     }
   };
@@ -165,6 +167,7 @@ export class AuthService implements IAuthService {
 
       return investor;
     } catch (error) {
+      console.log("Error in change password", error);
       throw error;
     }
   };

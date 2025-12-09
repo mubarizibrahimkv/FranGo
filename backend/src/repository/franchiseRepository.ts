@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { FilterQuery, SortOrder } from "mongoose";
 import { IFranchiseRepo } from "../interface/ṛepository/franchiseRepoInterface";
 import Franchise, { IFranchise } from "../models/franchiseModel";
 import { BaseRepository } from "./baseRepository";
@@ -11,7 +11,10 @@ export class FranchiseRepo extends BaseRepository<IFranchise> implements IFranch
         const franchises = await Franchise.find({ company: new mongoose.Types.ObjectId(companyId) }).skip(skip).limit(limit).lean();
         return franchises;
     }
-    async findAllWithCompany(query: any, sortOption: any) {
+    async findAllWithCompany(
+        query: FilterQuery<IFranchise>,
+        sortOption: Record<string, SortOrder>
+    ) {
         return await Franchise.find(query)
             .populate({
                 path: "company",

@@ -4,7 +4,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
-import { User, DollarSign, LogOut, LogInIcon } from "lucide-react";
+import { User, LogOut, LogInIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import { logoutUser, setUser } from "../../redux/slice/authSlice";
@@ -47,9 +47,6 @@ const Navbar: React.FC = () => {
             }),
           );
         }
-        // else {
-        //   navigate("/");
-        // }
       } catch (error) {
         console.log("Error fetching Google user", error);
         navigate("/investor/login");
@@ -179,21 +176,12 @@ const Navbar: React.FC = () => {
                               openLoginModale();
                             }}
                           >
-                            <LogInIcon size={16} /> Logins
+                            <LogInIcon size={16} /> Login
                           </div>
                           {isOpenLoginModal && (
                             <AuthChoiceModal onClose={closeLoginModale} />
                           )}
                         </div>
-                      </li>
-                      <li>
-                        <Link
-                          to="/subscription"
-                          className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
-                          onClick={() => setIsClickedOpen(false)}
-                        >
-                          <DollarSign size={16} /> Subscription
-                        </Link>
                       </li>
                       <li>
                         <button

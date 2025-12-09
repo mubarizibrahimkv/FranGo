@@ -1,5 +1,5 @@
 import { ICompanyAuthRepo } from "../interface/ṛepository/companyAuthRepositoryInterface";
-import Company from "../models/companyModel";
+import Company, { ICompany } from "../models/companyModel";
 
 export class CompanyAuthRepository implements ICompanyAuthRepo {
     async registerUser(
@@ -42,7 +42,7 @@ export class CompanyAuthRepository implements ICompanyAuthRepo {
             throw error;
         }
     }
-    async saveUser(company: any) {
+    async saveUser(company: ICompany) {
         return await company.save();
     }
 }

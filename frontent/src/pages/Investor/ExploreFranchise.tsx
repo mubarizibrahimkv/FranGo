@@ -169,7 +169,7 @@ const ExploreFranchise = () => {
     navigate(`/franchise/${id}`);
   };
 
-  const onSubmitFilter = (filters: any) => {
+  const onSubmitFilter = (filters: IFilters) => {
     setFilters(filters);
     setIsFilterPanelOpen(false);
   };
@@ -527,9 +527,6 @@ const ExploreFranchise = () => {
           )}
         </div>
 
-
-
-        
         <div className="flex justify-center mt-8 items-center gap-2 mb-4">
           {page > 1 && (
             <div

@@ -32,8 +32,9 @@ const AdminDashboard: React.FC = () => {
       setCompanies(response.companies);
       setPage(response.currentPage);
       setTotalPages(response.totalPages);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to fetch companies");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 
@@ -53,8 +54,9 @@ const AdminDashboard: React.FC = () => {
           ),
         );
       }
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update company status");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 

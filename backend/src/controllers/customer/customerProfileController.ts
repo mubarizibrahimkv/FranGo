@@ -11,7 +11,7 @@ export class CustomerProfileController implements ICustomerProfileController {
         const { customerId } = req.params;
         const { formData } = req.body;
         try {
-            const address = await this._profileService.addAddress(customerId, formData);
+            await this._profileService.addAddress(customerId, formData);
             res.status(HttpStatus.OK).json({ success: true });
         } catch (error) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -48,7 +48,7 @@ export class CustomerProfileController implements ICustomerProfileController {
         const { addressId } = req.params;
         const { formData } = req.body;
         try {
-            const edited = await this._profileService.editAddress(addressId, formData);
+           await this._profileService.editAddress(addressId, formData);
             res.status(HttpStatus.OK).json({ success: true });
         } catch (error) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -60,7 +60,7 @@ export class CustomerProfileController implements ICustomerProfileController {
     deleteAddress = async (req: Request, res: Response) => {
         const { addressId } = req.params;
         try {
-            const deleted = await this._profileService.deleteAddress(addressId);
+           await this._profileService.deleteAddress(addressId);
             res.status(HttpStatus.OK).json({ success: true });
         } catch (error) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({

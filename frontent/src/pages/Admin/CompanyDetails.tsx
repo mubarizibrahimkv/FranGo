@@ -20,10 +20,9 @@ const CompanyDetails = () => {
           const result = await getCompanyDetails(id);
           setUser(result.company);
         }
-      } catch (err: any) {
-        const errMsg =
-          err?.response?.data?.message || err.message || "Something went wrong";
-        toast.error(errMsg);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        toast.error(message);
       }
     };
     fetchInvestor();

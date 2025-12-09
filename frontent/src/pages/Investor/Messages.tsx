@@ -8,6 +8,11 @@ import Navbar from "../../components/InvestorComponents/Navbar";
 import type { IconversationWithUser } from "../../types/common";
 import { socket } from "../../utils/socket";
 
+interface UnreadUpdate {
+  channel: string;
+  unreadCount: number;
+}
+
 const Chat: React.FC = () => {
   const [convesation, setConversation] = useState<IconversationWithUser[]>([]);
   const user = useSelector((state: RootState) => state.user);
@@ -27,7 +32,7 @@ const Chat: React.FC = () => {
 
       setUnreadCounts((prev) => {
         const updated = { ...prev };
-        res.conversations.forEach((c: any) => {
+        res.conversations.forEach((c: UnreadUpdate) => {
           if (!(c.channel in prev)) {
             updated[c.channel] = c.unreadCount || 0;
           }
@@ -69,7 +74,7 @@ const Chat: React.FC = () => {
   useEffect(() => {
     socket.connect();
 
-    const handleUnreadUpdate = ({ channel, unreadCount }: any) => {
+    const handleUnreadUpdate = ({ channel, unreadCount }: UnreadUpdate) => {
       console.log("CHANNEL:", channel, "COUNT:", unreadCount);
       setUnreadCounts((prev) => ({
         ...prev,

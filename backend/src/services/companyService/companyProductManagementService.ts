@@ -77,6 +77,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
                 message: "Product categories added successfully",
             };
         } catch (error) {
+            console.error("Add Product category Error:", error);
             throw error;
         }
     };
@@ -85,6 +86,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
             const products = await this._productCategoryRepo.findAllWithCategoryHierarchy(companyId);
             return products;
         } catch (error) {
+            console.error("Get all Product category Error:", error);
             throw error;
         }
     }
@@ -110,6 +112,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
             }
             return updatedCategory;
         } catch (error) {
+            console.error("Edit Product category Error:", error);
             throw error;
         }
     }
@@ -122,6 +125,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
             }
             return deletedCategory;
         } catch (error) {
+            console.error("Delete Product category Error:", error);
             throw error;
         }
     }
@@ -175,6 +179,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
 
             return product;
         } catch (error) {
+            console.error("Add Product Error:", error);
             throw error;
         }
     };
@@ -228,6 +233,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
             return updatedProduct;
 
         } catch (err) {
+            console.error("Update Product Error:", err);
             throw err;
         }
     };
@@ -239,6 +245,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
                 throw new Error("Product not found");
             } return product;
         } catch (error) {
+           console.error("Delete Product Error:", error);
             throw error;
         }
     };
@@ -256,7 +263,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
             const totalPages = Math.ceil(totalProducts / limit);
             return { products, totalPages };
         } catch (error) {
-            console.error("Add Product Error:", error);
+            console.error("Get Products Error:", error);
             throw error;
         }
     };

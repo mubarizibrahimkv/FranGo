@@ -41,7 +41,7 @@ export class AuthRepository extends BaseRepository<IInvestor> implements IAuthRe
         }
     }
 
-    async saveUser(user: any) {
+    async saveUser(user: IInvestor) {
         return await user.save();
     }
 }

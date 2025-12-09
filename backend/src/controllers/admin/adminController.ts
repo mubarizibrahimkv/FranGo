@@ -14,7 +14,7 @@ export class Admincontroller implements IAdminControler {
             if (file) {
                 data.image = file.path; 
             }
-            const response = await this._adminService.addIndustryCategory(data);
+            await this._adminService.addIndustryCategory(data);
             res.status(HttpStatus.OK).json({ success: true });
             return;
         } catch (error: unknown) {
@@ -36,10 +36,7 @@ export class Admincontroller implements IAdminControler {
                 data.image = req.file.path;
             }
 
-            console.log(data);  // ❌ Before → {}   ✔ Now → real object
-
-            console.log(data, "iuytfdxnjuytrdcvbutfvtfvytg");
-            const response = await this._adminService.editIndustryCategory(data);
+            await this._adminService.editIndustryCategory(data);
             res.status(HttpStatus.OK).json({ success: true });
             return;
         } catch (error: unknown) {
@@ -64,7 +61,7 @@ export class Admincontroller implements IAdminControler {
     deleteIndustryCategory = async (req: Request, res: Response) => {
         const { categoryId } = req.params;
         try {
-            const industries = await this._adminService.deleteIndustryCategory(categoryId);
+            await this._adminService.deleteIndustryCategory(categoryId);
             res.status(HttpStatus.OK).json({ success: true });
             return;
         } catch (error: unknown) {

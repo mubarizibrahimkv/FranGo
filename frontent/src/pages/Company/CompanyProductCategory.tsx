@@ -103,11 +103,10 @@ const AdminProductCategory = () => {
       } else {
         setError(res.message);
       }
-    } catch (error: unknown) {
-      const err = error as any;
-      const msg =
-        err?.response?.data?.message || err?.message || "Something went wrong";
-      setError(msg);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setError(message);
+      toast.error(message);
     }
   };
 

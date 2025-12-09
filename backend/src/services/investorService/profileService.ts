@@ -10,6 +10,10 @@ import HttpStatus from "../../utils/httpStatusCode";
 import { Messages } from "../../constants/messages";
 import { INotificationRepo } from "../../interface/ṛepository/notificationRepoInterface";
 
+interface ICategory {
+  categoryName: string;
+}
+
 export class ProfileService implements IProfileService {
     constructor(private _authRepo: IAuthRepo, private _profileRepo: IProfileRepo, private _industryCategoryRepo: IIndustryCategoryRepo, private _notificationRepo: INotificationRepo) { }
     getProfile = async (investorId: string) => {
@@ -25,10 +29,10 @@ export class ProfileService implements IProfileService {
             const seekerObj = seeker.toObject();
 
             seekerObj.previousBusiness = seekerObj.previousBusiness?.map(
-                (cat: any) => cat.categoryName
+                (cat: ICategory) => cat.categoryName
             );
             seekerObj.preferredFranchiseType = seekerObj.preferredFranchiseType?.map(
-                (cat: any) => cat.categoryName
+                (cat: ICategory) => cat.categoryName
             );
             return { seeker: seekerObj, industryCategory };
         } catch (error) {

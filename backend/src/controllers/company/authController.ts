@@ -9,6 +9,7 @@ dotenv.config();
 import HttpStatus from "../../utils/httpStatusCode";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import { Messages } from "../../constants/messages";
+import { AuthenticatedUser } from "../../config/passport";
 
 export interface formData {
   companyName: string;
@@ -37,7 +38,7 @@ export class CompanyAuthController implements ICompanyAuthController {
         return;
       }
 
-      const { company, token, refreshToken } =
+      const { token, refreshToken } =
         await this._companyAuthSerice.register(
           formData,
           registrationProofFile.path,
@@ -173,9 +174,9 @@ export class CompanyAuthController implements ICompanyAuthController {
       return;
     }
 
-    const user = req.user as any;
-    const accessToken = generateToken(user.id, user.isAdmin);
-    const refreshToken = generateRefreshToken(user.id, user.isAdmin);
+    const user = req.user as AuthenticatedUser;
+    const accessToken = generateToken(user.id, user.role);
+    const refreshToken = generateRefreshToken(user.id, user.role);
 
     res.cookie("access_token", accessToken, {
       httpOnly: true,
@@ -201,7 +202,7 @@ export class CompanyAuthController implements ICompanyAuthController {
         return;
       }
 
-      const user = req.user as any;
+      const user = req.user as AuthenticatedUser;
       res.json({
         _id: user.id,
         userName: user.companyName || user.userName,
@@ -209,7 +210,7 @@ export class CompanyAuthController implements ICompanyAuthController {
         email: user.email,
         isAdmin: user.isAdmin || false,
         role: user.role,
-        status:user.status,
+        // status:user.status,
         token: req.cookies.access_token || null,
       });
     } catch (error: unknown) {

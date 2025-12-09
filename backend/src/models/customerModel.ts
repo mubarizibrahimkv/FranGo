@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, HydratedDocument, Types } from "mongoose";
+import mongoose, { Schema, Document, Types } from "mongoose";
 
 export interface ICustomer extends Document {
   _id: Types.ObjectId;

@@ -30,9 +30,9 @@ const Chat: React.FC = () => {
       setUnreadCounts((prev) => {
         const updated = { ...prev };
 
-        res.conversations.forEach((c: any) => {
+        res.conversations.forEach((c: IconversationWithUser) => {
           if (!(c.channel in prev)) {
-            updated[c.channel] = c.unreadCount || 0;
+            updated[c.channel] = Number(c.unreadCount ?? 0);
           }
         });
 

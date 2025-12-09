@@ -302,7 +302,6 @@ export class CommpanyProfileService implements IcompanyService {
         razorpayPaymentId: string,
         razorpayOrderId: string,
         razorpaySignature: string,
-        amount: string
     ) => {
         const generatedSignature = crypto
             .createHmac("sha256", process.env.RAZORPAY_SECRET_KEY!)
@@ -333,6 +332,7 @@ export class CommpanyProfileService implements IcompanyService {
             const notifications = await this._notificationRepo.findByUserId(userId);
             return notifications || [];
         } catch (error) {
+            console.log("Error in company get notifications ", error);
             throw error;
         }
     };
@@ -344,7 +344,8 @@ export class CommpanyProfileService implements IcompanyService {
             }
             return notification;
         } catch (error) {
+            console.log("Error in company update notifications", error);
             throw error;
         }
     };
-}  
+}   

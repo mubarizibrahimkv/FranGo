@@ -17,4 +17,5 @@ export interface IInvestorService {
     getNotification( investorId: string): Promise<INotification[]>
     updateNotification( notificationId: string): Promise<INotification>
     getMyFranchises( investorId: string): Promise<(IApplication&{franchise:IFranchise})[]|null>
+    deleteAplication( applicationId: string): Promise<IFranchise|null>
 }

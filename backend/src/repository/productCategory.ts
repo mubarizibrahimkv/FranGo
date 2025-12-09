@@ -76,6 +76,7 @@ export class ProductCategoryRepo implements IProductCategoryRepo {
 
       return updated;
     } catch (error) {
+      console.error("Edit Product category Error:", error);
       throw error;
     }
   }
@@ -89,6 +90,7 @@ export class ProductCategoryRepo implements IProductCategoryRepo {
 
       return deleted;
     } catch (error) {
+       console.error("Delete Product category Error:", error);
       throw error;
     }
   }
@@ -96,6 +98,6 @@ export class ProductCategoryRepo implements IProductCategoryRepo {
     return await ProductCategory.findById(categoryId);
   }
   async findByProductCategory(productCategoryId:string){
-      return await ProductCategory.findOne({});
+      return await ProductCategory.findOne({productCategoryId});
   }
 }

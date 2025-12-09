@@ -32,8 +32,9 @@ const Address = () => {
           console.log(addresses.customer);
           setAddress(addresses.customer);
         }
-      } catch (error: any) {
-        toast.error(error);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        toast.error(message);
       }
     };
     getAddreses();
@@ -61,12 +62,9 @@ const Address = () => {
       }
       setIsModalOpen(false);
       setReload((prev) => !prev);
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Something went wrong";
-      toast.error(errorMessage);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 
@@ -82,12 +80,9 @@ const Address = () => {
         setReload((prev) => !prev);
         toast.success("Address Deleted Successfully");
       }
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Something went wrong";
-      toast.error(errorMessage);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 

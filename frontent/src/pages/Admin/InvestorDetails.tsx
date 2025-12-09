@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import type { Investor } from "../../types/investor";
 import { useParams } from "react-router-dom";
 import { getInvestorDetails } from "../../services/admin/manageUsers";
@@ -20,10 +20,9 @@ const InvestorDetails = () => {
           console.log(result.investor, "invstos jhjhjjhj in details page");
           console.log(user, "invstos in details page");
         }
-      } catch (err: any) {
-        const errMsg =
-          err?.response?.data?.message || err.message || "Something went wrong";
-        toast.error(errMsg);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        toast.error(message);
       }
     };
     fetchInvestor();

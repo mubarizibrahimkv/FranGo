@@ -26,7 +26,7 @@ const ChatModal = ({
     if (!isOpen) return;
     socket.emit("join_channel", channel);
     console.log("Joined channel:", channel);
-  }, [channel]);
+  }, [channel, isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;

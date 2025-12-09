@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { FilterQuery, Types } from "mongoose";
 import Product, { IProduct } from "../models/productModel";
 import { IProductRepo } from "../interface/ṛepository/productRepoInterface";
 import { BaseRepository } from "./baseRepository";
@@ -24,7 +24,7 @@ export class ProductRepo extends BaseRepository<IProduct> implements IProductRep
     category: string,
     name: string
 ) {
-    const query: any = {
+    const query: FilterQuery<IProduct> = {
         company: companyId,
         productCategory: category,
         name: { $regex: new RegExp(`^${name}$`, "i") }

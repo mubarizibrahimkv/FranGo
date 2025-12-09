@@ -50,12 +50,9 @@ const ProfilePage: React.FC = () => {
         setShowChangePassModal(false);
         toast.success("Password Changed Successfully");
       }
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Something went wrong";
-      toast.error(errorMessage);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 

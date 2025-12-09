@@ -158,13 +158,11 @@ const ProductCategoryModal: React.FC<ProductCategoryModalProps> = ({
             )}
           </div>
 
-          {/* Product Category Name (Multiple) */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Product Category Names <span className="text-red-500">*</span>
             </label>
 
-            {/* Input + Add button */}
             <div className="flex gap-2">
               <input
                 type="text"

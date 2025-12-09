@@ -8,26 +8,25 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 import type { IFranchise } from "../../types/company";
 import { useNavigate } from "react-router-dom";
 
-interface IMyFranchises{
-  _id:string
-  franchise:IFranchise
+interface IMyFranchises {
+  _id: string;
+  franchise: IFranchise;
 }
 
 const MyFranchises = () => {
-  const [franchises, setFranchises] = useState<IMyFranchises[]|[]>([]);
+  const [franchises, setFranchises] = useState<IMyFranchises[] | []>([]);
   const investorId = useSelector((state: RootState) => state.user._id);
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchMyFranchises = async () => {
       const franchises = await getMyFranchises(investorId);
-      console.log(franchises.franchises,"my fanchisess")
+      console.log(franchises.franchises, "my fanchisess");
       setFranchises(franchises.franchises);
     };
     fetchMyFranchises();
-  }, []);
+  }, [investorId]);
 
-
-   const handleNaviagation = (id: string) => {
+  const handleNaviagation = (id: string) => {
     navigate(`/franchise/${id}`);
   };
 
@@ -36,8 +35,7 @@ const MyFranchises = () => {
       <Navbar />
       <div>
         <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
-          <span className="text-red-500 text-2xl">•</span> Recommended
-          Franchises
+          <span className="text-red-500 text-2xl">•</span> Your Franchises
         </h2>
         <p className="text-gray-600 mb-6">Explore franchises</p>
 
@@ -93,7 +91,10 @@ const MyFranchises = () => {
                     <FaTags />
                     Category:{" "}
                     <span className="font-semibold text-[#011E2B]">
-                      {franchise.franchise.company?.industryCategory?.categoryName}
+                      {
+                        franchise.franchise.company?.industryCategory
+                          ?.categoryName
+                      }
                     </span>
                   </p>
                 </div>

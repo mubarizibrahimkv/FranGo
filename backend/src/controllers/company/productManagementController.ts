@@ -9,7 +9,7 @@ export class ProductManagementController {
         const { companyId } = req.params;
         const { data } = req.body;
         try {
-            const { success, createdProducts, message } = await this._productManagementService.addProductCategory(companyId, data);
+            const { success, message } = await this._productManagementService.addProductCategory(companyId, data);
             res.status(HttpStatus.OK).json({ success, message });
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -104,14 +104,17 @@ export class ProductManagementController {
 
     editProduct = async (req: Request, res: Response) => {
         try {
-            const { companyId,productId } = req.params;
-            let { category, name, price, description, removedImages } = req.body;
+            const { companyId, productId } = req.params;
+            const { category, name, price, description, removedImages: removedImagesRaw } = req.body;
+
+            let removedImages = removedImagesRaw;
 
 
             if (removedImages) {
                 try {
                     removedImages = JSON.parse(removedImages);
                 } catch (err) {
+                    console.log(err);
                     removedImages = [];
                 }
             } else {
@@ -152,7 +155,7 @@ export class ProductManagementController {
     deleteProduct = async (req: Request, res: Response) => {
         try {
             const { productId } = req.params;
-            const products = await this._productManagementService.deleteProduct(productId);
+            await this._productManagementService.deleteProduct(productId);
             res.status(HttpStatus.OK).json({ success: true });
         } catch (error: unknown) {
             if (error instanceof Error) {

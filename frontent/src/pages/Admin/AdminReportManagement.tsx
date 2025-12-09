@@ -13,8 +13,9 @@ const AdminReportManagement = () => {
         const res = await getReports();
         console.log(res.reports, "reports");
         setReports(res.reports);
-      } catch (error: any) {
-        toast.error(error);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        toast.error(message);
       }
     };
     fetchReports();
@@ -26,8 +27,9 @@ const AdminReportManagement = () => {
       if (response.success) {
         toast.success(isBlocked ? "Company Blocked" : "Company Unblocked");
       }
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update company status");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
     }
   };
 

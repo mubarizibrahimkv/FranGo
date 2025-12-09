@@ -91,11 +91,10 @@ const CompanyRegister = () => {
       } else {
         toast.error("Signup failed. Please try again.");
       }
-    } catch (err: any) {
-      const errMsg =
-        err?.response?.data?.message || err.message || "Something went wrong";
-      toast.error(errMsg);
-      setError(errMsg);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      toast.error(message);
+      setError(message);
     } finally {
       setLoading(false);
     }
