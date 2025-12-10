@@ -1,13 +1,13 @@
 import { AxiosError } from "axios";
 import api from "./api";
-import { INVESTOR_BASE_ROUTE } from "../constants/apiRoutes";
+import { INVESTOR_ROUTES } from "../constants/apiRoutes";
 import type { IApiParams } from "../pages/Investor/ExploreFranchise";
 import type { Investor } from "../types/investor";
 
 export const getFranchises = async (params?: IApiParams, page?: number) => {
   try {
     const res = await api.get(
-      `${INVESTOR_BASE_ROUTE}/franchises?page=${page}`,
+       INVESTOR_ROUTES.GET_FRANCHISES(page),
       { params },
     );
     return res.data;
@@ -20,7 +20,7 @@ export const getFranchises = async (params?: IApiParams, page?: number) => {
 };
 export const getFranchiseDetails = async (id: string) => {
   try {
-    const res = await api.get(`${INVESTOR_BASE_ROUTE}/franchise/${id}`);
+    const res = await api.get( INVESTOR_ROUTES.GET_FRANCHISE_DETAILS(id));
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -36,7 +36,10 @@ export const applyAApplication = async (
 ) => {
   try {
     const res = await api.post(
-      `${INVESTOR_BASE_ROUTE}/franchise/${investorId}/${franchiseId}`,
+      INVESTOR_ROUTES.APPLY_APPLICATION(
+        investorId,
+        franchiseId,
+      ),
       { formData },
     );
     return res.data;
@@ -50,7 +53,7 @@ export const applyAApplication = async (
 export const getAApplication = async (investorId: string, page: number) => {
   try {
     const res = await api.get(
-      `${INVESTOR_BASE_ROUTE}/applications/${investorId}?page=${page}`,
+      INVESTOR_ROUTES.GET_APPLICATIONS(investorId, page),
     );
     return res.data;
   } catch (error) {
@@ -64,7 +67,7 @@ export const getMyFranchises = async (investorId: string) => {
   try {
     console.log(investorId, "invevestori in my franshi");
     const res = await api.get(
-      `${INVESTOR_BASE_ROUTE}/myFranchises/${investorId}`,
+     INVESTOR_ROUTES.GET_MY_FRANCHISES(investorId),
     );
     return res.data;
   } catch (error) {
@@ -77,7 +80,7 @@ export const getMyFranchises = async (investorId: string) => {
 export const deleteApplication = async (applicationId: string) => {
   try {
     const res = await api.delete(
-      `${INVESTOR_BASE_ROUTE}/applications/${applicationId}`,
+      INVESTOR_ROUTES.DELETE_APPLICATION(applicationId),
     );
     return res.data;
   } catch (error) {
@@ -98,7 +101,10 @@ export const payAdvance = async (
 ) => {
   try {
     const res = await api.post(
-      `${INVESTOR_BASE_ROUTE}/applications/payAdvance/${investorId}/${applicationId}`,
+      INVESTOR_ROUTES.PAY_ADVANCE(
+        investorId,
+        applicationId,
+      ),
       { data },
     );
     return res.data;
@@ -120,7 +126,11 @@ export const verifyPayAdvanceOrder = async (
 ) => {
   try {
     const res = await api.post(
-      `/${INVESTOR_BASE_ROUTE}/application/verifyPayAdvance/${investorId}/${applicationId}`,
+           INVESTOR_ROUTES.VERIFY_PAY_ADVANCE(
+        investorId,
+        applicationId,
+      ),
+
       { paymentId, orderId, signature, amount },
     );
     return res.data;
@@ -139,7 +149,7 @@ export const applyReport = async (
 ) => {
   try {
     const res = await api.post(
-      `/${INVESTOR_BASE_ROUTE}/report/franchise/${investorId}`,
+      INVESTOR_ROUTES.APPLY_REPORT(investorId),
       { franchiseId, reason },
     );
     return res.data;

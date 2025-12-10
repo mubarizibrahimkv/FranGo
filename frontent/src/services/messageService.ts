@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import api from "./api";
-import { MESSAGE_BASE_ROUTE } from "../constants/apiRoutes";
+import {  MESSAGE_ROUTES } from "../constants/apiRoutes";
 
 export const sendMessage = async (
   channel: string,
@@ -11,7 +11,7 @@ export const sendMessage = async (
   imageUrl?: string,
 ) => {
   try {
-    const response = await api.post(`${MESSAGE_BASE_ROUTE}/chats/messages`, {
+    const response = await api.post(MESSAGE_ROUTES.SEND_MESSAGE, {
       channel,
       message,
       senderId,
@@ -28,7 +28,7 @@ export const sendMessage = async (
 };
 export const fetchMessages = async (senderId: string, receiverId: string) => {
   try {
-    const response = await api.get(`${MESSAGE_BASE_ROUTE}/chats/messages`, {
+    const response = await api.get(MESSAGE_ROUTES.FETCH_MESSAGES, {
       params: { senderId, receiverId },
     });
     return response.data;
@@ -40,7 +40,7 @@ export const fetchMessages = async (senderId: string, receiverId: string) => {
 };
 export const getConversation = async (userId: string) => {
   try {
-    const response = await api.get(`${MESSAGE_BASE_ROUTE}/chats/approved`, {
+    const response = await api.get(MESSAGE_ROUTES.GET_CONVERSATION, {
       params: { userId },
     });
     return response.data;

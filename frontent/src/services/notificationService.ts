@@ -1,11 +1,12 @@
 import { AxiosError } from "axios";
 import api from "./api";
+import { NOTIFICATION_ROUTES } from "../constants/apiRoutes";
 
 export type IRole = "admin" | "company" | "investor" | "customer";
 
 export const getNotifications = async (role: IRole, userId: string) => {
   try {
-    const response = await api.get(`${role}/${userId}/notifications`);
+    const response = await api.get( NOTIFICATION_ROUTES.GET_ALL(role, userId),);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -24,7 +25,7 @@ export const updateNotification = async (
     "roel and notificaiton id respectively in seriver",
   );
   try {
-    const response = await api.put(`${role}/notifications/${notificationId}`);
+    const response = await api.put( NOTIFICATION_ROUTES.UPDATE(role, notificationId));
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {

@@ -1,11 +1,11 @@
 import { AxiosError } from "axios";
 import api from "../api";
 import type { Company, IFranchise } from "../../types/company";
-import { COMPANY_BASE_ROUTE } from "../../constants/apiRoutes";
+import { COMPANY, COMPANY_BASE_ROUTE } from "../../constants/apiRoutes";
 
 export const fetchCompany = async (companyId: string) => {
   try {
-    const res = await api.get(`/${COMPANY_BASE_ROUTE}/profile/${companyId}`);
+    const res = await api.get(COMPANY.PROFILE(companyId));
     return res.data;
   } catch (error) {
     console.log("Error fetching company :", error);
@@ -16,7 +16,7 @@ export const fetchCompany = async (companyId: string) => {
 export const getFranchise = async (companyId: string, page: number) => {
   try {
     const res = await api.get(
-      `/${COMPANY_BASE_ROUTE}/franchise/${companyId}?page=${page}`,
+      COMPANY.FRANCHISE.GET(companyId, page),
     );
     return res.data;
   } catch (error) {
@@ -27,7 +27,7 @@ export const getFranchise = async (companyId: string, page: number) => {
 export const getSpecificFranchise = async (franchiseId: string) => {
   try {
     const res = await api.get(
-      `/${COMPANY_BASE_ROUTE}/franchise/getFranchise/${franchiseId}`,
+      COMPANY.FRANCHISE.SPECIFIC(franchiseId),
     );
     return res.data;
   } catch (error) {
@@ -39,7 +39,7 @@ export const getSpecificFranchise = async (franchiseId: string) => {
 export const addFranchise = async (companyId: string, data: IFranchise) => {
   try {
     const res = await api.post(
-      `/${COMPANY_BASE_ROUTE}/franchise/${companyId}`,
+     COMPANY.FRANCHISE.ADD(companyId),
       { data },
     );
     return res.data;
@@ -51,7 +51,7 @@ export const addFranchise = async (companyId: string, data: IFranchise) => {
 export const editFranchise = async (franchiseId: string, data: IFranchise) => {
   try {
     const res = await api.put(
-      `/${COMPANY_BASE_ROUTE}/franchise/${franchiseId}`,
+      COMPANY.FRANCHISE.EDIT(franchiseId),
       data,
     );
     return res.data;
@@ -63,7 +63,7 @@ export const editFranchise = async (franchiseId: string, data: IFranchise) => {
 export const deleteFranchise = async (franchiseId: string) => {
   try {
     const res = await api.delete(
-      `/${COMPANY_BASE_ROUTE}/franchise/${franchiseId}`,
+      COMPANY.FRANCHISE.DELETE(franchiseId),
     );
     return res.data;
   } catch (error) {
@@ -75,7 +75,7 @@ export const deleteFranchise = async (franchiseId: string) => {
 export const changeLogo = async (formData: FormData, companyId: string) => {
   try {
     const res = await api.put(
-      `/${COMPANY_BASE_ROUTE}/profile/${companyId}/changeLogo`,
+       COMPANY.PROFILE_CHANGE_LOGO(companyId),
       formData,
       {
         headers: {
@@ -99,7 +99,7 @@ export const changeLogo = async (formData: FormData, companyId: string) => {
 
 export const editProfile = async (companyData: Company, companyId: string) => {
   try {
-    const res = await api.put(`/${COMPANY_BASE_ROUTE}/profile/${companyId}`, {
+    const res = await api.put(COMPANY.PROFILE(companyId), {
       companyData,
     });
     return res.data;
@@ -124,7 +124,7 @@ export const reApply = async (id: string) => {
 export const getApplications = async (id: string, page: number) => {
   try {
     const res = await api.get(
-      `/${COMPANY_BASE_ROUTE}/application/${id}?page=${page}`,
+      COMPANY.APPLICATION.ALL(id, page),
     );
     return res.data;
   } catch (error) {
@@ -139,7 +139,7 @@ export const handleApplicationStatus = async (
   status: "rejected" | "approved" | "pending",
 ) => {
   try {
-    const res = await api.put(`/${COMPANY_BASE_ROUTE}/application/${id}`, {
+    const res = await api.put(COMPANY.APPLICATION.UPDATE(id), {
       status,
     });
     return res.data;
@@ -152,7 +152,7 @@ export const handleApplicationStatus = async (
 };
 export const getProductCategories = async (id: string) => {
   try {
-    const res = await api.get(`/${COMPANY_BASE_ROUTE}/productCategory/${id}`);
+    const res = await api.get(COMPANY.PRODUCT_CATEGORY.GET(id));
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -168,7 +168,7 @@ export const editProductCategories = async (
 ) => {
   try {
     const res = await api.put(
-      `/${COMPANY_BASE_ROUTE}/productCategory/${companyId}/${categoryId}`,
+ COMPANY.PRODUCT_CATEGORY.EDIT(companyId, categoryId),
       { newName },
     );
     return res.data;
@@ -185,7 +185,7 @@ export const deleteProductCategories = async (
 ) => {
   try {
     const res = await api.delete(
-      `/${COMPANY_BASE_ROUTE}/productCategory/${companyId}/${categoryId}`,
+      COMPANY.PRODUCT_CATEGORY.DELETE(companyId, categoryId),
     );
     return res.data;
   } catch (error) {
@@ -205,7 +205,7 @@ export const addProductCategories = async (
   },
 ) => {
   try {
-    const res = await api.post(`/${COMPANY_BASE_ROUTE}/productCategory/${id}`, {
+    const res = await api.post(COMPANY.PRODUCT_CATEGORY.ADD(id), {
       data,
     });
     return res.data;
@@ -220,7 +220,7 @@ export const addProductCategories = async (
 export const addProduct = async (companyId: string, data: FormData) => {
   try {
     const res = await api.post(
-      `/${COMPANY_BASE_ROUTE}/product/${companyId}`,
+      COMPANY.PRODUCT.ADD(companyId),
       data,
     );
     return res.data;
@@ -238,7 +238,7 @@ export const editProduct = async (
 ) => {
   try {
     const res = await api.put(
-      `/${COMPANY_BASE_ROUTE}/product/${companyId}/${productId}`,
+     COMPANY.PRODUCT.EDIT(companyId, productId),
       data,
     );
     return res.data;
@@ -251,7 +251,7 @@ export const editProduct = async (
 };
 export const deleteProduct = async (productId: string) => {
   try {
-    const res = await api.delete(`/${COMPANY_BASE_ROUTE}/product/${productId}`);
+    const res = await api.delete(COMPANY.PRODUCT.DELETE(productId));
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -266,7 +266,7 @@ export const createSubscriptionOrder = async (
 ) => {
   try {
     const res = await api.post(
-      `/${COMPANY_BASE_ROUTE}/subscription/${companyId}`,
+     COMPANY.SUBSCRIPTION.CREATE(companyId),
       { amount },
     );
     return res.data;
@@ -280,7 +280,7 @@ export const createSubscriptionOrder = async (
 export const getProducts = async (companyId: string, page: number) => {
   try {
     const res = await api.get(
-      `/${COMPANY_BASE_ROUTE}/product/${companyId}?page=${page}`,
+    COMPANY.PRODUCT.GET(companyId, page),
     );
     return res.data;
   } catch (error) {
@@ -299,7 +299,7 @@ export const verifySubscriptionOrder = async (
 ) => {
   try {
     const res = await api.post(
-      `/${COMPANY_BASE_ROUTE}/subscription/verify/${companyId}`,
+     COMPANY.SUBSCRIPTION.VERIFY(companyId),
       { paymentId, orderId, signature, amount },
     );
     return res.data;

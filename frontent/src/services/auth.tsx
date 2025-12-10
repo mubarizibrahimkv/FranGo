@@ -2,8 +2,8 @@ import api from "./api";
 import type { Role } from "../types/common";
 import axios, { AxiosError } from "axios";
 import {
-  COMPANY_BASE_ROUTE,
-  INVESTOR_BASE_ROUTE,
+  AUTH_ROUTES,
+  COMPANY_AUTH_ROUTES,
 } from "../constants/apiRoutes";
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -15,14 +15,14 @@ interface signUpData {
 }
 
 export const signupApi = async (data: signUpData) => {
-  const response = await api.post(`/${data.role}/auth/register`, data);
+  const response = await api.post(AUTH_ROUTES.REGISTER(data.role), data);
   const user = response.data;
   return user;
 };
 
 export const loginApi = async (email: string, password: string, role: Role) => {
   try {
-    const response = await api.post(`/${role}/auth/login`, { email, password });
+    const response = await api.post(AUTH_ROUTES.LOGIN(role), { email, password });
     return response.data;
   } catch (error) {
     console.log(error);
@@ -36,7 +36,7 @@ export const verifyOtp = async (data: {
   role: Role;
 }) => {
   try {
-    const response = await api.post(`/${data.role}/auth/verify-otp`, data);
+    const response = await api.post(AUTH_ROUTES.VERIFY_OTP(data.role), data);
     const user = response.data;
     return user;
   } catch (error) {
@@ -47,7 +47,7 @@ export const verifyOtp = async (data: {
 
 export const resendOtpApi = async (email: string, role: Role) => {
   try {
-    const response = await api.post(`/${role}/auth/resend-otp`, { email });
+    const response = await api.post(AUTH_ROUTES.RESEND_OTP(role), { email });
     return response.data;
   } catch (error) {
     console.log(error);
@@ -58,7 +58,7 @@ export const resendOtpApi = async (email: string, role: Role) => {
 export const companySignupApi = async (formData: FormData) => {
   try {
     const result = await api.post(
-      `/${COMPANY_BASE_ROUTE}/auth/register`,
+      AUTH_ROUTES.COMPANY_REGISTER,
       formData,
       {
         headers: {
@@ -76,7 +76,7 @@ export const companySignupApi = async (formData: FormData) => {
 export const verifyEmail = async (token: string) => {
   try {
     const company = await api.get(
-      `/${COMPANY_BASE_ROUTE}/auth/verify-email?token=${token}`,
+     AUTH_ROUTES.VERIFY_EMAIL(token),
     );
     return company.data;
   } catch (error) {
@@ -87,7 +87,7 @@ export const verifyEmail = async (token: string) => {
 
 export const logout = async (id: string) => {
   try {
-    const res = await api.post(`/${INVESTOR_BASE_ROUTE}/auth/logout/${id}`);
+    const res = await api.post(AUTH_ROUTES.LOGOUT(id));
     return res.data;
   } catch (error) {
     console.log(error);
@@ -104,7 +104,7 @@ export const resendLink = async ({
 }) => {
   try {
     const res = await api.post(
-      `/${COMPANY_BASE_ROUTE}/auth/verify-email/resendLink`,
+      COMPANY_AUTH_ROUTES.RESEND_LINK,
       { email, purpose },
     );
     return res.data;
@@ -116,7 +116,7 @@ export const resendLink = async ({
 
 export const forgotPassword = async (email: string, role: string) => {
   try {
-    const res = await api.post(`/${role}/auth/login/forgot-password`, {
+    const res = await api.post(AUTH_ROUTES.FORGOT_PASSWORD(role), {
       email,
     });
     return res.data;
@@ -128,7 +128,7 @@ export const forgotPassword = async (email: string, role: string) => {
 export const forgotPasswordCumpany = async (email: string) => {
   try {
     const res = await api.post(
-      `/${COMPANY_BASE_ROUTE}/auth/login/forgot-password`,
+      COMPANY_AUTH_ROUTES.FORGOT_PASSWORD,
       { email },
     );
     return res.data;
@@ -143,7 +143,7 @@ export const changePassword = async (
   role: Role,
 ) => {
   try {
-    const res = await api.post(`/${role}/auth/login/changePassword`, {
+    const res = await api.post(AUTH_ROUTES.CHANGE_PASSWORD(role), {
       email,
       password,
     });
@@ -155,7 +155,7 @@ export const changePassword = async (
 };
 
 export const googleLogin = (role: string) => {
-  const GOOGLE_URL = `${apiUrl}/${role}/google`;
+  const GOOGLE_URL = `${apiUrl}${AUTH_ROUTES.GOOGLE(role)}`;
   console.log(`Google login clicked for role: ${role}`);
   window.open(GOOGLE_URL, "_self");
 };
@@ -163,7 +163,7 @@ export const googleLogin = (role: string) => {
 export const fetchGoogleUser = async (role: string) => {
   console.log("serojvin success ggoogle");
   try {
-    const response = await axios.get(`${apiUrl}/${role}/google/success`, {
+    const response = await axios.get( `${apiUrl}${AUTH_ROUTES.GOOGLE_SUCCESS(role)}`, {
       withCredentials: true,
     });
     return response.data;

@@ -1,9 +1,9 @@
-import { ADMIN_BASE_ROUTE } from "../../constants/apiRoutes";
+import { ADMIN_API } from "../../constants/apiRoutes";
 import api from "../api";
 
 export const getUsersAPI = async (role: string, page: number) => {
   try {
-    const response = await api.get(`${ADMIN_BASE_ROUTE}/${role}?page=${page}`);
+    const response = await api.get(ADMIN_API.USERS(role, page));
     return response.data;
   } catch (error) {
     console.log(error);
@@ -13,7 +13,7 @@ export const getUsersAPI = async (role: string, page: number) => {
 export const getPendingUsersAPI = async (role: string, page: number) => {
   try {
     const response = await api.get(
-      `${ADMIN_BASE_ROUTE}/${role}/pending?page=${page}`,
+      ADMIN_API.PENDING_USERS(role, page),
     );
     return response.data;
   } catch (error) {
@@ -27,7 +27,7 @@ export const blockUsersAPI = async (
   block: boolean,
 ) => {
   try {
-    const response = await api.put(`${ADMIN_BASE_ROUTE}/${role}/block/${id}`, {
+    const response = await api.put(ADMIN_API.BLOCK_USER(role, id), {
       block,
     });
     return response.data;
@@ -43,7 +43,7 @@ export const changeStatusUsersAPI = async (
   reason?: string,
 ) => {
   try {
-    const response = await api.put(`${ADMIN_BASE_ROUTE}/${role}/verify/${id}`, {
+    const response = await api.put(ADMIN_API.VERIFY_USER(role, id), {
       status,
       reason,
     });
@@ -55,7 +55,7 @@ export const changeStatusUsersAPI = async (
 };
 export const getCompanyDetails = async (id: string) => {
   try {
-    const response = await api.get(`${ADMIN_BASE_ROUTE}/company/${id}`);
+    const response = await api.get(ADMIN_API.COMPANY_DETAILS(id));
     return response.data;
   } catch (error) {
     console.log(error);
@@ -64,7 +64,7 @@ export const getCompanyDetails = async (id: string) => {
 };
 export const getInvestorDetails = async (id: string) => {
   try {
-    const response = await api.get(`${ADMIN_BASE_ROUTE}/investor/${id}`);
+    const response = await api.get(ADMIN_API.INVESTOR_DETAILS(id));
     return response.data;
   } catch (error) {
     console.log(error);
@@ -74,7 +74,7 @@ export const getInvestorDetails = async (id: string) => {
 
 export const addCategories = async (data: FormData) => {
   try {
-    const response = await api.post(`${ADMIN_BASE_ROUTE}/industryCategory`, {
+    const response = await api.post(ADMIN_API.CATEGORY, {
       data,
     });
     return response.data;
@@ -85,7 +85,7 @@ export const addCategories = async (data: FormData) => {
 };
 export const editCategories = async (data: FormData) => {
   try {
-    const response = await api.put(`${ADMIN_BASE_ROUTE}/industryCategory`, {
+    const response = await api.put(ADMIN_API.CATEGORY, {
       data,
     });
     return response.data;
@@ -96,7 +96,7 @@ export const editCategories = async (data: FormData) => {
 };
 export const getCategories = async () => {
   try {
-    const response = await api.get(`${ADMIN_BASE_ROUTE}/industryCategory`);
+    const response = await api.get(ADMIN_API.CATEGORY);
     return response.data;
   } catch (error) {
     console.log(error);
@@ -107,7 +107,7 @@ export const getCategories = async () => {
 export const deleteCategory = async (id: string) => {
   try {
     const response = await api.delete(
-      `${ADMIN_BASE_ROUTE}/industryCategory/${id}`,
+      ADMIN_API.DELETE_CATEGORY(id),
     );
     return response.data;
   } catch (error) {
@@ -117,7 +117,7 @@ export const deleteCategory = async (id: string) => {
 };
 export const getReports = async () => {
   try {
-    const response = await api.get(`${ADMIN_BASE_ROUTE}/report`);
+    const response = await api.get(ADMIN_API.REPORTS);
     return response.data;
   } catch (error) {
     console.log(error);

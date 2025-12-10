@@ -1,13 +1,11 @@
 import { AxiosError } from "axios";
 import api from "./api";
 import type { Investor } from "../types/investor";
-import { INVESTOR_BASE_ROUTE } from "../constants/apiRoutes";
+import { COMMON_ROUTES, INVESTOR_PROFILE_ROUTES } from "../constants/apiRoutes";
 
 export const getProfile = async (seekerId: string) => {
   try {
-    const response = await api.get(
-      `/${INVESTOR_BASE_ROUTE}/${seekerId}/profile`,
-    );
+    const response = await api.get(INVESTOR_PROFILE_ROUTES.PROFILE(seekerId));
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -24,7 +22,7 @@ export const updateProfileImage = async (
 ) => {
   try {
     const res = await api.put(
-      `${INVESTOR_BASE_ROUTE}/${seekerId}/profile`,
+      INVESTOR_PROFILE_ROUTES.UPDATE_PROFILE_IMAGE(seekerId),
       formData,
       {
         headers: {
@@ -39,7 +37,7 @@ export const updateProfileImage = async (
       console.error("Edit profile:", error?.response?.data);
       throw new Error(
         error.response?.data?.message ||
-          "Something went wrong. Please try again.",
+        "Something went wrong. Please try again.",
       );
     }
     throw new Error("Something went wrong. Please try again.");
@@ -52,7 +50,7 @@ export const updateProfile = async (
 ) => {
   try {
     const res = await api.put(
-      `${INVESTOR_BASE_ROUTE}/${seekerId}/updateProfile`,
+      INVESTOR_PROFILE_ROUTES.UPDATE_PROFILE(seekerId),
       formData,
     );
     return res.data;
@@ -70,7 +68,7 @@ export const changePassword = async (
   data: { oldPassword: string; newPassword: string },
 ) => {
   try {
-    const res = await api.put(`${role}/profile/changePassword/${id}`, { data });
+    const res = await api.put(COMMON_ROUTES.CHANGE_PASSWORD(role,id), { data });
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -81,7 +79,7 @@ export const changePassword = async (
 };
 export const reApply = async (id: string) => {
   try {
-    const res = await api.put(`/${INVESTOR_BASE_ROUTE}/profile/reapply/${id}`);
+    const res = await api.put(INVESTOR_PROFILE_ROUTES.REAPPLY(id));
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {
