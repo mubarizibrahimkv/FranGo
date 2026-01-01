@@ -1,19 +1,20 @@
 import { ADMIN_API } from "../../constants/apiRoutes";
 import api from "../api";
 
-export const getUsersAPI = async (role: string, page: number) => {
+export const getUsersAPI = async (role: string, page: number,search:string,filter?:string) => {
   try {
-    const response = await api.get(ADMIN_API.USERS(role, page));
+    const response = await api.get(ADMIN_API.USERS(role, page),{params:{search,filter}});
     return response.data;
   } catch (error) {
     console.log(error);
     throw error;
   }
 };
-export const getPendingUsersAPI = async (role: string, page: number) => {
+export const getPendingUsersAPI = async (role: string, page: number,search:string) => {
   try {
     const response = await api.get(
-      ADMIN_API.PENDING_USERS(role, page),
+      ADMIN_API.PENDING_USERS(role, page)
+      ,{params:{search}}
     );
     return response.data;
   } catch (error) {
@@ -94,12 +95,12 @@ export const editCategories = async (data: FormData) => {
     throw error;
   }
 };
-export const getCategories = async () => {
+export const getCategories = async (search?:string,page?:number,filter?:string) => {
   try {
-    const response = await api.get(ADMIN_API.CATEGORY);
+    const response = await api.get(ADMIN_API.CATEGORY,{params:{search,page,filter}});
     return response.data;
   } catch (error) {
-    console.log(error);
+    console.log(error); 
     throw error;
   }
 };
@@ -113,14 +114,14 @@ export const deleteCategory = async (id: string) => {
   } catch (error) {
     console.log(error);
     throw error;
-  }
+  } 
 };
-export const getReports = async () => {
+export const getReports = async (search:string,page:number) => {
   try {
-    const response = await api.get(ADMIN_API.REPORTS);
+    const response = await api.get(ADMIN_API.REPORTS,{params:{search,page}});
     return response.data;
   } catch (error) {
     console.log(error);
-    throw error;
+    throw error;    
   }
 };

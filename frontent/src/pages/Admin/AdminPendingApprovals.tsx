@@ -8,6 +8,7 @@ import {
 } from "../../services/admin/manageUsers";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
+import AdminSearchBar from "../../components/CommonComponents/SearchBar";
 
 interface User {
   _id: string;
@@ -26,11 +27,12 @@ const AdminPendingApproval: React.FC = () => {
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchText, setSearchText] = useState("");
 
   if (!role) return null;
   const fetchCompanies = async () => {
     try {
-      const response = await getPendingUsersAPI(role, page);
+      const response = await getPendingUsersAPI(role, page, searchText);
       setCompanies(response.users);
 
       setPage(response.currentPage);
@@ -44,19 +46,19 @@ const AdminPendingApproval: React.FC = () => {
   useEffect(() => {
     if (!role) return;
     fetchCompanies();
-  }, [role, page, fetchCompanies]);
+  }, [role, page, fetchCompanies, searchText]);
 
   const verifyCompany = async (
     companyId: string,
     selectedAction: "reject" | "approve",
-    reason?: string,
+    reason?: string
   ) => {
     try {
       const response = await changeStatusUsersAPI(
         companyId,
         role,
         selectedAction,
-        reason,
+        reason
       );
       if (response.success) {
         toast.success("Company Verified Successfully");
@@ -76,16 +78,19 @@ const AdminPendingApproval: React.FC = () => {
           heading={`Verify ${role.charAt(0).toUpperCase() + role.slice(1)}`}
         />
         <main className="flex-1 p-6 overflow-y-auto mt-10">
+          <AdminSearchBar onSubmit={(text: string) => setSearchText(text)} />
           {companies.length === 0 ? (
             <p className="text-gray-600">No companies pending approval.</p>
           ) : (
-            <EntityTable
-              users={companies}
-              actionType="verify"
-              onAction={(id, action, reason) =>
-                verifyCompany(id, action as "approve" | "reject", reason)
-              }
-            />
+            <div>
+              <EntityTable
+                users={companies}
+                actionType="verify"
+                onAction={(id, action, reason) =>
+                  verifyCompany(id, action as "approve" | "reject", reason)
+                }
+              />
+            </div>
           )}
 
           <div className="flex justify-center items-center gap-2 mb-4">

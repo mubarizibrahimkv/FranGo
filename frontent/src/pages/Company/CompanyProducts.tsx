@@ -17,6 +17,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { Edit } from "lucide-react";
 import type { IProduct } from "../../types/company";
 import ConfirmAlert from "../../components/CommonComponents/ConfirmationModal";
+import AdminSearchBar from "../../components/CommonComponents/SearchBar";
 
 export interface IProductForm extends IProduct {
   removedImages?: string[];
@@ -26,7 +27,7 @@ const CompanyProducts = () => {
   const company = useSelector((state: RootState) => state.user);
   const [reload, setReload] = useState(false);
   const [productCategories, setProductCategories] = useState<ProductCategory[]>(
-    [],
+    []
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -37,8 +38,10 @@ const CompanyProducts = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(
-    null,
+    null
   );
+  const [searchText, setSearchText] = useState("");
+  const [productCategory, setProductCategory] = useState("");
 
   useEffect(() => {
     const fetchCompanyProductCategories = async () => {
@@ -49,14 +52,15 @@ const CompanyProducts = () => {
   }, [page, company._id]);
 
   useEffect(() => {
+    const filter=productCategory
     const fetchProducts = async () => {
-      const response = await getProducts(company._id, page);
+      const response = await getProducts(company._id, page, searchText,filter);
       setProducts(response.products);
       setPage(response.currentPage);
       setTotalPages(response.totalPages);
     };
     fetchProducts();
-  }, [page, reload, company._id]);
+  }, [page, reload, company._id, searchText,productCategory]);
 
   const handleAddProduct = () => {
     setSelectedProduct(null);
@@ -80,7 +84,7 @@ const CompanyProducts = () => {
 
   const handleModalSubmit = async (
     formData: IProductForm,
-    editing: boolean,
+    editing: boolean
   ) => {
     try {
       setIsSubmitting(true);
@@ -101,7 +105,7 @@ const CompanyProducts = () => {
 
             data.append(
               "removedImages",
-              JSON.stringify(formData.removedImages || []),
+              JSON.stringify(formData.removedImages || [])
             );
 
             const res = await editProduct(company._id, productId, data);
@@ -162,11 +166,17 @@ const CompanyProducts = () => {
 
         <main className="flex-1 p-6 overflow-y-auto">
           <div className="flex justify-between items-center mb-4">
-            <div className="flex-1">{/* <SearchBar /> */}</div>
+            <div className="flex-1">
+              <div className="w-3/4 ml-2">
+                <AdminSearchBar
+                  onSubmit={(text: string) => setSearchText(text)}
+                />
+              </div>
+            </div>
 
             <button
               onClick={handleAddProduct}
-              className="bg-[#0C2340] text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-[#1E3A8A] transition-colors ml-4"
+              className="bg-[#0C2340] text-white px-5 py-3 rounded-lg text-sm font-semibold hover:bg-[#1E3A8A] transition-colors ml-4"
             >
               ADD
             </button>
@@ -180,6 +190,49 @@ const CompanyProducts = () => {
               isEditing={isEditing}
               isSubmitting={isSubmitting}
             />
+          </div>
+
+          <div className="w-full flex justify-center">
+            <div className="max-w-5xl w-full px-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                {/* ================= Product Category ================= */}
+                <div className="md:col-span-4 text-center">
+                  <label className="block text-[10px] font-semibold text-gray-500 mb-2 uppercase tracking-wide">
+                    Product Category
+                  </label>
+
+                  <div className="flex justify-center gap-2 flex-wrap">
+                    {/* All */}
+                    <button
+                      onClick={() => setProductCategory("")}
+                      className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition
+              ${
+                productCategory === ""
+                  ? "bg-[#0C2340] text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+                    >
+                      All
+                    </button>
+
+                    {productCategories.map((item) => (
+                      <button
+                        key={item._id}
+                        onClick={() => setProductCategory(item._id)}
+                        className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition
+                ${
+                  productCategory === item._id
+                    ? "bg-[#0C2340] text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+                      >
+                        {item.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <table className="min-w-full border-separate border-spacing-y-2 text-center">

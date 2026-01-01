@@ -17,7 +17,7 @@ export const getFranchises = async (params?: IApiParams, page?: number) => {
       throw error;
     }
   }
-};
+}; 
 export const getFranchiseDetails = async (id: string) => {
   try {
     const res = await api.get( INVESTOR_ROUTES.GET_FRANCHISE_DETAILS(id));
@@ -50,10 +50,10 @@ export const applyAApplication = async (
     }
   }
 };
-export const getAApplication = async (investorId: string, page: number) => {
+export const getAApplication = async (investorId: string, page: number,search:string,filter:string) => {
   try {
     const res = await api.get(
-      INVESTOR_ROUTES.GET_APPLICATIONS(investorId, page),
+      INVESTOR_ROUTES.GET_APPLICATIONS(investorId, page),{params:{search,filter}}
     );
     return res.data;
   } catch (error) {
@@ -65,7 +65,6 @@ export const getAApplication = async (investorId: string, page: number) => {
 };
 export const getMyFranchises = async (investorId: string) => {
   try {
-    console.log(investorId, "invevestori in my franshi");
     const res = await api.get(
      INVESTOR_ROUTES.GET_MY_FRANCHISES(investorId),
     );

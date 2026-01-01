@@ -4,14 +4,20 @@ import { useEffect, useState } from "react";
 import { blockUsersAPI, getReports } from "../../services/admin/manageUsers";
 import { toast } from "react-toastify";
 import type { IReport } from "../../types/admin";
+import AdminSearchBar from "../../components/CommonComponents/SearchBar";
 
 const AdminReportManagement = () => {
   const [reports, setReports] = useState<IReport[] | []>([]);
+  const [searchText, setSearchText] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        const res = await getReports();
-        console.log(res.reports, "reports");
+        const res = await getReports(searchText,page);
+        setPage(res.currentPage);
+        setTotalPages(res.totalPages);
         setReports(res.reports);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -19,7 +25,7 @@ const AdminReportManagement = () => {
       }
     };
     fetchReports();
-  }, []);
+  }, [searchText,page]);
 
   const blockInvestor = async (investorId: string, isBlocked: boolean) => {
     try {
@@ -42,7 +48,12 @@ const AdminReportManagement = () => {
 
         <main className="flex-1 p-6 overflow-y-auto">
           <div className="flex justify-between items-center mb-4">
-            <div className="flex-1">{/* <SearchBar /> */}</div>
+            <div className="w-3/4 ml-2">
+              {/* <SearchBar /> */}
+              <AdminSearchBar
+                onSubmit={(text: string) => setSearchText(text)}
+              />
+            </div>
           </div>
 
           <table className="min-w-full border-separate border-spacing-y-2">
@@ -56,8 +67,8 @@ const AdminReportManagement = () => {
                 </th>
                 <th className="px-5 py-3 text-left font-semibold">Reason</th>
                 <th className="px-5 py-3 text-left font-semibold">Staus</th>
-                <th className="px-5 py-3 text-left font-semibold rounded-tr-lg">
-                  Created At
+                <th className="px-5 py-3 text-left font-semibold ">
+                  Date
                 </th>
                 <th className="px-5 py-3 text-left font-semibold rounded-tr-lg">
                   Action
@@ -97,7 +108,7 @@ const AdminReportManagement = () => {
                           report.reportedAgainst._id &&
                           blockInvestor(
                             report.reportedAgainst._id,
-                            !report.reportedAgainst.isBlocked,
+                            !report.reportedAgainst.isBlocked
                           )
                         }
                       >
@@ -115,6 +126,38 @@ const AdminReportManagement = () => {
               )}
             </tbody>
           </table>
+
+          <div className="flex justify-center items-center gap-2 mb-4">
+            {page > 1 && (
+              <div
+                onClick={() => setPage(page - 1)}
+                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+              >
+                {"<"}
+              </div>
+            )}
+
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage(i + 1)}
+                className={`px-3 py-1 rounded ${
+                  page === i + 1 ? "bg-[#0C2340] text-white" : "bg-gray-200 "
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            {page < totalPages && (
+              <div
+                onClick={() => setPage(page + 1)}
+                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+              >
+                {">"}
+              </div>
+            )}
+          </div>
         </main>
       </div>
     </div>

@@ -53,7 +53,7 @@ export const updateProfile = async (
       INVESTOR_PROFILE_ROUTES.UPDATE_PROFILE(seekerId),
       formData,
     );
-    return res.data;
+    return res.data;  
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Edit profile:", error?.response?.data);

@@ -170,6 +170,6 @@ export const fetchGoogleUser = async (role: string) => {
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Login Error:", error.response?.data);
-    }
+    }   
   }
 };

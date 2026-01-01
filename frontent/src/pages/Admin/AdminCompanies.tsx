@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import AdminSidebar from "../../components/AdminComponents/AdminSlideBar";
 import AdminNavbar from "../../components/AdminComponents/AdminNavbar";
 import { toast } from "react-toastify";
-import { blockUsersAPI, getUsersAPI } from "../../services/admin/manageUsers";
+import { blockUsersAPI, getCategories, getUsersAPI } from "../../services/admin/manageUsers";
 import EntityTable from "../../components/AdminComponents/EntityTable";
 import { useNavigate } from "react-router-dom";
+import AdminSearchBar from "../../components/CommonComponents/SearchBar";
+import type { IIndustryCategory } from "../../types/admin";
 
 interface User {
   _id: string;
@@ -25,10 +27,25 @@ const AdminDashboard: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
   const role = "company";
+    const [searchText,setSearchText]=useState("")
+  const [industryCategory,setIndustryCategory]=useState<IIndustryCategory[]>([]);
+    const [filter, setFilter] = useState("");
+
+
+    useEffect(() => {
+        const getCategory = async () => {
+          const res = await getCategories();
+          if(res.success){
+            setIndustryCategory(res.industries)
+          }
+        };
+    
+        getCategory();
+      }, []);
 
   const fetchCompanies = async () => {
     try {
-      const response = await getUsersAPI(role, page);
+      const response = await getUsersAPI(role, page,searchText,filter);
       setCompanies(response.companies);
       setPage(response.currentPage);
       setTotalPages(response.totalPages);
@@ -40,7 +57,7 @@ const AdminDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchCompanies();
-  }, [page, fetchCompanies]);
+  }, [page, fetchCompanies,searchText,filter]);
 
   const blockCompany = async (companyId: string, isBlocked: boolean) => {
     try {
@@ -68,15 +85,60 @@ const AdminDashboard: React.FC = () => {
         <AdminNavbar heading="Companies" />
 
         <main className="flex-1 p-6 overflow-y-auto">
-          <div className="flex justify-between items-center mb-4">
-            <div className="w-full max-w-xs ml-2">{/* <SearchBar /> */}</div>
+          <div className="flex justify-between gap-5 items-center mb-4">
+            <div className="w-full  ml-2">
+              <AdminSearchBar onSubmit={(text:string)=>setSearchText(text)}/>
+            </div>
 
             <button
               onClick={() => navigate("/admin/pendingApproval/company")}
-              className="bg-[#0C2340] text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-[#1E3A8A] transition-colors mr-6"
+              className="bg-[#0C2340] text-white px-5 py-3 rounded-lg text-sm font-semibold hover:bg-[#1E3A8A] transition-colors mr-6"
             >
-              Verify
+              VERIFY
             </button>
+          </div>
+
+           <div className="w-full flex justify-center">
+            <div className="max-w-5xl w-full px-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                {/* ================= Product Category ================= */}
+                <div className="md:col-span-4 text-center">
+                  <label className="block text-[10px] font-semibold text-gray-500 mb-2 uppercase tracking-wide">
+                    Industry Category
+                  </label>
+
+                  <div className="flex justify-center gap-2 flex-wrap">
+                    {/* All */}
+                    <button
+                      onClick={() => setFilter("")}
+                      className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition
+              ${
+                filter === ""
+                  ? "bg-[#0C2340] text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+                    >
+                      All
+                    </button>
+
+                    {industryCategory?.map((item) => (
+                      <button
+                        key={item._id}
+                        onClick={() => setFilter(item._id ? item._id : "")}
+                        className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition
+                ${
+                  filter === item._id
+                    ? "bg-[#0C2340] text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+                      >
+                        {item.categoryName}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <EntityTable

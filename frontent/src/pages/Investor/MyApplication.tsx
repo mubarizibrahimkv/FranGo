@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Footer from "../../components/InvestorComponents/Footer";
 import Navbar from "../../components/InvestorComponents/Navbar";
 import {
-  applyAApplication,
   deleteApplication,
   getAApplication,
   payAdvance,
@@ -23,34 +22,53 @@ import type { Investor } from "../../types/investor";
 import { AxiosError } from "axios";
 import { FaTrashAlt } from "react-icons/fa";
 import ConfirmAlert from "../../components/CommonComponents/ConfirmationModal";
+import AdminSearchBar from "../../components/CommonComponents/SearchBar";
+import { Edit } from "lucide-react";
+import { getProfile, updateProfile } from "../../services/profile";
 
 const MyApplication = () => {
-  const investor = useSelector((state: RootState) => state.user);
+  const investorId = useSelector((state: RootState) => state.user._id);
+  const [investor, setInvestor] = useState<Investor | null>(null);
   const [applications, setApplications] = useState<IApplication[] | []>([]);
   const [reload, setReload] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedFranchise, setSelectedFranchise] = useState<IFranchise | null>(
-    null,
+    null
   );
   const [showAlert, setShowAlert] = useState(false);
   const [selectedApp, setSelectedApp] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const investorIsAuthenticated = useSelector(
+    (state: RootState) => state.user.isAuthenticated
+  );
+  const [filterValue, setFilterValue] = useState("");
+
+  useEffect(() => {
+    const fetchInvestor = async () => {
+      const res = await getProfile(investorId);
+      console.log(res.seeker);
+      setInvestor(res.seeker);
+    };
+    fetchInvestor();
+  }, [investorId]);
+
+  const handleEditClick = (franchise: IFranchise) => {
+    if (investorIsAuthenticated) {
+      setSelectedFranchise(franchise);
+    } else {
+      toast.info("Please Login to continue");
+    }
+  };
 
   const handleApply = async (formData: Partial<Investor>) => {
+    console.log("formdata frm amy application", formData);
     try {
-      if (selectedFranchise?._id) {
-        const res = await applyAApplication(
-          formData as Investor,
-          selectedFranchise._id,
-          investor._id,
-        );
-        if (res.success) {
-          toast.success("Application applied successfully");
-        } else {
-          toast.error("Failed to apply for franchise");
-        }
+      const res = await updateProfile(formData, investorId);
+      if (res) {
+        toast.success("Application updated successfully");
       } else {
-        console.log("Didnt select franchise");
+        toast.error("Failed to update ");
       }
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -69,7 +87,12 @@ const MyApplication = () => {
 
   useEffect(() => {
     const fetchApplications = async () => {
-      const res = await getAApplication(investor._id, page);
+      const res = await getAApplication(
+        investorId,
+        page,
+        searchText,
+        filterValue
+      );
       if (res.success) {
         setApplications(res.application);
         setPage(page);
@@ -77,7 +100,7 @@ const MyApplication = () => {
       }
     };
     fetchApplications();
-  }, [reload, page, investor._id]);
+  }, [reload, page, investorId, searchText, filterValue]);
 
   const handlePayAdvance = async (applicationId: string, amount: number) => {
     const data: Payment = {
@@ -87,7 +110,7 @@ const MyApplication = () => {
     };
 
     try {
-      const res = await payAdvance(investor._id, applicationId, data);
+      const res = await payAdvance(investorId, applicationId, data);
       const { order, key } = res;
 
       const options: RazorpayOptions = {
@@ -101,12 +124,12 @@ const MyApplication = () => {
         handler: async (response: RazorpayResponse) => {
           try {
             await verifyPayAdvanceOrder(
-              investor._id,
+              investorId,
               applicationId,
               response.razorpay_payment_id,
               response.razorpay_order_id,
               response.razorpay_signature,
-              amount,
+              amount
             );
 
             setReload((prev) => !prev);
@@ -118,8 +141,8 @@ const MyApplication = () => {
         },
 
         prefill: {
-          name: investor.userName,
-          email: investor.email,
+          name: investor?.userName,
+          email: investor?.email,
         },
 
         theme: {
@@ -156,7 +179,38 @@ const MyApplication = () => {
           <h1 className="text-2xl font-semibold text-gray-800 mb-6 text-left font-serif">
             My Applications
           </h1>
-          <div className="flex justify-end mb-4"></div>
+          <div className="flex justify-end mb-4 gap-4">
+            <div className="flex-1">
+              <div className="w-3/4 ml-2">
+                <AdminSearchBar
+                  onSubmit={(text: string) => setSearchText(text)}
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm ">
+              {[
+                { label: "All", value: "" },
+                { label: "Pending", value: "pending" },
+                { label: "Approved", value: "approved" },
+                { label: "Rejected", value: "rejected" },
+              ].map(({ label, value }) => (
+                <button
+                  key={label}
+                  onClick={() => setFilterValue(value)}
+                  className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all
+                  ${
+                    filterValue === value
+                     ? "bg-[#0C2340] text-white shadow"
+                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                 }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <table className="min-w-full border-separate border-spacing-y-2">
             <thead>
               <tr className="bg-[#0C2340] text-white text-base text-center">
@@ -222,15 +276,24 @@ const MyApplication = () => {
 
                   <td className="px-5 py-3 flex items-center justify-center gap-5">
                     {application.status === "pending" && (
-                      <button
-                        onClick={() => {
-                          setSelectedApp(application._id);
-                          setShowAlert(true);
-                        }}
-                        className="text-red-600 hover:underline flex items-center gap-1"
-                      >
-                        <FaTrashAlt size={18} />
-                      </button>
+                      <>
+                        <button
+                          onClick={() => {
+                            setSelectedApp(application._id);
+                            setShowAlert(true);
+                          }}
+                          className="text-red-600 hover:underline flex items-center gap-1"
+                        >
+                          <FaTrashAlt size={18} />
+                        </button>
+                        <Edit
+                          size={18}
+                          onClick={() => {
+                            handleEditClick(application.franchise);
+                          }}
+                          className="text-green-400 hover:underline cursor-pointer"
+                        />
+                      </>
                     )}
 
                     {application.status === "rejected" && (
@@ -250,7 +313,7 @@ const MyApplication = () => {
                             application.franchise.advancefee &&
                             handlePayAdvance(
                               application._id,
-                              application.franchise.advancefee,
+                              application.franchise.advancefee
                             )
                           }
                         >
@@ -285,7 +348,7 @@ const MyApplication = () => {
           />
         )}
 
-        {selectedFranchise && (
+        {selectedFranchise && investor && (
           <ApplyModal
             onClose={() => setSelectedFranchise(null)}
             onApply={handleApply}

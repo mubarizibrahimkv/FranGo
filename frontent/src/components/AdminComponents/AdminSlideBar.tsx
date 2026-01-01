@@ -8,7 +8,6 @@ import {
   LogOut,
   Users,
   Layers,
-  Tag,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
@@ -30,16 +29,10 @@ const menuItems: MenuItem[] = [
   { name: "Companies", icon: Building2, route: "/admin/companies" },
   { name: "Investors", icon: User, route: "/admin/investors" },
   { name: "Report Management", icon: FileText, route: "/admin/reports" },
-  { name: "Subscription", icon: Tag, route: "/admin/subscription" },
   {
     name: "Industry Category",
     icon: Layers,
     route: "/admin/industry-category",
-  },
-  {
-    name: "Product Category",
-    icon: Layers,
-    route: "/admin/productCategory",
   },
 ];
 

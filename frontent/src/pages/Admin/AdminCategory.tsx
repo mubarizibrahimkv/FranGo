@@ -12,13 +12,43 @@ import {
 import { toast } from "react-toastify";
 import { Edit } from "lucide-react";
 import { FaTrashAlt } from "react-icons/fa";
+import AdminSearchBar from "../../components/CommonComponents/SearchBar";
 
 const AdminCategory = () => {
   const [categories, setCategories] = useState<IIndustryCategory[]>([]);
+  const [industryCategory, setInustryCategory] = useState<IIndustryCategory[]>([]);
   const [isOpenModal, setIsModal] = useState(false);
   const [reload, setReload] = useState(false);
   const [selectedCategory, setSelectedCategory] =
     useState<IIndustryCategory | null>(null);
+  const [searchText, setSearchText] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [filter, setFilter] = useState("");
+
+  useEffect(() => {
+    const getCategory = async () => {
+      const res = await getCategories(searchText, page, filter);
+
+      if (res.success) {
+        setCategories(res.industries);
+        setTotalPages(res.totalPages);
+      } 
+    };
+
+    getCategory();
+  }, [reload, searchText, page, filter]);
+
+  useEffect(() => {
+    const getCategory = async () => {
+      const res = await getCategories();
+      if(res.success){
+        setInustryCategory(res.industries)
+      }
+    };
+
+    getCategory();
+  }, []);
 
   const handleCategory = async (formData: FormData) => {
     try {
@@ -53,17 +83,6 @@ const AdminCategory = () => {
     }
   };
 
-  useEffect(() => {
-    const getCategory = async () => {
-      const res = await getCategories();
-      if (res.success) {
-        setCategories(res.industries);
-        console.log(res.industries);
-      }
-    };
-    getCategory();
-  }, [reload]);
-
   return (
     <div className="flex h-screen bg-gray-100">
       <AdminSidebar />
@@ -72,17 +91,21 @@ const AdminCategory = () => {
         <AdminNavbar heading="Categories" />
 
         <main className="flex-1 p-6 overflow-y-auto">
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex-1">{/* <SearchBar /> */}</div>
+          <div className="flex justify-between items-center mb-4 mt-10">
+            <div className="flex-1">
+              <AdminSearchBar
+                onSubmit={(text: string) => setSearchText(text)}
+              />
+            </div>
 
             <button
               onClick={() => {
                 setSelectedCategory(null);
                 setIsModal(true);
               }}
-              className="bg-[#0C2340] text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-[#1E3A8A] transition-colors ml-4"
+              className="bg-[#0C2340] text-white px-5 py-3 rounded-lg text-sm font-semibold hover:bg-[#1E3A8A] transition-colors ml-4"
             >
-              ADD
+              ADD CATEGORY
             </button>
 
             {isOpenModal && (
@@ -94,13 +117,58 @@ const AdminCategory = () => {
             )}
           </div>
 
+          <div className="w-full flex justify-center">
+            <div className="max-w-5xl w-full px-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                {/* ================= Product Category ================= */}
+                <div className="md:col-span-4 text-center">
+                  <label className="block text-[10px] font-semibold text-gray-500 mb-2 uppercase tracking-wide">
+                    Industry Category
+                  </label>
+
+                  <div className="flex justify-center gap-2 flex-wrap">
+                    {/* All */}
+                    <button
+                      onClick={() => setFilter("")}
+                      className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition
+              ${
+                filter === ""
+                  ? "bg-[#0C2340] text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+                    >
+                      All
+                    </button>
+
+                    {industryCategory?.map((item) => (
+                      <button
+                        key={item._id}
+                        onClick={() => setFilter(item._id ? item._id : "")}
+                        className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition
+                ${
+                  filter === item._id
+                    ? "bg-[#0C2340] text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+                      >
+                        {item.categoryName}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <table className="min-w-full border-separate border-spacing-y-2">
             <thead>
               <tr className="bg-[#0C2340] text-white text-base">
-                <th className="px-5 py-3 text-left font-semibold rounded-tl-lg">
+                {/* <th className="px-5 py-3 text-left font-semibold rounded-tl-lg">
                   Image
+                </th> */}
+                <th className="px-5 py-3 text-left font-semibold rounded-tl-lg">
+                  Category
                 </th>
-                <th className="px-5 py-3 text-left font-semibold">Category</th>
                 <th className="px-5 py-3 text-left font-semibold">
                   Sub Category
                 </th>
@@ -198,6 +266,38 @@ const AdminCategory = () => {
               )}
             </tbody>
           </table>
+
+          <div className="flex justify-center items-center gap-2 mb-4">
+            {page > 1 && (
+              <div
+                onClick={() => setPage(page - 1)}
+                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+              >
+                {"<"}
+              </div>
+            )}
+
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage(i + 1)}
+                className={`px-3 py-1 rounded ${
+                  page === i + 1 ? "bg-[#0C2340] text-white" : "bg-gray-200 "
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            {page < totalPages && (
+              <div
+                onClick={() => setPage(page + 1)}
+                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+              >
+                {">"}
+              </div>
+            )}
+          </div>
         </main>
       </div>
     </div>

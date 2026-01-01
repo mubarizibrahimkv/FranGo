@@ -15,6 +15,7 @@ import {
 import type { IIndustryCategory } from "../../types/admin";
 import { Edit } from "lucide-react";
 import { FaTrashAlt } from "react-icons/fa";
+import AdminSearchBar from "../../components/CommonComponents/SearchBar";
 
 export interface ProductCategory {
   _id: string;
@@ -31,15 +32,18 @@ const AdminProductCategory = () => {
   const [industryCategories, setIndustryCategories] =
     useState<IIndustryCategory>();
   const [productCategories, setProductCategories] = useState<ProductCategory[]>(
-    [],
+    []
   );
   const [isOpenModal, setIsModal] = useState(false);
   const company = useSelector((state: RootState) => state.user);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] =
-    useState<ProductCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] =useState<ProductCategory | null>(null);
   const [editedName, setEditedName] = useState("");
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchText, setSearchText] = useState("");
+  const [subCategory,setSubCategory]=useState("")
 
   useEffect(() => {
     const getCategory = async () => {
@@ -52,14 +56,16 @@ const AdminProductCategory = () => {
   }, [company._id]);
 
   useEffect(() => {
+    const filter=subCategory
     const getProductCategory = async () => {
-      const res = await getProductCategories(company._id);
+      const res = await getProductCategories(company._id,searchText,filter);
       if (res.success) {
+        setTotalPages(res.totalPages);
         setProductCategories(res.data);
       }
     };
     getProductCategory();
-  }, [company._id]);
+  }, [company._id, searchText, page,subCategory]);
 
   const handleProductCategory = async (data: {
     industryCategoryId: string;
@@ -95,7 +101,7 @@ const AdminProductCategory = () => {
       const res = await editProductCategories(
         company._id,
         selectedCategory._id,
-        editedName,
+        editedName
       );
       if (res.success) {
         toast.success("Edited");
@@ -128,13 +134,20 @@ const AdminProductCategory = () => {
 
         <main className="flex-1 p-6 overflow-y-auto">
           <div className="flex justify-between items-center mb-4">
-            <div className="flex-1">{/* <SearchBar /> */}</div>
+            <div className="flex-1">
+              <div className="w-3/4 ml-2">
+                <AdminSearchBar
+                  onSubmit={(text: string) => setSearchText(text)}
+                />
+              </div>
+              {/* <SearchBar /> */}
+            </div>
 
-            <button
+            <button          
               onClick={() => {
                 setIsModal(true);
               }}
-              className="bg-[#0C2340] text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-[#1E3A8A] transition-colors ml-4"
+              className="bg-[#0C2340] text-white px-5 py-3 rounded-lg text-sm font-semibold hover:bg-[#1E3A8A] transition-colors ml-4"
             >
               ADD
             </button>
@@ -147,6 +160,50 @@ const AdminProductCategory = () => {
                 error={error}
               />
             )}
+          </div>
+
+
+             <div className="w-full flex justify-center">
+            <div className="max-w-5xl w-full px-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                {/* ================= Product Category ================= */}
+                <div className="md:col-span-4 text-center">
+                  <label className="block text-[10px] font-semibold text-gray-500 mb-2 uppercase tracking-wide">
+                    Product Category
+                  </label>
+
+                  <div className="flex justify-center gap-2 flex-wrap">
+                    {/* All */}
+                    <button
+                      onClick={() => setSubCategory("")}
+                      className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition
+              ${
+                subCategory === ""
+                  ? "bg-[#0C2340] text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+                    >
+                      All
+                    </button>
+
+                    {industryCategories?.subCategories.map((item) => (
+                      <button
+                        key={item._id}
+                        onClick={() => setSubCategory(item._id?item._id:"")}
+                        className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition
+                ${
+                  subCategory === item._id
+                    ? "bg-[#0C2340] text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+                      >
+                        {item.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <table className="min-w-full border-separate border-spacing-y-2 text-center">
@@ -238,6 +295,38 @@ const AdminProductCategory = () => {
               )}
             </tbody>
           </table>
+
+          <div className="flex justify-center items-center gap-2 mb-4">
+            {page > 1 && (
+              <div
+                onClick={() => setPage(page - 1)}
+                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+              >
+                {"<"}
+              </div>
+            )}
+
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage(i + 1)}
+                className={`px-3 py-1 rounded ${
+                  page === i + 1 ? "bg-[#0C2340] text-white" : "bg-gray-200 "
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            {page < totalPages && (
+              <div
+                onClick={() => setPage(page + 1)}
+                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+              >
+                {">"}
+              </div>
+            )}
+          </div>
         </main>
       </div>
     </div>

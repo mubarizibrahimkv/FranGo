@@ -13,10 +13,11 @@ export const fetchCompany = async (companyId: string) => {
   }
 };
 
-export const getFranchise = async (companyId: string, page: number) => {
+export const getFranchise = async (companyId: string, page?: number,search?:string,filter?:Record<string,string>) => {
   try {
     const res = await api.get(
       COMPANY.FRANCHISE.GET(companyId, page),
+      {params:{search,...filter}}
     );
     return res.data;
   } catch (error) {
@@ -121,10 +122,11 @@ export const reApply = async (id: string) => {
   }
 };
 
-export const getApplications = async (id: string, page: number) => {
+export const getApplications = async (id: string, page: number,search:string,filter?:Record<string,string>) => {
   try {
     const res = await api.get(
       COMPANY.APPLICATION.ALL(id, page),
+      {params:{search,...filter}}
     );
     return res.data;
   } catch (error) {
@@ -150,12 +152,12 @@ export const handleApplicationStatus = async (
     }
   }
 };
-export const getProductCategories = async (id: string) => {
+export const getProductCategories = async (id: string,search?:string,filter?:string) => {
   try {
-    const res = await api.get(COMPANY.PRODUCT_CATEGORY.GET(id));
+    const res = await api.get(COMPANY.PRODUCT_CATEGORY.GET(id),{params:{search,filter}});
     return res.data;
   } catch (error) {
-    if (error instanceof AxiosError) {
+    if (error instanceof AxiosError) {  
       console.error("Get productcategory :", error?.response?.data);
       throw error;
     }
@@ -277,11 +279,10 @@ export const createSubscriptionOrder = async (
     }
   }
 };
-export const getProducts = async (companyId: string, page: number) => {
+export const getProducts = async (companyId: string, page: number,search:string,filter?:string) => {
   try {
     const res = await api.get(
-    COMPANY.PRODUCT.GET(companyId, page),
-    );
+    COMPANY.PRODUCT.GET(companyId, page),{params:{search,filter}});
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {

@@ -6,13 +6,14 @@ export interface IIndustryCategory {
   categoryName: string;
   image?: string | File;
   subCategories: {
+    _id?:string
     name: string;
     subSubCategories: { name: string }[];
   }[];
 }
 
 export interface ISubSubCategory {
-  _id: string;
+  _id?: string;
   name: string;
 }
 

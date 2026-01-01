@@ -28,7 +28,7 @@ const CompanySubscription: React.FC = () => {
         key,
         amount: order.amount,
         currency: "INR",
-        name: "Cyclore",
+        name: "FranGo",
         description: "Subscription Payment",
         order_id: order.id,
         handler: async function (response: RazorpayPaymentResponse) {

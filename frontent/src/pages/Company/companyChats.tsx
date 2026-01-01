@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Sidebar from "../../components/CompanyComponents/Sidebar";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
@@ -19,10 +19,12 @@ const Chat: React.FC = () => {
   const [profileImage, setProfileImage] = useState("");
   const [selectedChannel, setSelectedChannel] = useState("");
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
+  const [searchText, setSearchText] = useState("");
 
-  const fetchConversations = async () => {
+  const fetchConversations = useCallback(async () => {
+    console.log("FETCHING WITH SEARCH:", searchText);
     try {
-      const res = await getConversation(companyId);
+      const res = await getConversation(companyId, searchText);
       if (!res.success) return;
 
       setConversation(res.conversations);
@@ -41,11 +43,19 @@ const Chat: React.FC = () => {
     } catch (err) {
       console.log("Error fetching conversations:", err);
     }
-  };
+  }, [companyId, searchText]);
 
   useEffect(() => {
     fetchConversations();
-  }, [senderIdChatBox, fetchConversations]);
+  }, [fetchConversations, senderIdChatBox]);
+
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      fetchConversations();
+    }, 400);
+
+    return () => clearTimeout(delay);
+  }, [searchText, fetchConversations]);
 
   useEffect(() => {
     socket.connect();
@@ -99,6 +109,8 @@ const Chat: React.FC = () => {
             <div className="w-1/3 bg-white rounded-xl shadow p-4 flex flex-col max-h-[83vh]">
               <input
                 type="text"
+                onChange={(e) => setSearchText(e.target.value)}
+                value={searchText}
                 placeholder="Search here..."
                 className="w-full mb-4 px-4 py-2 bg-gray-100 rounded-lg outline-none"
               />
@@ -111,7 +123,7 @@ const Chat: React.FC = () => {
                       setSelectedChannel(u.channel);
                       setSenderIdChatBox(companyId);
                       const receiver = u.participants.find(
-                        (p) => p.role === "investor",
+                        (p) => p.role === "investor"
                       );
                       setUnreadCounts((prev) => ({
                         ...prev,

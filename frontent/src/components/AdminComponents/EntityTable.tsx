@@ -62,17 +62,17 @@ const EntityTable: React.FC<Props> = ({
 
   return (
     <div className="overflow-x-auto px-4 py-2">
-      <table className="min-w-full border-separate border-spacing-y-2">
+      <table className="min-w-full border-separate border-spacing-y-2 text-center">
         <thead>
           <tr className="bg-[#0C2340] text-white text-base rounded-t-lg">
             <th className="px-5 py-3 text-left font-semibold rounded-tl-lg">
               Logo
             </th>
-            <th className="px-5 py-3 text-left font-semibold">Name</th>
-            <th className="px-5 py-3 text-left font-semibold">Email</th>
-            <th className="px-5 py-3 text-left font-semibold">Mobile No</th>
-            <th className="px-5 py-3 text-left font-semibold">Registered</th>
-            <th className="px-5 py-3 text-left font-semibold rounded-tr-lg">
+            <th className="px-5 py-3 font-semibold">Name</th>
+            <th className="px-5 py-3  font-semibold">Email</th>
+            <th className="px-5 py-3  font-semibold">Mobile No</th>
+            <th className="px-5 py-3  font-semibold">Registered</th>
+            <th className="px-5 py-3  font-semibold rounded-tr-lg">
               Action
             </th>
           </tr>

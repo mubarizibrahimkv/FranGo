@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { blockUsersAPI, getUsersAPI } from "../../services/admin/manageUsers";
 import EntityTable from "../../components/AdminComponents/EntityTable";
 import { useNavigate } from "react-router-dom";
+import AdminSearchBar from "../../components/CommonComponents/SearchBar";
 
 interface User {
   _id: string;
@@ -27,11 +28,13 @@ const Investors: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const role = "investor";
   const navigate = useNavigate();
+    const [searchText,setSearchText]=useState("")
+  
 
   useEffect(() => {
     const loadCompanies = async () => {
       try {
-        const response = await getUsersAPI(role, page);
+        const response = await getUsersAPI(role, page,searchText);
         setInvestors(response.investors);
         setPage(response.currentPage);
         setTotalPages(response.totalPages);
@@ -41,7 +44,7 @@ const Investors: React.FC = () => {
       }
     };
     loadCompanies();
-  }, [refresh, page]);
+  }, [refresh, page,searchText]);
 
   const blockInvestor = async (investorId: string, isBlocked: boolean) => {
     try {
@@ -70,12 +73,14 @@ const Investors: React.FC = () => {
         <AdminNavbar heading="Investors" />
 
         <main className="flex-1 p-6 overflow-y-auto">
-          <div className="flex justify-between items-center mb-4">
-            <div className="w-full max-w-xs ml-2">{/* <SearchBar />  */}</div>
+          <div className="flex justify-between items-center gap-5 mb-4">
+           <div className="w-full  ml-2">{/* <SearchBar /> */}
+              <AdminSearchBar onSubmit={(text:string)=>setSearchText(text)}/>
+            </div>
 
             <button
               onClick={() => navigate("/admin/pendingApproval/investor")}
-              className="bg-[#0C2340] text-white px-5 py-2  rounded-lg text-sm font-semibold hover:bg-[#1E3A8A] transition-colors mr-6"
+              className="bg-[#0C2340] text-white px-5 py-3  rounded-lg text-sm font-semibold hover:bg-[#1E3A8A] transition-colors mr-6"
             >
               Verify
             </button>

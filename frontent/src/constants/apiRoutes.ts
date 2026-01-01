@@ -92,7 +92,7 @@ export const COMPANY = {
   PROFILE_CHANGE_LOGO: (id: string) => `/company/profile/${id}/changeLogo`,
   
   FRANCHISE: {
-    GET: (companyId: string, page: number) =>
+    GET: (companyId: string, page?: number) =>
       `/company/franchise/${companyId}?page=${page}`,
 
     SPECIFIC: (id: string) => `/company/franchise/getFranchise/${id}`,

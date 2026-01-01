@@ -4,6 +4,7 @@ import AdminNavbar from "../../components/AdminComponents/AdminNavbar";
 import EntityTable from "../../components/AdminComponents/EntityTable";
 import { blockUsersAPI, getUsersAPI } from "../../services/admin/manageUsers";
 import { toast } from "react-toastify";
+import AdminSearchBar from "../../components/CommonComponents/SearchBar";
 
 interface User {
   _id: string;
@@ -12,7 +13,7 @@ interface User {
   companyName?: string;
   userName?: string;
   email: string;
-  phoneNo: string;
+  phoneNo: string; 
   createdAt: Date;
   isBlocked: boolean;
   role?: "investor" | "company" | "customer";
@@ -23,11 +24,13 @@ const AdminDashboard: React.FC = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const role = "customer";
+  const [searchText,setSearchText]=useState("")
+
 
   useEffect(() => {
     const loadCompanies = async () => {
       try {
-        const response = await getUsersAPI(role, page);
+        const response = await getUsersAPI(role, page,searchText);
         setCustomers(response.users);
         setPage(response.currentPage);
         setTotalPages(response.totalPages);
@@ -37,7 +40,7 @@ const AdminDashboard: React.FC = () => {
       }
     };
     loadCompanies();
-  }, [page]);
+  }, [page,searchText]);
 
   const blockInvestor = async (investorId: string, isBlocked: boolean) => {
     try {
@@ -61,10 +64,12 @@ const AdminDashboard: React.FC = () => {
     <div className="flex h-screen bg-[#F6F6F6]">
       <AdminSidebar />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col ">
         <AdminNavbar heading={"Customers"} />
 
+
         <main className="flex-1 p-6 overflow-y-auto mt-6">
+        <AdminSearchBar onSubmit={(text:string)=>setSearchText(text)}/>
           <EntityTable
             users={customers}
             onAction={blockInvestor}
@@ -105,7 +110,7 @@ const AdminDashboard: React.FC = () => {
         </main>
       </div>
     </div>
-  );
+  ); 
 };
 
 export default AdminDashboard;
