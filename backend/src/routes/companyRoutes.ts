@@ -11,7 +11,7 @@ import passport, { setupGoogleStrategy } from "../config/passport";
 import { FranchiseRepo } from "../repository/franchiseRepository";
 import { ApplicationRepo } from "../repository/applicationRepository";
 import { ProductManagementService } from "../services/companyService/companyProductManagementService";
-import { ProductCategoryRepo } from "../repository/productCategory";
+import { ProductCategoryRepo } from "../repository/productCategoryRepository";
 import { ProductManagementController } from "../controllers/company/productManagementController";
 import { IndustryCategoryRepo } from "../repository/industryCategoryRepository";
 import { ProductRepo } from "../repository/productRepository";

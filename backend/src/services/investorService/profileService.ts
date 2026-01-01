@@ -9,9 +9,12 @@ import mongoose, { Types } from "mongoose";
 import HttpStatus from "../../utils/httpStatusCode";
 import { Messages } from "../../constants/messages";
 import { INotificationRepo } from "../../interface/ṛepository/notificationRepoInterface";
+import dotenv from "dotenv";
+dotenv.config();
+
 
 interface ICategory {
-  categoryName: string;
+    categoryName: string;
 }
 
 export class ProfileService implements IProfileService {
@@ -57,20 +60,22 @@ export class ProfileService implements IProfileService {
 
     updateProfile = async (investorId: string, updatedData: IInvestor) => {
         try {
+
             if (updatedData.previousBusiness?.length) {
-                updatedData.previousBusiness = updatedData.previousBusiness.map(
-                    (id) => new Types.ObjectId(id)
-                );
+                updatedData.previousBusiness = updatedData.previousBusiness.map((id) => new Types.ObjectId(id));
             }
 
             if (updatedData.preferredFranchiseType?.length) {
-                updatedData.preferredFranchiseType = updatedData.preferredFranchiseType.map(
-                    (id) => new Types.ObjectId(id)
-                );
+                updatedData.preferredFranchiseType = updatedData.preferredFranchiseType.map((id) => new Types.ObjectId(id));
             }
+
             const investor = await this._profileRepo.updateProfile(investorId, updatedData);
             if (!investor) throw { status: HttpStatus.BAD_REQUEST, message: Messages.INVESTOR_NOT_FOUND };
-            const adminId = "$2b$10$fRCoV5J/OXDVA2wGEPLPL.NLeAlt8wnUpyKygCDC31K5B4xfGh.em";
+            const adminId = process.env.ADMIN_ID;
+
+            if (!adminId || !mongoose.Types.ObjectId.isValid(adminId)) {
+                throw new Error("Invalid or missing ADMIN_ID in environment variables");
+            }
             await this._notificationRepo.create({
                 userId: new mongoose.Types.ObjectId(adminId),
                 message: "A investor has completed its profile. Please review and verify.",

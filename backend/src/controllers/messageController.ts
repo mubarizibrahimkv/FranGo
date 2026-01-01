@@ -20,10 +20,12 @@ export class MessageController {
         }   
     };
 
-    getConversations = async (req: Request, res: Response) => {
+    getConversations = async (req: Request, res: Response) => { 
         const userId = req.query.userId as string;
+        const searchStr = typeof req.query.search === "string" ? req.query.search : "";
         try {
-            const conversations = await this._messageService.getConversations(userId);
+            const conversations = await this._messageService.getConversations(userId,searchStr);
+            console.log(conversations)
             res.status(HttpStatus.OK).json({ success: true, conversations });
         } catch (error: unknown) {
             if (error instanceof Error) {

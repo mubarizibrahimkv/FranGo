@@ -4,10 +4,11 @@ import { IIndustryCategoryRepo } from "../../interface/ṛepository/adminIndustr
 import { INotificationRepo } from "../../interface/ṛepository/notificationRepoInterface";
 import { IProductCategoryRepo } from "../../interface/ṛepository/productCategoryInterface";
 import { IRepoortRepo } from "../../interface/ṛepository/reportRepoInterface";
-import { IIndustryCategory } from "../../models/industryCategoryModel";
+import IndustryCategory, { IIndustryCategory } from "../../models/industryCategoryModel";
+import Report from "../../models/reportModel";
 
 export class AdminService implements IAdminService {
-    constructor(private _IndustryCategoryRepo: IIndustryCategoryRepo, private _ProductCategoryRepo: IProductCategoryRepo,private _reportRepo:IRepoortRepo,private _notificationRepo:INotificationRepo) { }
+    constructor(private _IndustryCategoryRepo: IIndustryCategoryRepo, private _ProductCategoryRepo: IProductCategoryRepo, private _reportRepo: IRepoortRepo, private _notificationRepo: INotificationRepo) { }
     addIndustryCategory = async (data: IIndustryCategory) => {
         try {
             const industry = await this._IndustryCategoryRepo.create(data);
@@ -34,11 +35,14 @@ export class AdminService implements IAdminService {
             throw error;
         }
     };
-    getIndustryCategory = async () => {
+    getIndustryCategory = async (search: string,page:number,filter?:string) => {
+        const limit = 7;
+        const skip = (Number(page) - 1) * limit;
         try {
-            const industries = await this._IndustryCategoryRepo.findAll();
-            console.log(industries);
-            return industries;
+            const industries = await this._IndustryCategoryRepo.findBySearch(limit,skip,search,filter);
+            const total = await IndustryCategory.countDocuments();
+            const totalPages = Math.ceil(total / limit);
+            return {industries,totalPages};
         } catch (error) {
             console.error("Get Industry category Error:", error);
             throw error;
@@ -60,28 +64,32 @@ export class AdminService implements IAdminService {
             throw error;
         }
     };
-    getReports = async () => {
+    getReports = async (page: number, search: string) => {
+        const limit = 10;
+        const skip = (Number(page) - 1) * limit;
         try {
-            const reports=await this._reportRepo.findAllWithCompanyAndInvestor();
-            return reports;
+            const reports = await this._reportRepo.findAllWithCompanyAndInvestor(limit, skip, search);
+            const total = await Report.countDocuments();
+            const totalPages = Math.ceil(total / limit);
+            return {reports,totalPages};
         } catch (error) {
             console.error("Get Reports Error:", error);
             throw error;
         }
     };
-    getNotification = async (userId:string) => {
+    getNotification = async (userId: string) => {
         try {
-            const notifications=await this._notificationRepo.findByUserId(userId);
-            return notifications||[];
+            const notifications = await this._notificationRepo.findByUserId(userId);
+            return notifications || [];
         } catch (error) {
             console.error("Get admin Notification Error:", error);
             throw error;
         }
     };
-    updateNotification = async (notificationId:string) => {
+    updateNotification = async (notificationId: string) => {
         try {
-            const notification=await this._notificationRepo.updateIsRead(notificationId);
-            if(!notification){
+            const notification = await this._notificationRepo.updateIsRead(notificationId);
+            if (!notification) {
                 throw ({ success: false, message: Messages.NOTIFICATION_NOT_FOUND });
             }
             return notification;

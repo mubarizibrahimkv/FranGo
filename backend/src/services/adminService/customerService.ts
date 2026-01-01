@@ -6,12 +6,12 @@ import Customer from "../../models/customerModel";
 export class AdminCustomerService implements IAdminCustomerService {
   constructor(private _customerRepo: IAdminCustomerRepo) {}
 
-  getCustomers = async (page: number) => {
+  getCustomers = async (page: number,search:string) => {
     const limit = 10;
     const skip = (page - 1) * limit;
     try {
       const totalCustomers = await Customer.countDocuments();
-      const customers = await this._customerRepo.getCustomers(limit, skip);
+      const customers = await this._customerRepo.getCustomers(limit, skip,search);
       const totalPages = Math.ceil(totalCustomers / limit);
 
       if (!customers) {

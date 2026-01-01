@@ -19,7 +19,7 @@ export type AuthenticatedUser = {
   profileImage?: string;
   email: string;
   isAdmin?: boolean;
-  role: "customer" | "investor" | "company";
+  role: "customer" | "investor" | "company"; 
 };
 
 const roleModelMap: RoleModelMap = {

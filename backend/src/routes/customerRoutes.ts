@@ -9,8 +9,6 @@ import passport, { setupGoogleStrategy } from "../config/passport";
 const router = Express.Router();
 
 
-
-
 const authRepo = new CustomerAuthRepo();
 const authService=new CustomerAuthService(authRepo);
 const authController=new CustomerAuthController(authService);

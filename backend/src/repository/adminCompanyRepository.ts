@@ -1,8 +1,9 @@
+import { FilterQuery } from "mongoose";
 import { IAdminCompanyRepo } from "../interface/ṛepository/adminCompanyRepoInterface";
-import Company from "../models/companyModel";
+import Company, { ICompany } from "../models/companyModel";
 
 export class AdminCompanyRepo implements IAdminCompanyRepo {
-    async getPendingCompanies(limit: number, skip: number) {
+    async getPendingCompanies(limit: number, skip: number,search:string) {
         return Company.find({
             status: "pending",
             companyName: { $exists: true, $ne: "" },
@@ -14,16 +15,41 @@ export class AdminCompanyRepo implements IAdminCompanyRepo {
             about: { $exists: true, $ne: "" },
             companyLogo: { $exists: true, $ne: "" },
             companyRegistrationProof: { $exists: true, $ne: null },
+            $or:[{email:{$regex:search,$options:"i"}},{companyName:{$regex:search,$options:"i"}},{brandName:{$regex:search,$options:"i"}}]
         })
             .sort({ createdAt: -1 })
-            .skip(skip)
+            .skip(skip) 
             .limit(limit)
             .lean();
     }
 
-    async getApprovedCompanies(limit: number, skip: number) {
-        return Company.find({ status: "approve" }).sort({ createdAt: -1 }).skip(skip).limit(limit);
-    }
+    async getApprovedCompanies(
+  limit: number,
+  skip: number,
+  search: string,
+  filter: string
+) {
+  const query: FilterQuery<ICompany> = {
+    status: "approve",
+  };
+
+  if (search) {
+    query.$or = [
+      { email: { $regex: search, $options: "i" } },
+      { companyName: { $regex: search, $options: "i" } },
+      { brandName: { $regex: search, $options: "i" } },
+    ];
+  }
+
+  if (filter) {
+    query.industryCategory = filter;
+  }
+
+  return Company.find(query)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+}
     async findCompanyById(companyId: string) {
         return Company.findById(companyId);
     }

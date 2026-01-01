@@ -106,9 +106,26 @@ export class ProfileController implements IcompanyProfileController {
   getFranchise = async (req: Request, res: Response): Promise<void> => {
     const { companyId } = req.params;
     const page = parseInt(req.query.page as string);
+    const searchStr = typeof req.query.search === "string" ? req.query.search : "";     
+    const filter: Record<string, string> = {};
 
+  if (typeof req.query.industrySubCategory === "string") {
+    filter.industrySubCategory = req.query.industrySubCategory;
+  }
+
+  if (typeof req.query.ownershipModel === "string") {
+    filter.ownershipModel = req.query.ownershipModel;
+  }
+
+  if (typeof req.query.minInvestment === "string") {
+    filter.minInvestment = req.query.minInvestment;
+  }
+
+  if (typeof req.query.maxInvestment === "string") {
+    filter.maxInvestment = req.query.maxInvestment;
+  }
     try {
-      const { companyIndustryCategory, franchises, totalPages } = await this._companyService.getFranchises(companyId, page);
+      const { companyIndustryCategory, franchises, totalPages } = await this._companyService.getFranchises(companyId, page, searchStr,filter);
       res.status(HttpStatus.OK).json({ success: true, companyIndustryCategory, franchises, currentPage: page, totalPages });
     } catch (error: unknown) {
       console.error("Get franchise error:", error);
@@ -175,8 +192,19 @@ export class ProfileController implements IcompanyProfileController {
   getApplications = async (req: Request, res: Response): Promise<void> => {
     const { companyId } = req.params;
     const page = parseInt(req.query.page as string);
+    const searchStr = typeof req.query.search === "string" ? req.query.search : "";
+    const filter: Record<string, string> = {};
+
+    if (typeof req.query.status === "string") {
+      filter.status = req.query.status;
+    }
+
+    if (typeof req.query.subCategoryId === "string") {
+      filter.subCategoryId = req.query.subCategoryId;
+    }
+
     try {
-      const { application, totalPages } = await this._companyService.getApplications(companyId, page);
+      const { application, totalPages } = await this._companyService.getApplications(companyId, page, searchStr, filter);
       res.status(HttpStatus.OK).json({ success: true, application, currentPage: page, totalPages });
     } catch (error: unknown) {
       if (typeof error === "object" && error !== null && "message" in error) {

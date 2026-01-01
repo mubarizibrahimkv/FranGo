@@ -1,4 +1,4 @@
-import { FilterQuery, Types } from "mongoose";
+import mongoose, { FilterQuery, Types } from "mongoose";
 import Product, { IProduct } from "../models/productModel";
 import { IProductRepo } from "../interface/ṛepository/productRepoInterface";
 import { BaseRepository } from "./baseRepository";
@@ -12,9 +12,36 @@ export class ProductRepo extends BaseRepository<IProduct> implements IProductRep
       .populate("industryCategory")
       .lean();
   }
-  async findByCompanyId(companyId:string,skip:number,limit:number){
-    return await Product.find({company:companyId}).populate("productCategory").skip(skip).limit(limit).sort({ createdAt: -1 });
+  async findByCompanyId(
+  companyId: string,
+  skip: number,
+  limit: number,
+  search: string,
+  filter?: string
+) {
+  const query: any = {
+    company: new mongoose.Types.ObjectId(companyId),
+  };
+
+  if (search?.trim()) {
+    query.$or = [
+      { name: { $regex: search, $options: "i" } },
+      { description: { $regex: search, $options: "i" } },
+    ];
   }
+
+  if (filter) {
+    query.productCategory = new mongoose.Types.ObjectId(filter);
+  }
+
+  return await Product.find(query)
+    .populate("productCategory")
+    .skip(skip)
+    .limit(limit)
+    .sort({ createdAt: -1 })
+    .lean();
+}
+
   async countByCompanyId(companyId:string){
     return await Product.countDocuments({company:companyId});
   }
@@ -23,7 +50,7 @@ export class ProductRepo extends BaseRepository<IProduct> implements IProductRep
     companyId: string,
     category: string,
     name: string
-) {
+) { 
     const query: FilterQuery<IProduct> = {
         company: companyId,
         productCategory: category,
@@ -36,4 +63,4 @@ export class ProductRepo extends BaseRepository<IProduct> implements IProductRep
     return Product.findOne(query);
 }
 
-}
+} 

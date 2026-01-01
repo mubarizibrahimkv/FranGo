@@ -14,7 +14,7 @@ import { AuthenticatedUser } from "../../config/passport";
 export interface formData {
   companyName: string;
   password: string;
-  email: string;
+  email: string; 
   role: "customer" | "admin" | "investor" | "company";
   registrationProof: string;
   companyLog: string;

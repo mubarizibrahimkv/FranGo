@@ -205,14 +205,14 @@ export class InvestorService implements IInvestorService {
             throw error;
         }
     };
-    getApplications = async (investorId: string, page: number) => {
+    getApplications = async (investorId: string, page: number,search:string,filter:string) => {
         const limit = 10;
-        const skip = (page - 1) * limit;
+        const skip = (page - 1) * limit;    
         try {
-            const application = await this._applicationRepo.findByInvestorId(investorId, skip, limit);
+            const application = await this._applicationRepo.findByInvestorId(investorId, skip, limit,search,filter);
             const totalApplications = await this._applicationRepo.countByInvestorId(investorId);
             if (!application) {
-                throw {
+                throw { 
                     status: HttpStatus.BAD_REQUEST, message: Messages.APPLICATION_NOT_FOUND
                 };
             }

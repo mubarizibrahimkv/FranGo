@@ -7,9 +7,10 @@ import { ERROR_MESSAGES } from "../../constants/errorMessages";
 export class AdminConmpanyController implements IAdminCompanyController {
     constructor(private _companyService: IAdminCompanyService) { }
     getPendingCompanies = async (req: Request, res: Response) => {
-        const page = parseInt(req.query.page as string);
+        const page = parseInt(req.query.page as string); 
+        const searchStr = typeof req.query.search === "string" ? req.query.search : "";
         try {
-            const {users,totalPages} = await this._companyService.getPendingCompanies(page);
+            const {users,totalPages} = await this._companyService.getPendingCompanies(page,searchStr);
             res.status(HttpStatus.OK).json({ success: true, users,currentPage:page,totalPages });
         } catch (err: unknown) {
             const errUnknown = err;
@@ -21,8 +22,10 @@ export class AdminConmpanyController implements IAdminCompanyController {
     }; 
     getApprovedCompanies = async (req: Request, res: Response) => {
         const page = parseInt(req.query.page as string) || 1;
+        const searchStr = typeof req.query.search === "string" ? req.query.search : "";
+        const filter=req.query.filter as string
         try {
-            const {companies,totalPages} = await this._companyService.getApprovedCompanies(page);
+            const {companies,totalPages} = await this._companyService.getApprovedCompanies(page,searchStr,filter);
             res.status(HttpStatus.OK).json({ success: true, companies,currentPage:page,totalPages });
         } catch (err: unknown) {
             const errUnknown = err;

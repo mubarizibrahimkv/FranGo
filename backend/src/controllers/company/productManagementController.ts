@@ -22,8 +22,10 @@ export class ProductManagementController {
 
     getAllProductCategories = async (req: Request, res: Response) => {
         const { companyId } = req.params;
+        const searchStr = typeof req.query.search === "string" ? req.query.search : "";
+        const filter=req.query.filter as string
         try {
-            const data = await this._productManagementService.getAllProductCategories(companyId);
+            const data = await this._productManagementService.getAllProductCategories(companyId, searchStr,filter);
             res.status(HttpStatus.OK).json({ success: true, data });
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -87,11 +89,14 @@ export class ProductManagementController {
             }
         }
     };
+
     getProducts = async (req: Request, res: Response) => {
         const page = parseInt(req.query.page as string);
+        const searchStr = typeof req.query.search === "string" ? req.query.search : "";
+        const filter=req.query.filter as string
         try {
             const { companyId } = req.params;
-            const { products, totalPages } = await this._productManagementService.getProducts(companyId, page);
+            const { products, totalPages } = await this._productManagementService.getProducts(companyId, page, searchStr,filter);
             res.status(HttpStatus.OK).json({ success: true, products, currentPage: page, totalPages });
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -109,7 +114,6 @@ export class ProductManagementController {
 
             let removedImages = removedImagesRaw;
 
-
             if (removedImages) {
                 try {
                     removedImages = JSON.parse(removedImages);
@@ -120,7 +124,6 @@ export class ProductManagementController {
             } else {
                 removedImages = [];
             }
-
 
             const files = req.files as Express.Multer.File[];
 

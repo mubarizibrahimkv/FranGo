@@ -8,11 +8,11 @@ import { INotificationRepo } from "../../interface/ṛepository/notificationRepo
 export class AdminInvestorService implements IAdminInvestorService {
     constructor(private _investorRepo: IAdminInvestorRepo,private _notificationRepo:INotificationRepo) {}
 
-    getPendingInvestors = async (page: number) => {
+    getPendingInvestors = async (page: number,search:string) => {
         const limit = 10;
         const skip = (page - 1) * limit;
         try {
-            const investor = await this._investorRepo.getPendingInvestors(limit, skip);
+            const investor = await this._investorRepo.getPendingInvestors(limit, skip,search);
             const totalInvestors = await Investor.countDocuments({ status: "pending" });
             const totalPages = Math.ceil(totalInvestors / limit);
             if (!investor) {
@@ -27,11 +27,11 @@ export class AdminInvestorService implements IAdminInvestorService {
         }
     };
 
-    getApprovedInvestors = async (page: number) => {
+    getApprovedInvestors = async (page: number,search:string) => {
         const limit = 10;
         const skip = (page - 1) * limit;
         try {
-            const investor = await this._investorRepo.getApprovedInvestors(limit, skip);
+            const investor = await this._investorRepo.getApprovedInvestors(limit, skip,search);
             const totalInvestors = await Investor.countDocuments({ status: "approve" });
             const totalPages = Math.ceil(totalInvestors / limit);
             if (!investor) {

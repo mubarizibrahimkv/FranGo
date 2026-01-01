@@ -32,7 +32,7 @@ export class InvestorController {
       maxFee = "",
       sort = "",
       order = "asc",
-      search = "",
+      search = "", 
     } = req.query;
 
     try {
@@ -93,11 +93,14 @@ export class InvestorController {
   getApplications = async (req: Request, res: Response): Promise<void> => {
     const { investorId } = req.params;
     const page = parseInt(req.query.page as string);
-
+    const searchStr = typeof req.query.search === "string" ? req.query.search : "";
+    const filter = typeof req.query.filter === "string" ? req.query.filter : "";
     try {
       const { application, totalPages } = await this._investorService.getApplications(
         investorId,
-        page
+        page,
+        searchStr,
+        filter
       );
       res
         .status(HttpStatus.OK)
@@ -132,7 +135,6 @@ export class InvestorController {
   };
 
   applyReport = async (req: Request, res: Response) => {
-    console.log("applyreport working constroller");
     try {
       const { investorId } = req.params;
       const { franchiseId, reason } = req.body;
@@ -170,8 +172,9 @@ export class InvestorController {
   };
   getMyFranchises = async (req: Request, res: Response) => {
     const { investorId } = req.params;
+    const searchStr = typeof req.query.search === "string" ? req.query.search : "";
     try {
-      const franchises = await this._investorService.getMyFranchises(investorId);
+      const franchises = await this._investorService.getMyFranchises(investorId,searchStr);
       res.status(HttpStatus.OK).json({ success: true, franchises });
       return;
     } catch (error: unknown) {

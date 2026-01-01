@@ -119,7 +119,7 @@ export class CommpanyProfileService implements IcompanyService {
         return true;
     };
 
-    getFranchises = async (companyId: string, page: number) => {
+    getFranchises = async (companyId: string, page: number,search:string,filter?:Record<string,string>) => {
         const limit = 10;
         const skip = (page - 1) * limit;
         try {
@@ -137,7 +137,7 @@ export class CommpanyProfileService implements IcompanyService {
 
             const companyIndustryCategory = company.industryCategory;
             const [franchises, totalFranchise] = await Promise.all([
-                this._franchiseRepo.findByCompanyId(companyId, skip, limit),
+                this._franchiseRepo.findByCompanyId(companyId, skip, limit,search,filter),
                 this._franchiseRepo.countByCompanyId(companyId),
             ]);
             const totalPages = Math.ceil(totalFranchise / limit);
@@ -252,7 +252,8 @@ export class CommpanyProfileService implements IcompanyService {
             throw new Error("Failed to fetch franchise details");
         }
     };
-    getApplications = async (companyId: string, page: number) => {
+
+    getApplications = async (companyId: string, page: number,search:string,filter:Record<string,string>) => {
         const limit = 10;
         const skip = (page - 1) * limit;
         try {
@@ -260,7 +261,7 @@ export class CommpanyProfileService implements IcompanyService {
             if (!company) {
                 throw new Error(Messages.COMPANY_NOT_FOUND);
             }
-            const application = await this._applicationRepo.findByCompanyId(companyId, skip, limit);
+            const application = await this._applicationRepo.findByCompanyId(companyId, skip, limit,search,filter);
             const totalApplications = await this._applicationRepo.countByCompanyId(companyId);
             const totalPages = Math.ceil(totalApplications / limit);
             return { application, totalPages };
@@ -273,6 +274,7 @@ export class CommpanyProfileService implements IcompanyService {
             throw new Error("Failed to fetch franchise details");
         }
     };
+
     changeApplicationStatus = async (applicationId: string, status: "approved" | "rejected" | "pending") => {
         try {
             const application = await this._applicationRepo.findById(applicationId);

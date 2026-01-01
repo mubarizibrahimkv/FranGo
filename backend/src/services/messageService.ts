@@ -29,7 +29,7 @@ export class MessageService implements IMessageService {
                             { userId: senderId, role: senderRole },
                             { userId: receiverId, role: receiverRole }
                         ],
-                        lastMessage: message,
+                        lastMessage: message, 
                         lastSender: senderId,
                         timestamps: new Date()
                     };
@@ -65,9 +65,9 @@ export class MessageService implements IMessageService {
             throw error;
         }
     };
-    getConversations = async (userId: string) => {
+    getConversations = async (userId: string,search:string) => {
         try {
-            const conversations = await this._conversationRepo.findByUserId(userId);
+            const conversations = await this._conversationRepo.findByUserId(userId,search);
             const result = [];
 
             if (conversations) {
@@ -113,9 +113,6 @@ export class MessageService implements IMessageService {
             const messages = await this._messageRepo.findByChannel(channel);
             await this._messageRepo.markMessagesRead(channel, receiverId);
             const unreadCount = await this._messageRepo.unreadCount(channel, receiverId);
- 
-            console.log("sender id that is company id in get message",senderId);
-            console.log("unread count after opening chat:", unreadCount);
 
             if (io) {
                 io.to(senderId).emit("unread_count_update", {

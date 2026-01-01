@@ -13,6 +13,22 @@ export interface IConversation extends Document {
   timestamps: Date;
 }
 
+
+export interface IConversationWithUserW extends IConversation {
+  investor?: {
+    _id: string;
+    userName: string;
+    profileImage?: string;
+  };
+  company?: {
+    _id: string;
+    companyName: string;
+    companyLogo?: string;
+  };
+}
+
+
+
 export interface Iconver {
   _id?: Types.ObjectId
   channel: string;

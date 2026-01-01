@@ -81,13 +81,13 @@ export class ProductManagementService implements ICompanyProductManagementServic
             throw error;
         }
     };
-    async getAllProductCategories(companyId: string) {
+    async getAllProductCategories(companyId: string,search:string,filter?:string) {
         try {
-            const products = await this._productCategoryRepo.findAllWithCategoryHierarchy(companyId);
+            const products = await this._productCategoryRepo.findAllWithCategoryHierarchy(companyId,search,filter);
             return products;
         } catch (error) {
             console.error("Get all Product category Error:", error);
-            throw error;
+            throw error;  
         }
     }
     async editProductCategory(companyId: string, categoryId: string, newName: string) {
@@ -116,7 +116,6 @@ export class ProductManagementService implements ICompanyProductManagementServic
             throw error;
         }
     }
-
     async deleteProductCategory(companyId: string, categoryId: string) {
         try {
             const deletedCategory = await this._productCategoryRepo.deleteCategory(companyId, categoryId);
@@ -129,8 +128,6 @@ export class ProductManagementService implements ICompanyProductManagementServic
             throw error;
         }
     }
-
-
     addProduct = async (
         companyId: string,
         category: string,
@@ -183,7 +180,6 @@ export class ProductManagementService implements ICompanyProductManagementServic
             throw error;
         }
     };
-
     editProduct = async (
         companyId: string,
         productId: string,
@@ -237,7 +233,6 @@ export class ProductManagementService implements ICompanyProductManagementServic
             throw err;
         }
     };
-
     deleteProduct = async (productId: string) => {
         try {
             const product = await this._productRepo.delete(productId);
@@ -249,14 +244,12 @@ export class ProductManagementService implements ICompanyProductManagementServic
             throw error;
         }
     };
-
-
-    getProducts = async (companyId: string, page: number) => {
+    getProducts = async (companyId: string, page: number,search:string,filter?:string) => {
         const limit = 10;
         const skip = (page - 1) * limit;
         try {
             const totalProducts = await this._productRepo.countByCompanyId(companyId);
-            const products = await this._productRepo.findByCompanyId(companyId, skip, limit);
+            const products = await this._productRepo.findByCompanyId(companyId, skip, limit,search,filter);
             if (!products) {
                 throw { status: HttpStatus.BAD_REQUEST, message: "Cannot find Products" };
             }

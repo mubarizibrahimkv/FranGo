@@ -43,7 +43,7 @@ const IndustryCategory = model<IIndustryCategory>(
   "IndustryCategory",
   industryCategorySchema    
 );
-
+ 
 export default IndustryCategory;
 
 

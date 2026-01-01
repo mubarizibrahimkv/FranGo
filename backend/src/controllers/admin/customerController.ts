@@ -9,8 +9,9 @@ export class AdminCustomerController implements IAdminCustomerController {
 
     getCustomers = async (req: Request, res: Response) => {
         const page = parseInt(req.query.page as string) || 1;
+        const searchStr = typeof req.query.search === "string" ? req.query.search : "";
         try {
-             const { customers,totalPages } = await this._customerService.getCustomers(page);
+             const { customers,totalPages } = await this._customerService.getCustomers(page,searchStr);
             res.status(HttpStatus.OK).json({ success: true, users:customers,currentPage:page,totalPages });
         } catch (error) {
             const message = error instanceof Error ? error.message : String(error);

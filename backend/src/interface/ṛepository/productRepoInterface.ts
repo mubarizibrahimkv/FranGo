@@ -3,7 +3,7 @@ import { IProduct } from "../../models/productModel";
 export interface IProductRepo{
    create(data:Partial<IProduct>):Promise<IProduct>
    findProductsByCompany(companyId:string):Promise<IProduct[]>
-   findByCompanyId(companyId:string,skip:number,limit:number):Promise<IProduct[]|null>
+   findByCompanyId(companyId:string,skip:number,limit:number,search:string,filter?: string):Promise<IProduct[]|null>
    countByCompanyId(companyId:string):Promise<number>
    update(productId:string,data:Partial<IProduct>):Promise<IProduct|null>
    delete(productId:string):Promise<IProduct|null>

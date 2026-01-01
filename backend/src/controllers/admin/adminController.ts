@@ -8,7 +8,7 @@ export class Admincontroller implements IAdminControler {
     addIndustryCategory = async (req: Request, res: Response) => {
         try {
 
-            const data = JSON.parse(req.body.data); // ✅ FIXED
+            const data = JSON.parse(req.body.data);
             const file = req.file;
 
             if (file) {
@@ -43,23 +43,26 @@ export class Admincontroller implements IAdminControler {
             const message = error instanceof Error ? error.message : String(error);
             console.error("edtIndustryCategory error:", error);
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
-            return;
+            return; 
         }
     };
     getIndustryCategory = async (req: Request, res: Response) => {
+       const searchStr = typeof req.query.search === "string" ? req.query.search : "";
+        const page = parseInt(req.query.page as string)||1;
+        const filter = req.query.filter as string
         try {
-            const industries = await this._adminService.getIndustryCategory();
-            res.status(HttpStatus.OK).json({ success: true, industries });
+            const {industries,totalPages} = await this._adminService.getIndustryCategory(searchStr,page,filter);
+            res.status(HttpStatus.OK).json({ success: true, industries,totalPages });
             return;
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : String(error);
             console.error("getIndustryCategory error:", error);
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
-            return;
+            return; 
         }
     };
     deleteIndustryCategory = async (req: Request, res: Response) => {
-        const { categoryId } = req.params;
+        const { categoryId } = req.params; 
         try {
             await this._adminService.deleteIndustryCategory(categoryId);
             res.status(HttpStatus.OK).json({ success: true });
@@ -72,9 +75,11 @@ export class Admincontroller implements IAdminControler {
         }
     };
     getReports = async (req: Request, res: Response) => {
+        const searchStr = typeof req.query.search === "string" ? req.query.search : "";
+         const page = parseInt(req.query.page as string)||1;
         try {
-            const reports = await this._adminService.getReports();
-            res.status(HttpStatus.OK).json({ success: true, reports });
+            const {reports,totalPages} = await this._adminService.getReports(page,searchStr);
+            res.status(HttpStatus.OK).json({ success: true, reports,totalPages });
             return;
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : String(error);
@@ -97,7 +102,7 @@ export class Admincontroller implements IAdminControler {
         }
     };
     updateNotification = async (req: Request, res: Response) => {
-    const { notificationId } = req.params;
+    const { notificationId } = req.params; 
         try {
             await this._adminService.updateNotification(notificationId);
             res.status(HttpStatus.OK).json({ success: true });

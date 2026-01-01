@@ -8,7 +8,8 @@ export interface IProductCategoryRepo {
     companyId: string
   ): Promise<IProductCategory | null>;
   findAllByCompany(companyId: string): Promise<IProductCategory[]>
-  findAllWithCategoryHierarchy(companyId: string): Promise<
+  findAllWithCategoryHierarchy(companyId: string,search:string,filter?: string 
+): Promise<
     {
       _id: string;
       name: string;

@@ -3,8 +3,8 @@ import { IFranchise } from "../../models/franchiseModel";
 
 export interface IApplicationRepo {
     create(data: Partial<IApplication>): Promise<IApplication>;
-    findByCompanyId(companyId: string,skip: number, limit: number): Promise<IApplication[]>;
-    findByInvestorId(investorId: string,skip:number,limit:number): Promise<IApplication[]>;
+    findByCompanyId(companyId: string,skip: number, limit: number,search:string,filter?: Record<string, string>): Promise<IApplication[]>;
+    findByInvestorId(investorId: string,skip:number,limit:number,search:string,filter:string): Promise<IApplication[]>;
     findById(applicationId:string):Promise<IApplication|null> 
     countByCompanyId(companyId: string):Promise<number> 
     countByInvestorId(investoId: string):Promise<number> 

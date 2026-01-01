@@ -12,7 +12,7 @@ import { adminAuth } from "../middleware/adminAuth";
 import { IndustryCategoryRepo } from "../repository/industryCategoryRepository";
 import { AdminService } from "../services/adminService/adminService";
 import { Admincontroller } from "../controllers/admin/adminController";
-import { ProductCategoryRepo } from "../repository/productCategory";
+import { ProductCategoryRepo } from "../repository/productCategoryRepository";
 import { ReportRepo } from "../repository/reportRepository";
 import upload from "../config/multer";
 import { NotificationRepo } from "../repository/notificationRepository";
@@ -20,7 +20,7 @@ const router = express.Router();
 
 const companyRepo=new AdminCompanyRepo();
 const notificationRepo=new NotificationRepo();
-const companyService=new AdminCompanyService(companyRepo,notificationRepo);
+const companyService=new AdminCompanyService(companyRepo,notificationRepo); 
 const companyController=new AdminConmpanyController(companyService);
 
 const customerRepo=new AdminCustomerRepo();
@@ -57,6 +57,6 @@ router.route("/industryCategory/:categoryId").delete(adminController.deleteIndus
 router.route("/report").get(adminController.getReports);
 router.get("/:userId/notifications",adminController.getNotifications);
 router.put("/notifications/:notificationId", adminController.updateNotification);
-
+ 
 
 export default router;  

@@ -7,10 +7,51 @@ export class FranchiseRepo extends BaseRepository<IFranchise> implements IFranch
     constructor() {
         super(Franchise);
     }
-    async findByCompanyId(companyId: string, skip: number, limit: number) {
-        const franchises = await Franchise.find({ company: new mongoose.Types.ObjectId(companyId) }).skip(skip).limit(limit).lean();
+    async findByCompanyId(
+        companyId: string,
+        skip: number,
+        limit: number,
+        search: string,
+        filter?: Record<string, string>
+    ) {
+        const query: FilterQuery<IFranchise> = {
+            company: new mongoose.Types.ObjectId(companyId),
+        };
+
+        if (search?.trim()) {
+            query.franchiseName = { $regex: search, $options: "i" };
+        }
+
+        if (filter?.industrySubCategory) {
+            query.industrySubCategory = new mongoose.Types.ObjectId(
+                filter.industrySubCategory
+            );
+        }
+
+        if (filter?.ownershipModel) {
+            query.ownershipModel = filter.ownershipModel;
+        }
+
+        if (filter?.minInvestment || filter?.maxInvestment) {
+            query.totalInvestement = {};
+
+            if (filter.minInvestment) {
+                query.totalInvestement.$gte = Number(filter.minInvestment);
+            }
+
+            if (filter.maxInvestment) {
+                query.totalInvestement.$lte = Number(filter.maxInvestment);
+            }
+        }
+
+        const franchises = await Franchise.find(query)
+            .skip(skip)
+            .limit(limit)
+            .lean();
+
         return franchises;
     }
+
     async findAllWithCompany(
         query: FilterQuery<IFranchise>,
         sortOption: Record<string, SortOrder>

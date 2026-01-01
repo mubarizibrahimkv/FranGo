@@ -8,13 +8,13 @@ import Company from "../../models/companyModel";
 export class AdminCompanyService implements IAdminCompanyService {
   constructor(private _companyRepo: IAdminCompanyRepo, private _notificationRepo: INotificationRepo) { }
 
-  getPendingCompanies = async (page: number) => {
+  getPendingCompanies = async (page: number,search:string) => {
     const limit = 10;
     const skip = (page - 1) * limit;
     try {
       const totalCompanies = await Company.countDocuments({ status: "pending" });
       const totalPages = Math.ceil(totalCompanies / limit);
-      const users = await this._companyRepo.getPendingCompanies(limit, skip);
+      const users = await this._companyRepo.getPendingCompanies(limit, skip,search);
       if (!users) {
         throw new Error(Messages.COMPANY_NOT_FOUND);
       }
@@ -25,11 +25,11 @@ export class AdminCompanyService implements IAdminCompanyService {
     }
   };
 
-  getApprovedCompanies = async (page: number) => {
+  getApprovedCompanies = async (page: number,search:string,filter:string) => {
     const limit = 10;
-    const skip = (page - 1) * limit;
+    const skip = (page - 1) * limit; 
     try {
-      const companies = await this._companyRepo.getApprovedCompanies(limit, skip);
+      const companies = await this._companyRepo.getApprovedCompanies(limit, skip,search,filter);
       const totalCompanies = await Company.countDocuments({ status: "approve" });
       const totalPages = Math.ceil(totalCompanies / limit);
       if (!companies) {

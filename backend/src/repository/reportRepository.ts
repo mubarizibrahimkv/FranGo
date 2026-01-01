@@ -6,15 +6,51 @@ export class ReportRepo extends BaseRepository<ReportDocument> implements IRepoo
     constructor() {
         super(Report);
     }
-    findAllWithCompanyAndInvestor() {
-        return Report.find()
-            .populate({
-                path: "reportedBy",
-                model: "Investor"
-            })
-            .populate({
-                path: "reportedAgainst",
-                model: "Company"
-            });
+  async findAllWithCompanyAndInvestor(limit: number, skip: number, search: string) {
+    const pipeline: any[] = [];
+
+    // ------- LOOKUP INVESTOR -------
+    pipeline.push({
+        $lookup: {
+            from: "investors",
+            localField: "reportedBy",
+            foreignField: "_id",
+            as: "reportedBy"
+        }
+    });
+
+    pipeline.push({ $unwind: "$reportedBy" });
+
+    // ------- LOOKUP COMPANY -------
+    pipeline.push({
+        $lookup: {
+            from: "companies",
+            localField: "reportedAgainst",
+            foreignField: "_id",
+            as: "reportedAgainst"
+        }
+    });
+
+    pipeline.push({ $unwind: "$reportedAgainst" });
+
+    // ------- SEARCH (reason OR investor OR company) -------
+    if (search) {
+        pipeline.push({
+            $match: {
+                $or: [
+                    { reason: { $regex: search, $options: "i" } },
+                    { "reportedBy.userName": { $regex: search, $options: "i" } },
+                    { "reportedAgainst.companyName": { $regex: search, $options: "i" } },
+                ]
+            }
+        });
     }
+
+    pipeline.push({ $sort: { createdAt: -1 } });
+    pipeline.push({ $skip: skip });
+    pipeline.push({ $limit: limit });
+
+    return Report.aggregate(pipeline);
+}
+
 }

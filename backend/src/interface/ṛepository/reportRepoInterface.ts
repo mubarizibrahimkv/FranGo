@@ -3,5 +3,5 @@ import { IReport } from "../../models/reportModel";
 export interface IRepoortRepo{
     create(data:IReport):Promise<IReport>
     findAll():Promise<IReport[]>
-    findAllWithCompanyAndInvestor():Promise<IReport[]>
+    findAllWithCompanyAndInvestor(limit: number, skip: number, search: string):Promise<IReport[]>
 }

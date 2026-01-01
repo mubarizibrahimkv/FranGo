@@ -8,7 +8,7 @@ export interface ICompanyProductManagementService {
         subSubCategoryId: string,
         productCategoryName: string,
     }): Promise<{ success: boolean; createdProducts?: IProductCategory[]; message: string }>
-    getAllProductCategories(companyId: string): Promise<
+    getAllProductCategories(companyId: string,search:string,filter?: string): Promise<
         {
             _id: string;
             name: string;
@@ -25,6 +25,6 @@ export interface ICompanyProductManagementService {
     deleteProductCategory(companyId:string,categoryId:string):Promise<IProductCategory>
     addProduct(companyId:string, category:string, name:string, price:string, description:string, imagePaths:string[]):Promise<IProduct>
     editProduct(companyId:string,productId:string, category:string, name:string, price:string, description:string, imagePaths:string[],removedImages:string[]):Promise<IProduct>
-    getProducts(companyId:string,page:number):Promise<{products:IProduct[],totalPages:number}>
+    getProducts(companyId:string,page:number,search:string,filter?: string):Promise<{products:IProduct[],totalPages:number}>
     deleteProduct(productId:string):Promise<IProduct>
 }
