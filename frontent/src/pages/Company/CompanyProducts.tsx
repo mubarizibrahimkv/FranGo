@@ -5,19 +5,22 @@ import {
   addProduct,
   deleteProduct,
   editProduct,
+  fetchCompany,
   getProductCategories,
   getProducts,
 } from "../../services/company/companyProfile";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import type { ProductCategory } from "./CompanyProductCategory";
 import ProductModal from "../../components/CompanyComponents/Modals/ProductModal";
 import { toast } from "react-toastify";
 import { FaTrashAlt } from "react-icons/fa";
-import { Edit } from "lucide-react";
-import type { IProduct } from "../../types/company";
+import { Crown, Edit } from "lucide-react";
+import type { Company, IProduct } from "../../types/company";
 import ConfirmAlert from "../../components/CommonComponents/ConfirmationModal";
 import AdminSearchBar from "../../components/CommonComponents/SearchBar";
+import { useNavigate } from "react-router-dom";
+import { setUser } from "../../redux/slice/authSlice";
 
 export interface IProductForm extends IProduct {
   removedImages?: string[];
@@ -25,9 +28,11 @@ export interface IProductForm extends IProduct {
 
 const CompanyProducts = () => {
   const company = useSelector((state: RootState) => state.user);
+  const [profile, setProfile] = useState<Partial<Company>>({});
+  const isSubscribed = profile?.subscription?.isActive;
   const [reload, setReload] = useState(false);
   const [productCategories, setProductCategories] = useState<ProductCategory[]>(
-    []
+    [],
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -38,10 +43,26 @@ const CompanyProducts = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(
-    null
+    null,
   );
   const [searchText, setSearchText] = useState("");
   const [productCategory, setProductCategory] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const res = await fetchCompany(company._id);
+      setProfile(res.data);
+      dispatch(
+        setUser({
+          ...company,
+          isSubscribed: res.data.subscription.isActive,
+        }),
+      );
+    };
+    fetchProfile();
+  }, [company._id, company, dispatch]);
 
   useEffect(() => {
     const fetchCompanyProductCategories = async () => {
@@ -52,15 +73,15 @@ const CompanyProducts = () => {
   }, [page, company._id]);
 
   useEffect(() => {
-    const filter=productCategory
+    const filter = productCategory;
     const fetchProducts = async () => {
-      const response = await getProducts(company._id, page, searchText,filter);
+      const response = await getProducts(company._id, page, searchText, filter);
       setProducts(response.products);
       setPage(response.currentPage);
       setTotalPages(response.totalPages);
     };
     fetchProducts();
-  }, [page, reload, company._id, searchText,productCategory]);
+  }, [page, reload, company._id, searchText, productCategory]);
 
   const handleAddProduct = () => {
     setSelectedProduct(null);
@@ -84,7 +105,7 @@ const CompanyProducts = () => {
 
   const handleModalSubmit = async (
     formData: IProductForm,
-    editing: boolean
+    editing: boolean,
   ) => {
     try {
       setIsSubmitting(true);
@@ -105,7 +126,7 @@ const CompanyProducts = () => {
 
             data.append(
               "removedImages",
-              JSON.stringify(formData.removedImages || [])
+              JSON.stringify(formData.removedImages || []),
             );
 
             const res = await editProduct(company._id, productId, data);
@@ -147,16 +168,17 @@ const CompanyProducts = () => {
           toast.error(" Failed to add product");
         }
       }
-      setReload((prev) => !prev);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-
       toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const navigateSubscription = () => {
+    navigate("/company/subscription");
+  };
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar />
@@ -174,11 +196,27 @@ const CompanyProducts = () => {
               </div>
             </div>
 
+            {!profile?.subscription?.isActive && (
+              <button
+                className="bg-[#0C2340] flex gap-2 items-center text-white px-5 py-3 rounded-lg text-sm font-semibold hover:bg-[#1E3A8A] transition-colors ml-4"
+                onClick={navigateSubscription}
+              >
+                <Crown />
+                SUBSCRIBE
+              </button>
+            )}
+
             <button
-              onClick={handleAddProduct}
-              className="bg-[#0C2340] text-white px-5 py-3 rounded-lg text-sm font-semibold hover:bg-[#1E3A8A] transition-colors ml-4"
+              onClick={isSubscribed ? handleAddProduct : navigateSubscription}
+              disabled={!isSubscribed}
+              className={`px-5 py-3 rounded-lg text-sm font-semibold ml-4 transition
+    ${
+      isSubscribed
+        ? "bg-[#0C2340] text-white hover:bg-[#1E3A8A]"
+        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+    }`}
             >
-              ADD
+              ADD PRODUCT
             </button>
 
             <ProductModal
@@ -275,18 +313,32 @@ const CompanyProducts = () => {
                     <td className="px-5 py-2">{product.description}</td>
                     <td className="px-5 py-2 flex items-center justify-center gap-3">
                       <button
-                        className="text-red-400 hover:underline"
+                        disabled={!isSubscribed}
                         onClick={() => {
+                          if (!isSubscribed) return navigateSubscription();
                           setSelectedProductId(product._id!);
                           setConfirmationModal(true);
                         }}
+                        className={`${
+                          isSubscribed
+                            ? "text-red-400 hover:underline"
+                            : "text-gray-300 cursor-not-allowed"
+                        }`}
                       >
                         <FaTrashAlt size={18} />
                       </button>
+
                       <Edit
                         size={18}
-                        onClick={() => handleEditProduct(product)}
-                        className="text-green-400 cursor-pointer"
+                        onClick={() => {
+                          if (!isSubscribed) return navigateSubscription();
+                          handleEditProduct(product);
+                        }}
+                        className={`${
+                          isSubscribed
+                            ? "text-green-400 cursor-pointer"
+                            : "text-gray-300 cursor-not-allowed"
+                        }`}
                       />
                     </td>
                   </tr>

@@ -37,7 +37,7 @@ export const updateProfileImage = async (
       console.error("Edit profile:", error?.response?.data);
       throw new Error(
         error.response?.data?.message ||
-        "Something went wrong. Please try again.",
+          "Something went wrong. Please try again.",
       );
     }
     throw new Error("Something went wrong. Please try again.");
@@ -53,7 +53,7 @@ export const updateProfile = async (
       INVESTOR_PROFILE_ROUTES.UPDATE_PROFILE(seekerId),
       formData,
     );
-    return res.data;  
+    return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Edit profile:", error?.response?.data);
@@ -68,7 +68,9 @@ export const changePassword = async (
   data: { oldPassword: string; newPassword: string },
 ) => {
   try {
-    const res = await api.put(COMMON_ROUTES.CHANGE_PASSWORD(role,id), { data });
+    const res = await api.put(COMMON_ROUTES.CHANGE_PASSWORD(role, id), {
+      data,
+    });
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {

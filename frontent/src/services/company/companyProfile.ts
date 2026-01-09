@@ -13,12 +13,16 @@ export const fetchCompany = async (companyId: string) => {
   }
 };
 
-export const getFranchise = async (companyId: string, page?: number,search?:string,filter?:Record<string,string>) => {
+export const getFranchise = async (
+  companyId: string,
+  page?: number,
+  search?: string,
+  filter?: Record<string, string>,
+) => {
   try {
-    const res = await api.get(
-      COMPANY.FRANCHISE.GET(companyId, page),
-      {params:{search,...filter}}
-    );
+    const res = await api.get(COMPANY.FRANCHISE.GET(companyId, page), {
+      params: { search, ...filter },
+    });
     return res.data;
   } catch (error) {
     console.log("Error fetching franchises :", error);
@@ -27,9 +31,7 @@ export const getFranchise = async (companyId: string, page?: number,search?:stri
 };
 export const getSpecificFranchise = async (franchiseId: string) => {
   try {
-    const res = await api.get(
-      COMPANY.FRANCHISE.SPECIFIC(franchiseId),
-    );
+    const res = await api.get(COMPANY.FRANCHISE.SPECIFIC(franchiseId));
     return res.data;
   } catch (error) {
     console.log("Error fetching fanchise details :", error);
@@ -39,10 +41,7 @@ export const getSpecificFranchise = async (franchiseId: string) => {
 
 export const addFranchise = async (companyId: string, data: IFranchise) => {
   try {
-    const res = await api.post(
-     COMPANY.FRANCHISE.ADD(companyId),
-      { data },
-    );
+    const res = await api.post(COMPANY.FRANCHISE.ADD(companyId), { data });
     return res.data;
   } catch (error) {
     console.log("Error creating franchise :", error);
@@ -51,10 +50,7 @@ export const addFranchise = async (companyId: string, data: IFranchise) => {
 };
 export const editFranchise = async (franchiseId: string, data: IFranchise) => {
   try {
-    const res = await api.put(
-      COMPANY.FRANCHISE.EDIT(franchiseId),
-      data,
-    );
+    const res = await api.put(COMPANY.FRANCHISE.EDIT(franchiseId), data);
     return res.data;
   } catch (error) {
     console.log("Error updating franchise :", error);
@@ -63,9 +59,7 @@ export const editFranchise = async (franchiseId: string, data: IFranchise) => {
 };
 export const deleteFranchise = async (franchiseId: string) => {
   try {
-    const res = await api.delete(
-      COMPANY.FRANCHISE.DELETE(franchiseId),
-    );
+    const res = await api.delete(COMPANY.FRANCHISE.DELETE(franchiseId));
     return res.data;
   } catch (error) {
     console.log("Error deleting franchise :", error);
@@ -76,7 +70,7 @@ export const deleteFranchise = async (franchiseId: string) => {
 export const changeLogo = async (formData: FormData, companyId: string) => {
   try {
     const res = await api.put(
-       COMPANY.PROFILE_CHANGE_LOGO(companyId),
+      COMPANY.PROFILE_CHANGE_LOGO(companyId),
       formData,
       {
         headers: {
@@ -122,12 +116,16 @@ export const reApply = async (id: string) => {
   }
 };
 
-export const getApplications = async (id: string, page: number,search:string,filter?:Record<string,string>) => {
+export const getApplications = async (
+  id: string,
+  page: number,
+  search: string,
+  filter?: Record<string, string>,
+) => {
   try {
-    const res = await api.get(
-      COMPANY.APPLICATION.ALL(id, page),
-      {params:{search,...filter}}
-    );
+    const res = await api.get(COMPANY.APPLICATION.ALL(id, page), {
+      params: { search, ...filter },
+    });
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -152,12 +150,18 @@ export const handleApplicationStatus = async (
     }
   }
 };
-export const getProductCategories = async (id: string,search?:string,filter?:string) => {
+export const getProductCategories = async (
+  id: string,
+  search?: string,
+  filter?: string,
+) => {
   try {
-    const res = await api.get(COMPANY.PRODUCT_CATEGORY.GET(id),{params:{search,filter}});
+    const res = await api.get(COMPANY.PRODUCT_CATEGORY.GET(id), {
+      params: { search, filter },
+    });
     return res.data;
   } catch (error) {
-    if (error instanceof AxiosError) {  
+    if (error instanceof AxiosError) {
       console.error("Get productcategory :", error?.response?.data);
       throw error;
     }
@@ -170,7 +174,7 @@ export const editProductCategories = async (
 ) => {
   try {
     const res = await api.put(
- COMPANY.PRODUCT_CATEGORY.EDIT(companyId, categoryId),
+      COMPANY.PRODUCT_CATEGORY.EDIT(companyId, categoryId),
       { newName },
     );
     return res.data;
@@ -221,10 +225,7 @@ export const addProductCategories = async (
 
 export const addProduct = async (companyId: string, data: FormData) => {
   try {
-    const res = await api.post(
-      COMPANY.PRODUCT.ADD(companyId),
-      data,
-    );
+    const res = await api.post(COMPANY.PRODUCT.ADD(companyId), data);
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -239,10 +240,7 @@ export const editProduct = async (
   data: FormData,
 ) => {
   try {
-    const res = await api.put(
-     COMPANY.PRODUCT.EDIT(companyId, productId),
-      data,
-    );
+    const res = await api.put(COMPANY.PRODUCT.EDIT(companyId, productId), data);
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -267,10 +265,9 @@ export const createSubscriptionOrder = async (
   amount: number,
 ) => {
   try {
-    const res = await api.post(
-     COMPANY.SUBSCRIPTION.CREATE(companyId),
-      { amount },
-    );
+    const res = await api.post(COMPANY.SUBSCRIPTION.CREATE(companyId), {
+      amount,
+    });
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -279,10 +276,16 @@ export const createSubscriptionOrder = async (
     }
   }
 };
-export const getProducts = async (companyId: string, page: number,search:string,filter?:string) => {
+export const getProducts = async (
+  companyId: string,
+  page: number,
+  search: string,
+  filter?: string,
+) => {
   try {
-    const res = await api.get(
-    COMPANY.PRODUCT.GET(companyId, page),{params:{search,filter}});
+    const res = await api.get(COMPANY.PRODUCT.GET(companyId, page), {
+      params: { search, filter },
+    });
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -299,10 +302,12 @@ export const verifySubscriptionOrder = async (
   amount: number,
 ) => {
   try {
-    const res = await api.post(
-     COMPANY.SUBSCRIPTION.VERIFY(companyId),
-      { paymentId, orderId, signature, amount },
-    );
+    const res = await api.post(COMPANY.SUBSCRIPTION.VERIFY(companyId), {
+      paymentId,
+      orderId,
+      signature,
+      amount,
+    });
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {

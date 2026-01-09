@@ -6,7 +6,7 @@ import type { IFilters } from "../../pages/Investor/ExploreFranchise";
 
 interface FilterPanelProps {
   onClose: () => void;
-  onApply: (filters: IFilters) => void;
+  onApply: (_: IFilters) => void;
   appliedFilters?: IFilters;
 }
 

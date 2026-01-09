@@ -135,7 +135,7 @@ const ExploreFranchise = () => {
       toast.info("Please Login to continue");
     }
   };
- 
+
   useEffect(() => {
     const fetchFranchises = async () => {
       const params = {

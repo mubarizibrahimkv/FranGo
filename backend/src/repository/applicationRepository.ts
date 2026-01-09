@@ -3,6 +3,8 @@ import Application, { IApplication } from "../models/applicationModel";
 import { BaseRepository } from "./baseRepository";
 import mongoose, { PipelineStage, Types } from "mongoose";
 import { IFranchise } from "../models/franchiseModel";
+import { ICompany } from "../models/companyModel";
+import { IIndustryCategory } from "../models/industryCategoryModel";
 
 export class ApplicationRepo extends BaseRepository<IApplication> implements IApplicationRepo {
     constructor() {
@@ -73,12 +75,6 @@ export class ApplicationRepo extends BaseRepository<IApplication> implements IAp
 
         return Application.aggregate(pipeline);
     }
-
-
-
-
-
-
     async countByCompanyId(companyId: string) {
         const result = await Application.aggregate([
             {
@@ -96,8 +92,6 @@ export class ApplicationRepo extends BaseRepository<IApplication> implements IAp
 
         return result.length > 0 ? result[0].total : 0;
     }
-
-
     async findByInvestorId(
         investorId: string,
         skip: number,
@@ -182,26 +176,32 @@ export class ApplicationRepo extends BaseRepository<IApplication> implements IAp
             { $limit: limit },
         ]);
     }
-
-
-
-
     async countByInvestorId(investorId: string) {
         return await Application.countDocuments({ investor: investorId });
     }
     async findByInvestorAndFranchise(investorId: string, franchiseId: string) {
         return await Application.findOne({ investor: investorId, franchise: franchiseId });
     }
-    async getApprovedFranchisesByInvestor(
-        investorId: string,
-
-    ) {
+    async getApprovedFranchisesByInvestor(investorId: string) {
         return await Application.find({
             investor: investorId,
             status: "approved",
         })
-            .populate<{ franchise: IFranchise }>("franchise")
-            .exec() as unknown as (IApplication & { franchise: IFranchise })[];
+            .populate({
+                path: "franchise",
+                populate: {
+                    path: "company",
+                    populate: {
+                        path: "industryCategory",
+                    },
+                },
+            })
+            .exec() as unknown as (IApplication & {
+                franchise: IFranchise & {
+                    company: ICompany & {
+                        industryCategory: IIndustryCategory;
+                    };
+                };
+            })[];
     }
-
 }

@@ -32,18 +32,19 @@ const AdminProductCategory = () => {
   const [industryCategories, setIndustryCategories] =
     useState<IIndustryCategory>();
   const [productCategories, setProductCategories] = useState<ProductCategory[]>(
-    []
+    [],
   );
   const [isOpenModal, setIsModal] = useState(false);
   const company = useSelector((state: RootState) => state.user);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] =useState<ProductCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] =
+    useState<ProductCategory | null>(null);
   const [editedName, setEditedName] = useState("");
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState("");
-  const [subCategory,setSubCategory]=useState("")
+  const [subCategory, setSubCategory] = useState("");
 
   useEffect(() => {
     const getCategory = async () => {
@@ -56,16 +57,16 @@ const AdminProductCategory = () => {
   }, [company._id]);
 
   useEffect(() => {
-    const filter=subCategory
+    const filter = subCategory;
     const getProductCategory = async () => {
-      const res = await getProductCategories(company._id,searchText,filter);
+      const res = await getProductCategories(company._id, searchText, filter);
       if (res.success) {
         setTotalPages(res.totalPages);
         setProductCategories(res.data);
       }
     };
     getProductCategory();
-  }, [company._id, searchText, page,subCategory]);
+  }, [company._id, searchText, page, subCategory, editedName]);
 
   const handleProductCategory = async (data: {
     industryCategoryId: string;
@@ -101,7 +102,7 @@ const AdminProductCategory = () => {
       const res = await editProductCategories(
         company._id,
         selectedCategory._id,
-        editedName
+        editedName,
       );
       if (res.success) {
         toast.success("Edited");
@@ -140,10 +141,9 @@ const AdminProductCategory = () => {
                   onSubmit={(text: string) => setSearchText(text)}
                 />
               </div>
-              {/* <SearchBar /> */}
             </div>
 
-            <button          
+            <button
               onClick={() => {
                 setIsModal(true);
               }}
@@ -162,8 +162,7 @@ const AdminProductCategory = () => {
             )}
           </div>
 
-
-             <div className="w-full flex justify-center">
+          <div className="w-full flex justify-center">
             <div className="max-w-5xl w-full px-4">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                 {/* ================= Product Category ================= */}
@@ -189,7 +188,7 @@ const AdminProductCategory = () => {
                     {industryCategories?.subCategories.map((item) => (
                       <button
                         key={item._id}
-                        onClick={() => setSubCategory(item._id?item._id:"")}
+                        onClick={() => setSubCategory(item._id ? item._id : "")}
                         className={`px-3 py-1.5 text-[11px] font-semibold rounded-full transition
                 ${
                   subCategory === item._id

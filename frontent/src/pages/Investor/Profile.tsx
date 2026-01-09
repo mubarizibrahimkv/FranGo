@@ -30,7 +30,7 @@ const Profile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showChangePassModal, setShowChangePassModal] = useState(false);
   const dispatch = useDispatch();
-  const [categories, setCategories] = useState([]); 
+  const [categories, setCategories] = useState([]);
 
   const handlePasswordChange = async (oldPass: string, newPass: string) => {
     try {
@@ -451,7 +451,7 @@ const Profile = () => {
             </div>
           </div>
         </div>
-        
+
         <ProfileEditModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

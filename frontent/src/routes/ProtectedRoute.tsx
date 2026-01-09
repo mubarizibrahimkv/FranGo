@@ -35,7 +35,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
 
       if (!hasAccess) {
         toast.info("Access denied for your role");
-        navigate("/customer/unauthorized", { replace: true });
+        navigate("/customer/login", { replace: true });
       }
 
       setCheckingAuth(false);

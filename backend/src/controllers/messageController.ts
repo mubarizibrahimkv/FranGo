@@ -5,6 +5,19 @@ import { ERROR_MESSAGES } from "../constants/errorMessages";
 
 export class MessageController {
     constructor(private _messageService: IMessageService) { }
+     private handleError(res: Response, error: unknown) {
+
+    const err =
+      typeof error === "object" &&
+        error !== null &&
+        "status" in error &&
+        "message" in error
+        ? (error as { status: number; message: string })
+        : error instanceof Error
+          ? { status: HttpStatus.INTERNAL_SERVER_ERROR, message: error.message }
+          : { status: HttpStatus.INTERNAL_SERVER_ERROR, message: ERROR_MESSAGES.SERVER_ERROR };
+
+  }
     
     sendMessage = async (req: Request, res: Response) => {
         const { channel, message, senderId, senderRole, receiverId, imageUrl } = req.body;
@@ -12,11 +25,7 @@ export class MessageController {
             await this._messageService.sendMessage(channel, message, senderId, senderRole, receiverId, imageUrl);
             res.status(HttpStatus.OK).json({ success: true, });
         } catch (error: unknown) {
-            if (error instanceof Error) {
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-            } else {
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
-            }
+            this.handleError(res, error); 
         }   
     };
 
@@ -25,14 +34,10 @@ export class MessageController {
         const searchStr = typeof req.query.search === "string" ? req.query.search : "";
         try {
             const conversations = await this._messageService.getConversations(userId,searchStr);
-            console.log(conversations)
+            console.log(conversations);
             res.status(HttpStatus.OK).json({ success: true, conversations });
         } catch (error: unknown) {
-            if (error instanceof Error) {
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-            } else {
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
-            }
+           this.handleError(res, error); 
         }
     };
 
@@ -46,11 +51,7 @@ export class MessageController {
             const messages = await this._messageService.getMessages(senderId, receiverId);
             res.status(HttpStatus.OK).json({ success: true, messages });
         } catch (error: unknown) {
-            if (error instanceof Error) {
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-            } else {
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
-            }
+            this.handleError(res, error); 
         }
     };
 

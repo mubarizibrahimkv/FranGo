@@ -1,13 +1,12 @@
-import {  CUSTOMER_PROFILE } from "../../constants/apiRoutes";
+import { CUSTOMER_PROFILE } from "../../constants/apiRoutes";
 import type { IAddress } from "../../types/customer";
 import api from "../api";
 
 export const addAddress = async (formData: IAddress, customerId: string) => {
   try {
-    const response = await api.post(
-      CUSTOMER_PROFILE.ADD_ADDRESS(customerId),
-      { formData },
-    );
+    const response = await api.post(CUSTOMER_PROFILE.ADD_ADDRESS(customerId), {
+      formData,
+    });
     return response.data;
   } catch (error) {
     console.log("Error adding address :", error);
@@ -17,9 +16,7 @@ export const addAddress = async (formData: IAddress, customerId: string) => {
 
 export const getAddress = async (customerId: string) => {
   try {
-    const response = await api.get(
-      CUSTOMER_PROFILE.GET_ADDRESS(customerId),
-    );
+    const response = await api.get(CUSTOMER_PROFILE.GET_ADDRESS(customerId));
     return response.data;
   } catch (error) {
     console.log("Error getting address :", error);
@@ -28,9 +25,7 @@ export const getAddress = async (customerId: string) => {
 };
 export const getCustomerAPI = async (customerId: string) => {
   try {
-    const response = await api.get(
-      CUSTOMER_PROFILE.GET_CUSTOMER(customerId),
-    );
+    const response = await api.get(CUSTOMER_PROFILE.GET_CUSTOMER(customerId));
     return response.data;
   } catch (error) {
     console.log("Error getting customer :", error);
@@ -39,10 +34,9 @@ export const getCustomerAPI = async (customerId: string) => {
 };
 export const editAddress = async (formData: IAddress, addressId: string) => {
   try {
-    const response = await api.put(
-      CUSTOMER_PROFILE.EDIT_ADDRESS(addressId),
-      { formData },
-    );
+    const response = await api.put(CUSTOMER_PROFILE.EDIT_ADDRESS(addressId), {
+      formData,
+    });
     return response.data;
   } catch (error) {
     console.log("Error updating address :", error);
@@ -52,7 +46,7 @@ export const editAddress = async (formData: IAddress, addressId: string) => {
 export const deleteAddress = async (addressId: string) => {
   try {
     const response = await api.delete(
-     CUSTOMER_PROFILE.DELETE_ADDRESS(addressId),
+      CUSTOMER_PROFILE.DELETE_ADDRESS(addressId),
     );
     return response.data;
   } catch (error) {

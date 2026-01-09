@@ -1,4 +1,4 @@
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { Investor } from "../../types/investor";
 import { useParams } from "react-router-dom";
 import { getInvestorDetails } from "../../services/admin/manageUsers";

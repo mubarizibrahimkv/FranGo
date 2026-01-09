@@ -38,7 +38,7 @@ const CompanyFranchises = lazy(
   () => import("../pages/Company/companyFranchises"),
 );
 const AdminIndustryCategory = lazy(
-  () => import("../pages/Admin/AdminCategory"),
+  () => import("../pages/Admin/AdminIndustryCategory"),
 );
 const CompanyFranchiseDetails = lazy(
   () => import("../pages/Company/companyFranchiseDetails"),

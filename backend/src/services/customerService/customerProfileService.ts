@@ -1,6 +1,3 @@
-
-
-
 import { ICustomerProfileService } from "../../interface/service/customerProfileService";
 import { ICustomerAuthRepo } from "../../interface/ṛepository/customerAuthRepoInterface";
 import { ICustomerRepo } from "../../interface/ṛepository/customerRepositoryInterface";
@@ -9,6 +6,8 @@ import { IAddressInput } from "../../types/addressInput";
 import bcrypt from "bcrypt";
 import HttpStatus from "../../utils/httpStatusCode";
 import { Messages } from "../../constants/messages";
+import { AddressMapper } from "../../mappers/address.mapper";
+import { CustomerMapper } from "../../mappers/customer.mapper";
 
 export class CustomerProfileService implements ICustomerProfileService {
     constructor(private _addressRepo: ICustomerRepo, private _customerRepo: ICustomerAuthRepo) { }
@@ -34,7 +33,7 @@ export class CustomerProfileService implements ICustomerProfileService {
                 throw { status: HttpStatus.NOT_FOUND, message: Messages.USER_NOT_FOUND };
             }
 
-            return customer;
+            return  CustomerMapper.toDTO(customer);
         } catch (error) {
             console.log("Error in get customer", error);
             throw error;
@@ -43,7 +42,7 @@ export class CustomerProfileService implements ICustomerProfileService {
     getAddress = async (customerId: string) => {
         try {
             const addresses = await this._addressRepo.getAddressesByCustomer(customerId);
-            return addresses;
+            return  AddressMapper.toDTOList(addresses);
         } catch (error) {
             console.log("Error in get address ", error);
             throw error;

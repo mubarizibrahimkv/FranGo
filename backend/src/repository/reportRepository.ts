@@ -1,3 +1,4 @@
+import { PipelineStage } from "mongoose";
 import { IRepoortRepo } from "../interface/ṛepository/reportRepoInterface";
 import Report, { ReportDocument } from "../models/reportModel";
 import { BaseRepository } from "./baseRepository";
@@ -7,9 +8,8 @@ export class ReportRepo extends BaseRepository<ReportDocument> implements IRepoo
         super(Report);
     }
   async findAllWithCompanyAndInvestor(limit: number, skip: number, search: string) {
-    const pipeline: any[] = [];
+    const pipeline: PipelineStage[] = [];
 
-    // ------- LOOKUP INVESTOR -------
     pipeline.push({
         $lookup: {
             from: "investors",
@@ -21,7 +21,6 @@ export class ReportRepo extends BaseRepository<ReportDocument> implements IRepoo
 
     pipeline.push({ $unwind: "$reportedBy" });
 
-    // ------- LOOKUP COMPANY -------
     pipeline.push({
         $lookup: {
             from: "companies",
@@ -33,7 +32,6 @@ export class ReportRepo extends BaseRepository<ReportDocument> implements IRepoo
 
     pipeline.push({ $unwind: "$reportedAgainst" });
 
-    // ------- SEARCH (reason OR investor OR company) -------
     if (search) {
         pipeline.push({
             $match: {

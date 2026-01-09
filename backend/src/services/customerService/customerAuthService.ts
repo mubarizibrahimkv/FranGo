@@ -5,6 +5,7 @@ import { ICustomerAuthRepo } from "../../interface/ṛepository/customerAuthRepo
 import { sendVerificationEmail } from "../../utils/mailService";
 import HttpStatus from "../../utils/httpStatusCode";
 import { Messages } from "../../constants/messages";
+import { CustomerMapper } from "../../mappers/customer.mapper";
 
 export class CustomerAuthService implements ICustomerAuthService {
     constructor(private _authRepo: ICustomerAuthRepo) { }
@@ -31,7 +32,7 @@ export class CustomerAuthService implements ICustomerAuthService {
             const token = generateToken(id, user.role);
             const refreshToken = generateRefreshToken(id, user.role);
 
-            return { user, token, refreshToken };
+            return { user :CustomerMapper.toDTO(user), token, refreshToken };
         } catch (error) {
             console.log("Error in register customer ", error);
             throw error;
@@ -61,7 +62,7 @@ export class CustomerAuthService implements ICustomerAuthService {
 
         await this._authRepo.saveUser(customer);
         return {
-            customer,
+            customer: CustomerMapper.toDTO(customer),
             message: "OTP verified successfully",
         };
     }
@@ -92,34 +93,39 @@ export class CustomerAuthService implements ICustomerAuthService {
 
     async Login(email: string, password: string) {
 
-        const user = await this._authRepo.findByEmail(email);
+        try {
+            const user = await this._authRepo.findByEmail(email);
 
-        if (!user) {
-            throw { status: HttpStatus.NOT_FOUND, message:Messages.USER_NOT_FOUND };
+            if (!user) {
+                throw { status: HttpStatus.NOT_FOUND, message: Messages.USER_NOT_FOUND };
+            }
+
+            if (user.isBlocked) {
+                throw { status: HttpStatus.NOT_FOUND, message: Messages.ACCOUNT_BLOCKED };
+            }
+
+            if (!user.password) {
+                throw { status: HttpStatus.BAD_REQUEST, message: "Password is missing for this user" };
+            }
+
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                throw { status: HttpStatus.UNAUTHORIZED, message: Messages.PASSWORD_DO_NOT_MATCH };
+            }
+
+            const id = typeof user._id === "string" ? user._id : String(user._id);
+            const token = generateToken(id, user.role);
+            const refreshToken = generateRefreshToken(id, user.role);
+
+            return {
+                user: CustomerMapper.toDTO(user),
+                token,
+                refreshToken,
+            };
+        } catch (error) {
+          console.log(error);
+          throw error;
         }
-
-        if (user.isBlocked) {
-            throw { status: HttpStatus.NOT_FOUND, message: Messages.ACCOUNT_BLOCKED };
-        }
-
-        if (!user.password) {
-            throw { status: HttpStatus.BAD_REQUEST, message: "Password is missing for this user" };
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            throw { status: HttpStatus.UNAUTHORIZED, message: Messages.PASSWORD_DO_NOT_MATCH };
-        }
-
-        const id = typeof user._id === "string" ? user._id : String(user._id);
-        const token = generateToken(id, user.role);
-        const refreshToken = generateRefreshToken(id, user.role);
-
-        return {
-            user,
-            token,
-            refreshToken,
-        };
     }
 
     forgotPassword = async (email: string) => {

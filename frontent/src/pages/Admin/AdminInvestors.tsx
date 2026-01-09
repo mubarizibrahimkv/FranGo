@@ -28,13 +28,12 @@ const Investors: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const role = "investor";
   const navigate = useNavigate();
-    const [searchText,setSearchText]=useState("")
-  
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     const loadCompanies = async () => {
       try {
-        const response = await getUsersAPI(role, page,searchText);
+        const response = await getUsersAPI(role, page, searchText);
         setInvestors(response.investors);
         setPage(response.currentPage);
         setTotalPages(response.totalPages);
@@ -44,7 +43,7 @@ const Investors: React.FC = () => {
       }
     };
     loadCompanies();
-  }, [refresh, page,searchText]);
+  }, [refresh, page, searchText]);
 
   const blockInvestor = async (investorId: string, isBlocked: boolean) => {
     try {
@@ -74,8 +73,11 @@ const Investors: React.FC = () => {
 
         <main className="flex-1 p-6 overflow-y-auto">
           <div className="flex justify-between items-center gap-5 mb-4">
-           <div className="w-full  ml-2">{/* <SearchBar /> */}
-              <AdminSearchBar onSubmit={(text:string)=>setSearchText(text)}/>
+            <div className="w-full  ml-2">
+              {/* <SearchBar /> */}
+              <AdminSearchBar
+                onSubmit={(text: string) => setSearchText(text)}
+              />
             </div>
 
             <button

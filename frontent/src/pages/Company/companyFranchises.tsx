@@ -34,11 +34,11 @@ const CompanyFranchises: React.FC = () => {
 
   const [industryCategoryId, setIndustryCategoryId] = useState<string>("");
   const [selectedFranchise, setSelectedFranchise] = useState<IFranchise | null>(
-    null
+    null,
   );
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [franchiseToDelete, setFranchiseToDelete] = useState<string | null>(
-    null
+    null,
   );
   const navigate = useNavigate();
 
@@ -63,26 +63,26 @@ const CompanyFranchises: React.FC = () => {
   };
 
   const filter: Record<string, string> = {};
+
   useEffect(() => {
+    if (selectedSubCategory?._id) {
+      filter.industrySubCategory = selectedSubCategory._id;
+    }
 
-  if (selectedSubCategory?._id) {
-    filter.industrySubCategory = selectedSubCategory._id;
-  }
+    if (ownershipModel) {
+      filter.ownershipModel = ownershipModel;
+    }
 
-  if (ownershipModel) {
-    filter.ownershipModel = ownershipModel;
-  }
+    if (investmentRange.min) {
+      filter.minInvestment = investmentRange.min;
+    }
 
-  if (investmentRange.min) {
-    filter.minInvestment = investmentRange.min;
-  }
-
-  if (investmentRange.max) {
-    filter.maxInvestment = investmentRange.max;
-  }
+    if (investmentRange.max) {
+      filter.maxInvestment = investmentRange.max;
+    }
     const getFranchises = async () => {
       try {
-        const res = await getFranchise(company._id, page, searchText,filter);
+        const res = await getFranchise(company._id, page, searchText, filter);
         setFranchises(res.franchises);
         setCategory(res.companyIndustryCategory.subCategories || []);
         setIndustryCategoryId(res.companyIndustryCategory._id || "");
@@ -92,7 +92,7 @@ const CompanyFranchises: React.FC = () => {
         if (err instanceof AxiosError) {
           toast.dismiss();
           toast.error(
-            err.response?.data?.message || "Unauthorized. Please login again."
+            err.response?.data?.message || "Unauthorized. Please login again.",
           );
         } else {
           toast.error((err as Error).message);
@@ -100,13 +100,23 @@ const CompanyFranchises: React.FC = () => {
       }
     };
     getFranchises();
-  }, [reload, page, company._id, searchText,filter]);
+  }, [
+    reload,
+    page,
+    company._id,
+    searchText,
+    selectedSubCategory?._id,
+    ownershipModel,
+    investmentRange.min,
+    investmentRange.max,
+    filter,
+  ]);
 
   const handleSubmit = async (data: IFranchise) => {
     try {
       const finalData = {
         ...data,
-        industryCategory: industryCategoryId,
+        industryCategoryString: industryCategoryId,
       };
 
       if (data._id) {
@@ -127,7 +137,7 @@ const CompanyFranchises: React.FC = () => {
       if (err instanceof AxiosError) {
         toast.dismiss();
         toast.error(
-          err.response?.data?.message || "Unauthorized. Please login again."
+          err.response?.data?.message || "Unauthorized. Please login again.",
         );
       } else {
         toast.error((err as Error).message);
@@ -156,7 +166,7 @@ const CompanyFranchises: React.FC = () => {
       if (err instanceof AxiosError) {
         toast.dismiss();
         toast.error(
-          err.response?.data?.message || "Unauthorized. Please login again."
+          err.response?.data?.message || "Unauthorized. Please login again.",
         );
       } else {
         toast.error((err as Error).message);
@@ -201,9 +211,6 @@ const CompanyFranchises: React.FC = () => {
               initialData={selectedFranchise || undefined}
             />
           )}
-
-
-
 
           {/* filter section */}
           <div className="rounded-lg shadow-sm p-3 m-4 border border-gray-100 bg-white">
@@ -319,8 +326,6 @@ const CompanyFranchises: React.FC = () => {
               </div>
             </div>
           </div>
-
-          
 
           <table className="min-w-full border-separate border-spacing-y-2">
             <thead>

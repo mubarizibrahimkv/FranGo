@@ -16,7 +16,9 @@ import AdminSearchBar from "../../components/CommonComponents/SearchBar";
 
 const AdminCategory = () => {
   const [categories, setCategories] = useState<IIndustryCategory[]>([]);
-  const [industryCategory, setInustryCategory] = useState<IIndustryCategory[]>([]);
+  const [industryCategory, setInustryCategory] = useState<IIndustryCategory[]>(
+    [],
+  );
   const [isOpenModal, setIsModal] = useState(false);
   const [reload, setReload] = useState(false);
   const [selectedCategory, setSelectedCategory] =
@@ -33,7 +35,7 @@ const AdminCategory = () => {
       if (res.success) {
         setCategories(res.industries);
         setTotalPages(res.totalPages);
-      } 
+      }
     };
 
     getCategory();
@@ -42,8 +44,8 @@ const AdminCategory = () => {
   useEffect(() => {
     const getCategory = async () => {
       const res = await getCategories();
-      if(res.success){
-        setInustryCategory(res.industries)
+      if (res.success) {
+        setInustryCategory(res.industries);
       }
     };
 

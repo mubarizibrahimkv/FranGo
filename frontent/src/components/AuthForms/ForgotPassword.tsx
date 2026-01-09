@@ -30,7 +30,6 @@ const ForgotPassword: React.FC = () => {
       let res;
       if (role === "company") {
         res = await forgotPasswordCumpany(email);
-        console.log(res, "res in frontet");
       } else {
         res = await forgotPassword(email, role);
       }

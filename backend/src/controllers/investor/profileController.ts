@@ -6,17 +6,28 @@ import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import { Messages } from "../../constants/messages";
 
 export class ProfileController implements IProfileController {
-  constructor(private _profileService: IProfileService) {}
+  constructor(private _profileService: IProfileService) { }
+  private handleError(res: Response, error: unknown) {
 
-  getProfile = async (req: Request, res: Response)=> {
+    const err =
+      typeof error === "object" &&
+        error !== null &&
+        "status" in error &&
+        "message" in error
+        ? (error as { status: number; message: string })
+        : error instanceof Error
+          ? { status: HttpStatus.INTERNAL_SERVER_ERROR, message: error.message }
+          : { status: HttpStatus.INTERNAL_SERVER_ERROR, message: ERROR_MESSAGES.SERVER_ERROR };
+
+  }
+
+  getProfile = async (req: Request, res: Response) => {
     try {
       const { seekerId } = req.params;
       const { seeker, industryCategory } = await this._profileService.getProfile(seekerId);
       res.status(HttpStatus.OK).json({ seeker, industryCategory });
     } catch (error: unknown) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        error: error instanceof Error ? error.message : ERROR_MESSAGES.SERVER_ERROR,
-      });
+      this.handleError(res, error);
     }
   };
 
@@ -28,25 +39,23 @@ export class ProfileController implements IProfileController {
       if (!file) {
         res.status(HttpStatus.BAD_REQUEST).json({ message: "No file uploaded" });
         return;
-      } 
+      }
 
-      const updatedSeeker = await this._profileService.updateProfileImage(seekerId, file.path);
-      res.status(HttpStatus.OK).json({ message: "Profile image updated successfully", seeker: updatedSeeker });
+      await this._profileService.updateProfileImage(seekerId, file.path);
+      res.status(HttpStatus.OK).json({ message: "Profile image updated successfully", });
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : ERROR_MESSAGES.SERVER_ERROR;
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message });
+      this.handleError(res, error);
     }
   };
 
-  updateProfile = async (req: Request, res: Response)=> {
+  updateProfile = async (req: Request, res: Response) => {
     try {
       const { seekerId } = req.params;
       const updatedData = req.body;
-      const updated = await this._profileService.updateProfile(seekerId, updatedData);
-      res.status(HttpStatus.OK).json({ message: Messages.PROFILE_UPDATED_SUCCESSFULLY, seeker: updated });
+      await this._profileService.updateProfile(seekerId, updatedData);
+      res.status(HttpStatus.OK).json({ message: Messages.PROFILE_UPDATED_SUCCESSFULLY });
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : ERROR_MESSAGES.SERVER_ERROR;
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message });
+      this.handleError(res, error);
     }
   };
 
@@ -56,12 +65,11 @@ export class ProfileController implements IProfileController {
       await this._profileService.reapply(investorId);
       res.status(HttpStatus.OK).json({ success: true });
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : ERROR_MESSAGES.SERVER_ERROR;
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message });
+      this.handleError(res, error);
     }
   };
 
-  changePassword = async (req: Request, res: Response)=> {
+  changePassword = async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
       const { data } = req.body;
@@ -70,12 +78,10 @@ export class ProfileController implements IProfileController {
 
       res.status(HttpStatus.OK).json({ success: true, message: Messages.PASSWORD_UPDATED_SUCCESSFULLY });
     } catch (error: unknown) {
-      console.error("Change password error:", error);
-      const message = error instanceof Error ? error.message : ERROR_MESSAGES.SERVER_ERROR;
-      res.status(HttpStatus.BAD_REQUEST).json({ message });
+      this.handleError(res, error);
     }
   };
 
 
-  
+
 }

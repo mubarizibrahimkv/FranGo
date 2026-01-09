@@ -4,31 +4,33 @@ import IndustryCategory, { IIndustryCategory } from "../models/industryCategoryM
 import { BaseRepository } from "./baseRepository";
 
 export class IndustryCategoryRepo extends BaseRepository<IIndustryCategory> implements IIndustryCategoryRepo {
-    constructor() {
-        super(IndustryCategory);
+  constructor() {
+    super(IndustryCategory);
+  }
+  async findBySearch(
+    limit: number,
+    skip: number,
+    search: string,
+    filter?: string
+  ) {
+    const query: Record<string, unknown> = {};
+
+    if (search?.trim()) {
+      query.categoryName = { $regex: search, $options: "i" };
     }
-    async findBySearch(
-  limit: number,
-  skip: number,
-  search: string,
-  filter?:string
-) {
-  const query: Record<string, unknown> = {};
 
-  if (search?.trim()) {
-    query.categoryName = { $regex: search, $options: "i" };
+    if (filter) {
+      query._id = new mongoose.Types.ObjectId(
+        filter
+      );
+    }
+
+    return await IndustryCategory.find(query)
+      .sort({ createdAt: 1 })
+      .limit(limit)
+      .skip(skip);
   }
-
-  if (filter) {
-    query._id = new mongoose.Types.ObjectId(
-      filter
-    );
+  async findOne(categoryName:string){
+    return await IndustryCategory.findOne({categoryName: { $regex: `^${categoryName}$`, $options: "i" }});
   }
-
-  return await IndustryCategory.find(query)
-    .sort({ createdAt: 1 })
-    .limit(limit)
-    .skip(skip);
-}
-
 } 

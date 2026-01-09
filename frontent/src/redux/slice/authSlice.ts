@@ -7,6 +7,7 @@ interface UserState {
   role: "admin" | "investor" | "customer" | "company";
   isAuthenticated: boolean;
   isAdmin: boolean;
+  isSubscribed: boolean;
   profileImage: string;
   token?: string;
   status: "approve" | "pending" | "reject";
@@ -18,6 +19,7 @@ const initialState: UserState = {
   _id: "",
   role: "customer",
   isAdmin: false,
+  isSubscribed: false,
   isAuthenticated: false,
   status: "pending",
   profileImage: "",
@@ -36,6 +38,7 @@ const userSlice = createSlice({
       state._id = "";
       state.role = "customer";
       state.isAdmin = false;
+      state.isSubscribed = false;
       state.isAuthenticated = false;
       state.profileImage = "";
     },

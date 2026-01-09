@@ -8,7 +8,7 @@ import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import { Messages } from "../../constants/messages";
 import { AuthenticatedUser } from "../../config/passport";
 
-interface IServiceError {
+export interface IServiceError {
   message: string;
   status?: number;
 }
@@ -19,7 +19,21 @@ const accessTokenMaxAge = Number(process.env.ACCESS_TOKEN_MAX_AGE) || 6 * 60 * 6
 const refreshTokenMaxAge = Number(process.env.REFRESH_TOKEN_MAX_AGE) || 7 * 24 * 60 * 60 * 1000;
 
 export class CustomerAuthController implements ICustomerAuthController {
-  constructor(private _customerAuthService: ICustomerAuthService) {}
+  constructor(private _customerAuthService: ICustomerAuthService) { }
+
+  private handleError(res: Response, error: unknown) {
+
+    const err =
+      typeof error === "object" &&
+        error !== null &&
+        "status" in error &&
+        "message" in error
+        ? (error as { status: number; message: string })
+        : error instanceof Error
+          ? { status: HttpStatus.INTERNAL_SERVER_ERROR, message: error.message }
+          : { status: HttpStatus.INTERNAL_SERVER_ERROR, message: ERROR_MESSAGES.SERVER_ERROR };
+
+  }
 
   register = async (req: Request, res: Response) => {
     const { userName, email, password, role } = req.body;
@@ -47,12 +61,8 @@ export class CustomerAuthController implements ICustomerAuthController {
 
       res.status(HttpStatus.OK).json(user);
     } catch (error: unknown) {
-    const serviceError = error as IServiceError;
-    const message = serviceError.message || ERROR_MESSAGES.SERVER_ERROR;
-    const status = serviceError.status || HttpStatus.INTERNAL_SERVER_ERROR;
-
-    res.status(status).json({ message });
-  }
+      this.handleError(res, error); 
+    }
   };
 
   login = async (req: Request, res: Response) => {
@@ -76,12 +86,8 @@ export class CustomerAuthController implements ICustomerAuthController {
 
       res.status(HttpStatus.OK).json(user);
     } catch (error: unknown) {
-    const serviceError = error as IServiceError;
-    const message = serviceError.message || ERROR_MESSAGES.SERVER_ERROR;
-    const status = serviceError.status || HttpStatus.INTERNAL_SERVER_ERROR;
-
-    res.status(status).json({ message });
-  }
+     this.handleError(res, error); 
+    }
   };
 
   verifyOtp = async (req: Request, res: Response) => {
@@ -99,12 +105,8 @@ export class CustomerAuthController implements ICustomerAuthController {
         },
       });
     } catch (error: unknown) {
-    const serviceError = error as IServiceError;
-    const message = serviceError.message || ERROR_MESSAGES.SERVER_ERROR;
-    const status = serviceError.status || HttpStatus.INTERNAL_SERVER_ERROR;
-
-    res.status(status).json({ message });
-  } 
+      this.handleError(res, error); 
+    }
   };
 
   resendOtp = async (req: Request, res: Response) => {
@@ -112,13 +114,9 @@ export class CustomerAuthController implements ICustomerAuthController {
     try {
       const message = await this._customerAuthService.resendOtp(email);
       res.status(HttpStatus.OK).json({ message });
-    }catch (error: unknown) {
-    const serviceError = error as IServiceError;
-    const message = serviceError.message || ERROR_MESSAGES.SERVER_ERROR;
-    const status = serviceError.status || HttpStatus.INTERNAL_SERVER_ERROR;
-
-    res.status(status).json({ message });
-  }
+    } catch (error: unknown) {
+    this.handleError(res, error); 
+    }
   };
 
   logoutUser = async (req: Request, res: Response) => {
@@ -134,8 +132,7 @@ export class CustomerAuthController implements ICustomerAuthController {
 
       res.status(HttpStatus.OK).json({ message: Messages.LOGOUT_SUCCESS });
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : Messages.LOGOUT_FAILED;
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message });
+      this.handleError(res, error); 
     }
   };
 
@@ -145,12 +142,8 @@ export class CustomerAuthController implements ICustomerAuthController {
       const customer = await this._customerAuthService.forgotPassword(email);
       res.status(HttpStatus.OK).json({ success: true, message: "Successfully Completed", customer });
     } catch (error: unknown) {
-    const serviceError = error as IServiceError;
-    const message = serviceError.message || ERROR_MESSAGES.SERVER_ERROR;
-    const status = serviceError.status || HttpStatus.INTERNAL_SERVER_ERROR;
-
-    res.status(status).json({ message });
-  }
+      this.handleError(res, error); 
+    }
   };
 
   changePassword = async (req: Request, res: Response) => {
@@ -159,18 +152,14 @@ export class CustomerAuthController implements ICustomerAuthController {
       const customer = await this._customerAuthService.changePassword(email, password);
       res.status(HttpStatus.OK).json({ success: true, message: "Successfully Completed", customer });
     } catch (error: unknown) {
-    const serviceError = error as IServiceError;
-    const message = serviceError.message || ERROR_MESSAGES.SERVER_ERROR;
-    const status = serviceError.status || HttpStatus.INTERNAL_SERVER_ERROR;
-
-    res.status(status).json({ message });
-  }
+    this.handleError(res, error); 
+    }
   };
 
   googleCallBack = async (req: Request, res: Response) => {
     try {
       if (!req.user) {
-        res.status(HttpStatus.NOT_FOUND).json({ message: Messages.UNAUTHORIZED_ACCESS  });
+        res.status(HttpStatus.NOT_FOUND).json({ message: Messages.UNAUTHORIZED_ACCESS });
         return;
       }
 
@@ -194,15 +183,14 @@ export class CustomerAuthController implements ICustomerAuthController {
 
       res.redirect(`${process.env.CLIENT_URL}/customer`);
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : ERROR_MESSAGES.SERVER_ERROR;
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message });
+     this.handleError(res, error); 
     }
   };
 
   getGoogleUser = async (req: Request, res: Response) => {
     try {
       if (!req.user) {
-        res.status(HttpStatus.UNAUTHORIZED).json({ message:Messages.UNAUTHORIZED_ACCESS });
+        res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.UNAUTHORIZED_ACCESS });
         return;
       }
 
@@ -217,8 +205,7 @@ export class CustomerAuthController implements ICustomerAuthController {
         token: req.cookies.access_token || null,
       });
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : ERROR_MESSAGES.SERVER_ERROR;
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message });
+    this.handleError(res, error); 
     }
   };
 }

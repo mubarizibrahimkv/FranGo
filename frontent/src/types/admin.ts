@@ -6,7 +6,7 @@ export interface IIndustryCategory {
   categoryName: string;
   image?: string | File;
   subCategories: {
-    _id?:string
+    _id?: string;
     name: string;
     subSubCategories: { name: string }[];
   }[];

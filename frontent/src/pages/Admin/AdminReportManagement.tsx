@@ -15,7 +15,7 @@ const AdminReportManagement = () => {
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        const res = await getReports(searchText,page);
+        const res = await getReports(searchText, page);
         setPage(res.currentPage);
         setTotalPages(res.totalPages);
         setReports(res.reports);
@@ -25,13 +25,18 @@ const AdminReportManagement = () => {
       }
     };
     fetchReports();
-  }, [searchText,page]);
+  }, [searchText, page]);
 
   const blockInvestor = async (investorId: string, isBlocked: boolean) => {
     try {
       const response = await blockUsersAPI(investorId, "company", isBlocked);
+
       if (response.success) {
         toast.success(isBlocked ? "Company Blocked" : "Company Unblocked");
+
+        const res = await getReports(searchText, page);
+        setReports(res.reports);
+        setTotalPages(res.totalPages);
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
@@ -49,7 +54,6 @@ const AdminReportManagement = () => {
         <main className="flex-1 p-6 overflow-y-auto">
           <div className="flex justify-between items-center mb-4">
             <div className="w-3/4 ml-2">
-              {/* <SearchBar /> */}
               <AdminSearchBar
                 onSubmit={(text: string) => setSearchText(text)}
               />
@@ -67,9 +71,7 @@ const AdminReportManagement = () => {
                 </th>
                 <th className="px-5 py-3 text-left font-semibold">Reason</th>
                 <th className="px-5 py-3 text-left font-semibold">Staus</th>
-                <th className="px-5 py-3 text-left font-semibold ">
-                  Date
-                </th>
+                <th className="px-5 py-3 text-left font-semibold ">Date</th>
                 <th className="px-5 py-3 text-left font-semibold rounded-tr-lg">
                   Action
                 </th>
@@ -108,7 +110,7 @@ const AdminReportManagement = () => {
                           report.reportedAgainst._id &&
                           blockInvestor(
                             report.reportedAgainst._id,
-                            !report.reportedAgainst.isBlocked
+                            !report.reportedAgainst.isBlocked,
                           )
                         }
                       >

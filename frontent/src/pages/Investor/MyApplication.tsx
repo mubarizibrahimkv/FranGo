@@ -34,13 +34,13 @@ const MyApplication = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedFranchise, setSelectedFranchise] = useState<IFranchise | null>(
-    null
+    null,
   );
   const [showAlert, setShowAlert] = useState(false);
   const [selectedApp, setSelectedApp] = useState("");
   const [searchText, setSearchText] = useState("");
   const investorIsAuthenticated = useSelector(
-    (state: RootState) => state.user.isAuthenticated
+    (state: RootState) => state.user.isAuthenticated,
   );
   const [filterValue, setFilterValue] = useState("");
 
@@ -62,7 +62,6 @@ const MyApplication = () => {
   };
 
   const handleApply = async (formData: Partial<Investor>) => {
-    console.log("formdata frm amy application", formData);
     try {
       const res = await updateProfile(formData, investorId);
       if (res) {
@@ -91,7 +90,7 @@ const MyApplication = () => {
         investorId,
         page,
         searchText,
-        filterValue
+        filterValue,
       );
       if (res.success) {
         setApplications(res.application);
@@ -129,7 +128,7 @@ const MyApplication = () => {
               response.razorpay_payment_id,
               response.razorpay_order_id,
               response.razorpay_signature,
-              amount
+              amount,
             );
 
             setReload((prev) => !prev);
@@ -162,6 +161,7 @@ const MyApplication = () => {
       const response = await deleteApplication(id);
       if (response.success) {
         setSelectedApp("");
+        setReload((prev) => !prev);
         toast.success("Application deleted successfully!");
       }
       return response;
@@ -201,9 +201,9 @@ const MyApplication = () => {
                   className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all
                   ${
                     filterValue === value
-                     ? "bg-[#0C2340] text-white shadow"
-                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                 }`}
+                      ? "bg-[#0C2340] text-white shadow"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
                 >
                   {label}
                 </button>
@@ -313,7 +313,7 @@ const MyApplication = () => {
                             application.franchise.advancefee &&
                             handlePayAdvance(
                               application._id,
-                              application.franchise.advancefee
+                              application.franchise.advancefee,
                             )
                           }
                         >

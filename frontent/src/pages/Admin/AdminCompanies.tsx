@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import AdminSidebar from "../../components/AdminComponents/AdminSlideBar";
 import AdminNavbar from "../../components/AdminComponents/AdminNavbar";
 import { toast } from "react-toastify";
-import { blockUsersAPI, getCategories, getUsersAPI } from "../../services/admin/manageUsers";
+import {
+  blockUsersAPI,
+  getCategories,
+  getUsersAPI,
+} from "../../services/admin/manageUsers";
 import EntityTable from "../../components/AdminComponents/EntityTable";
 import { useNavigate } from "react-router-dom";
 import AdminSearchBar from "../../components/CommonComponents/SearchBar";
@@ -27,25 +31,26 @@ const AdminDashboard: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
   const role = "company";
-    const [searchText,setSearchText]=useState("")
-  const [industryCategory,setIndustryCategory]=useState<IIndustryCategory[]>([]);
-    const [filter, setFilter] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [industryCategory, setIndustryCategory] = useState<IIndustryCategory[]>(
+    [],
+  );
+  const [filter, setFilter] = useState("");
 
+  useEffect(() => {
+    const getCategory = async () => {
+      const res = await getCategories();
+      if (res.success) {
+        setIndustryCategory(res.industries);
+      }
+    };
 
-    useEffect(() => {
-        const getCategory = async () => {
-          const res = await getCategories();
-          if(res.success){
-            setIndustryCategory(res.industries)
-          }
-        };
-    
-        getCategory();
-      }, []);
+    getCategory();
+  }, []);
 
-  const fetchCompanies = async () => {
+  const fetchCompanies = useCallback(async () => {
     try {
-      const response = await getUsersAPI(role, page,searchText,filter);
+      const response = await getUsersAPI(role, page, searchText, filter);
       setCompanies(response.companies);
       setPage(response.currentPage);
       setTotalPages(response.totalPages);
@@ -53,11 +58,11 @@ const AdminDashboard: React.FC = () => {
       const message = error instanceof Error ? error.message : String(error);
       toast.error(message);
     }
-  };
+  }, [role, page, searchText, filter]);
 
   useEffect(() => {
     fetchCompanies();
-  }, [page, fetchCompanies,searchText,filter]);
+  }, [fetchCompanies]);
 
   const blockCompany = async (companyId: string, isBlocked: boolean) => {
     try {
@@ -87,7 +92,9 @@ const AdminDashboard: React.FC = () => {
         <main className="flex-1 p-6 overflow-y-auto">
           <div className="flex justify-between gap-5 items-center mb-4">
             <div className="w-full  ml-2">
-              <AdminSearchBar onSubmit={(text:string)=>setSearchText(text)}/>
+              <AdminSearchBar
+                onSubmit={(text: string) => setSearchText(text)}
+              />
             </div>
 
             <button
@@ -98,7 +105,7 @@ const AdminDashboard: React.FC = () => {
             </button>
           </div>
 
-           <div className="w-full flex justify-center">
+          <div className="w-full flex justify-center">
             <div className="max-w-5xl w-full px-4">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                 {/* ================= Product Category ================= */}

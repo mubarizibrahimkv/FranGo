@@ -6,6 +6,20 @@ import { ERROR_MESSAGES } from "../../constants/errorMessages";
 
 export class AdminConmpanyController implements IAdminCompanyController {
     constructor(private _companyService: IAdminCompanyService) { }
+    private handleError(res: Response, error: unknown) {
+
+    const err =
+      typeof error === "object" &&
+        error !== null &&
+        "status" in error &&
+        "message" in error
+        ? (error as { status: number; message: string })
+        : error instanceof Error
+          ? { status: HttpStatus.INTERNAL_SERVER_ERROR, message: error.message }
+          : { status: HttpStatus.INTERNAL_SERVER_ERROR, message: ERROR_MESSAGES.SERVER_ERROR };
+
+    res.status(err.status).json({ success: false, message: err.message });
+  }
     getPendingCompanies = async (req: Request, res: Response) => {
         const page = parseInt(req.query.page as string); 
         const searchStr = typeof req.query.search === "string" ? req.query.search : "";
@@ -13,26 +27,18 @@ export class AdminConmpanyController implements IAdminCompanyController {
             const {users,totalPages} = await this._companyService.getPendingCompanies(page,searchStr);
             res.status(HttpStatus.OK).json({ success: true, users,currentPage:page,totalPages });
         } catch (err: unknown) {
-            const errUnknown = err;
-            const errorWithStatus = errUnknown as { status?: number; message?: string };
-            const status = errorWithStatus.status ?? HttpStatus.INTERNAL_SERVER_ERROR;
-            const message = errorWithStatus.message ?? (errUnknown instanceof Error ? errUnknown.message : ERROR_MESSAGES.SERVER_ERROR);
-            res.status(status).json({ message });
+            this.handleError(res, err);
         }
     }; 
     getApprovedCompanies = async (req: Request, res: Response) => {
         const page = parseInt(req.query.page as string) || 1;
         const searchStr = typeof req.query.search === "string" ? req.query.search : "";
-        const filter=req.query.filter as string
+        const filter=req.query.filter as string;
         try {
             const {companies,totalPages} = await this._companyService.getApprovedCompanies(page,searchStr,filter);
             res.status(HttpStatus.OK).json({ success: true, companies,currentPage:page,totalPages });
         } catch (err: unknown) {
-            const errUnknown = err;
-            const errorWithStatus = errUnknown as { status?: number; message?: string };
-            const status = errorWithStatus.status ?? HttpStatus.INTERNAL_SERVER_ERROR;
-            const message = errorWithStatus.message ?? (errUnknown instanceof Error ? errUnknown.message : ERROR_MESSAGES.SERVER_ERROR);
-            res.status(status).json({ message });
+            this.handleError(res, err);
         }
     };
     changeStatusCompany = async (req: Request, res: Response) => {
@@ -46,11 +52,7 @@ export class AdminConmpanyController implements IAdminCompanyController {
             const companies = await this._companyService.changeStatusCompany(companyId, status,reason);
             res.status(HttpStatus.OK).json({ success: true, companies });
         } catch (err: unknown) {
-            const errUnknown = err;
-            const errorWithStatus = errUnknown as { status?: number; message?: string };
-            const status = errorWithStatus.status ?? HttpStatus.INTERNAL_SERVER_ERROR;
-            const message = errorWithStatus.message ?? (errUnknown instanceof Error ? errUnknown.message : ERROR_MESSAGES.SERVER_ERROR);
-            res.status(status).json({ message });
+            this.handleError(res, err);
         }
     };
     blockCompany = async (req: Request, res: Response) => {
@@ -60,11 +62,7 @@ export class AdminConmpanyController implements IAdminCompanyController {
             const companies = await this._companyService.blockCompany(companyId, block);
             res.status(HttpStatus.OK).json({ success: true, companies });
         } catch (err: unknown) {
-            const errUnknown = err;
-            const errorWithStatus = errUnknown as { status?: number; message?: string };
-            const status = errorWithStatus.status ?? HttpStatus.INTERNAL_SERVER_ERROR;
-            const message = errorWithStatus.message ?? (errUnknown instanceof Error ? errUnknown.message : ERROR_MESSAGES.SERVER_ERROR);
-            res.status(status).json({ message });
+            this.handleError(res, err);
         }
     };
     getCompanyDetails = async (req: Request, res: Response) => {
@@ -73,11 +71,7 @@ export class AdminConmpanyController implements IAdminCompanyController {
             const company = await this._companyService.getCompanyDetails(id);
             res.status(HttpStatus.OK).json({ success: true, company });
         } catch (err: unknown) {
-            const errUnknown = err;
-            const errorWithStatus = errUnknown as { status?: number; message?: string };
-            const status = errorWithStatus.status ?? HttpStatus.INTERNAL_SERVER_ERROR;
-            const message = errorWithStatus.message ?? (errUnknown instanceof Error ? errUnknown.message :ERROR_MESSAGES.SERVER_ERROR);
-            res.status(status).json({ message });
+            this.handleError(res, err);
         }
     };
 }

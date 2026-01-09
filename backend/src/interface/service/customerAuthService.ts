@@ -1,3 +1,4 @@
+import { CustomerDTO } from "../../dtos/customer/customer.dto";
 import { ICustomer } from "../../models/customerModel";
 
 
@@ -7,7 +8,7 @@ export interface ICustomerAuthService {
     email: string,
     password: string,
     role: string
-  ): Promise<{ user:ICustomer  | null;
+  ): Promise<{ user:CustomerDTO  | null;
      token: string; 
      refreshToken: string; }>
 
@@ -16,7 +17,7 @@ export interface ICustomerAuthService {
     email: string,
     otp: string
   ): Promise<{
-    customer: ICustomer;
+    customer: CustomerDTO;
     message: string;
   }>;
 
@@ -26,7 +27,7 @@ export interface ICustomerAuthService {
   email: string,
   password: string
 ): Promise<{
-  user: ICustomer;
+  user: CustomerDTO;
   token: string;
   refreshToken: string;
 }>;

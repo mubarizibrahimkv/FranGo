@@ -54,7 +54,7 @@ export class FranchiseRepo extends BaseRepository<IFranchise> implements IFranch
 
     async findAllWithCompany(
         query: FilterQuery<IFranchise>,
-        sortOption: Record<string, SortOrder>
+        sortOption: Record<string, SortOrder> 
     ) {
         return await Franchise.find(query)
             .populate({
@@ -72,5 +72,8 @@ export class FranchiseRepo extends BaseRepository<IFranchise> implements IFranch
             path: "company",
             populate: { path: "industryCategory" }
         });
+    }
+    async findById(id: string) {
+        return await Franchise.findById(id).populate("industryCategory").populate("industrySubCategory");
     }
 } 

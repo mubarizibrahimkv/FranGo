@@ -4,7 +4,6 @@ import IcompanyService from "../../interface/service/companyProfileInterface";
 import { ICompanyProfileRepo } from "../../interface/ṛepository/companyProfileRepositoryInterface";
 import Company, { ICompany } from "../../models/companyModel";
 import IndustryCategory, { IIndustryCategory } from "../../models/industryCategoryModel";
-import { CompanySerivceResponse } from "../../types/interfaceTypes";
 import bcrypt from "bcrypt";
 import { IFranchise } from "../../models/franchiseModel";
 import { IFranchiseRepo } from "../../interface/ṛepository/franchiseRepoInterface";
@@ -13,24 +12,24 @@ import { Messages } from "../../constants/messages";
 import { IApplicationRepo } from "../../interface/ṛepository/applicationRepoInterface";
 import crypto from "crypto";
 import { INotificationRepo } from "../../interface/ṛepository/notificationRepoInterface";
+import { CompanyMapper } from "../../mappers/company.mapper";
+import { FranchiseMapper } from "../../mappers/franchise.mapper";
+import { ApplicationMapper } from "../../mappers/application.mapper";
 
 export class CommpanyProfileService implements IcompanyService {
 
     constructor(private _companyProfileRepo: ICompanyProfileRepo, private _franchiseRepo: IFranchiseRepo, private _applicationRepo: IApplicationRepo, private _notificationRepo: INotificationRepo) { }
 
-    getProfiles = async (companyId: string): Promise<CompanySerivceResponse> => {
+    getProfiles = async (companyId: string) => {
         try {
             const company = await this._companyProfileRepo.findById(companyId);
             if (!company) {
-                return {
-                    company: {} as ICompany,
+                throw {
+                    status: HttpStatus.NOT_FOUND,
                     message: Messages.COMPANY_NOT_FOUND,
                 };
             }
-            return {
-                company: company,
-                message: Messages.FETCH_SUCCESS,
-            };
+            return CompanyMapper.toProfile(company);
         } catch (error) {
             console.error("Register error:", error);
             throw error;
@@ -55,25 +54,37 @@ export class CommpanyProfileService implements IcompanyService {
 
     updateProfile = async (companyData: ICompany, companyId: string) => {
         try {
-            const industryCategory = await IndustryCategory.findById(companyData.industryCategory);
+            const categoryId =
+                typeof companyData.industryCategory === "string"
+                    ? companyData.industryCategory
+                    : companyData.industryCategory?._id;
+
+            if (!categoryId) {
+                throw { status: HttpStatus.BAD_REQUEST, message: Messages.INDUSTRY_CATEGORY_NOT_FOUND };
+            }
+            const industryCategory = await IndustryCategory.findById(categoryId);
             if (!industryCategory) {
                 throw { status: HttpStatus.BAD_REQUEST, message: Messages.INDUSTRY_CATEGORY_NOT_FOUND };
             }
-            if (typeof companyData.industryCategory === "string") {
-                companyData.industryCategory = new mongoose.Types.ObjectId(companyData.industryCategory);
+            companyData.industryCategory = new mongoose.Types.ObjectId(categoryId);
+
+            const updated = await this._companyProfileRepo.updateProfile(
+                companyData,
+                companyId
+            );
+            if (!updated) {
+                throw new Error(Messages.UPDATE_FAILED);
             }
-            const updated = await this._companyProfileRepo.updateProfile(companyData, companyId);
-            if (!updated) throw new Error(Messages.UPDATE_FAILED);
-            const adminId = "$2b$10$fRCoV5J/OXDVA2wGEPLPL.NLeAlt8wnUpyKygCDC31K5B4xfGh.em";
+            const adminId = "64fae9c4d9f12a0012345678";
+
             await this._notificationRepo.create({
                 userId: new mongoose.Types.ObjectId(adminId),
                 message: "A company has completed its profile. Please review and verify.",
                 isRead: false,
             });
-
-            return updated;
+            return CompanyMapper.toProfile(updated);
         } catch (error) {
-            console.error("Register error:", error);
+            console.error("Profile updating error:", error);
             throw error;
         }
     };
@@ -119,7 +130,7 @@ export class CommpanyProfileService implements IcompanyService {
         return true;
     };
 
-    getFranchises = async (companyId: string, page: number,search:string,filter?:Record<string,string>) => {
+    getFranchises = async (companyId: string, page: number, search: string, filter?: Record<string, string>) => {
         const limit = 10;
         const skip = (page - 1) * limit;
         try {
@@ -137,13 +148,18 @@ export class CommpanyProfileService implements IcompanyService {
 
             const companyIndustryCategory = company.industryCategory;
             const [franchises, totalFranchise] = await Promise.all([
-                this._franchiseRepo.findByCompanyId(companyId, skip, limit,search,filter),
+                this._franchiseRepo.findByCompanyId(companyId, skip, limit, search, filter),
                 this._franchiseRepo.countByCompanyId(companyId),
             ]);
             const totalPages = Math.ceil(totalFranchise / limit);
 
 
-            return { companyIndustryCategory, franchises, totalPages };
+            return {
+                companyIndustryCategory: {
+                    _id: companyIndustryCategory._id.toString(),
+                    name: companyIndustryCategory.categoryName, 
+                }, franchises: FranchiseMapper.toResponseList(franchises), totalPages
+            };
         } catch (error: unknown) {
             if (error instanceof Error) {
                 console.error("Error fetching company industry category:", error.message);
@@ -242,7 +258,7 @@ export class CommpanyProfileService implements IcompanyService {
             if (!franchise) {
                 throw { status: HttpStatus.BAD_REQUEST, message: Messages.FRANCHISE_NOT_FOUND } as IError;
             }
-            return franchise;
+            return FranchiseMapper.toResponse(franchise);
         } catch (error: unknown) {
             if (error instanceof Error) {
                 console.error("Error fetching franchise details:", error.message);
@@ -253,7 +269,7 @@ export class CommpanyProfileService implements IcompanyService {
         }
     };
 
-    getApplications = async (companyId: string, page: number,search:string,filter:Record<string,string>) => {
+    getApplications = async (companyId: string, page: number, search: string, filter: Record<string, string>) => {
         const limit = 10;
         const skip = (page - 1) * limit;
         try {
@@ -261,10 +277,10 @@ export class CommpanyProfileService implements IcompanyService {
             if (!company) {
                 throw new Error(Messages.COMPANY_NOT_FOUND);
             }
-            const application = await this._applicationRepo.findByCompanyId(companyId, skip, limit,search,filter);
+            const application = await this._applicationRepo.findByCompanyId(companyId, skip, limit, search, filter);
             const totalApplications = await this._applicationRepo.countByCompanyId(companyId);
             const totalPages = Math.ceil(totalApplications / limit);
-            return { application, totalPages };
+            return {  application: ApplicationMapper.toResponseList(application), totalPages };
         } catch (error: unknown) {
             if (error instanceof Error) {
                 console.error("Error fetching franchise details:", error.message);
@@ -275,30 +291,30 @@ export class CommpanyProfileService implements IcompanyService {
         }
     };
 
-    changeApplicationStatus = async (applicationId: string, status: "approved" | "rejected" | "pending") => {
-        try {
-            const application = await this._applicationRepo.findById(applicationId);
-            if (!application) {
-                throw new Error(Messages.APPLICATION_NOT_FOUND);
+        changeApplicationStatus = async (applicationId: string, status: "approved" | "rejected" | "pending") => {
+            try {
+                const application = await this._applicationRepo.findById(applicationId);
+                if (!application) {
+                    throw new Error(Messages.APPLICATION_NOT_FOUND);
+                }
+                application.status = status;
+                await application.save();
+                const message = status === "approved" ? "Your application has been approved by the company." : "Your application has been rejected by the company.";
+                await this._notificationRepo.create({
+                    userId: application.investor,
+                    message,
+                    isRead: false,
+                });
+                return ApplicationMapper.toResponse(application);
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    console.error("Error fetching franchise details:", error.message);
+                } else {
+                    console.error("Unknown error while fetching franchise details");
+                }
+                throw new Error("Failed to fetch franchise details");
             }
-            application.status = status;
-            await application.save();
-            const message = status === "approved" ? "Your application has been approved by the company." : "Your application has been rejected by the company.";
-            await this._notificationRepo.create({
-                userId: application.investor,
-                message,
-                isRead: false,
-            });
-            return application;
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                console.error("Error fetching franchise details:", error.message);
-            } else {
-                console.error("Unknown error while fetching franchise details");
-            }
-            throw new Error("Failed to fetch franchise details");
-        }
-    };
+        };
     verifyPayment = async (
         companyId: string,
         razorpayPaymentId: string,

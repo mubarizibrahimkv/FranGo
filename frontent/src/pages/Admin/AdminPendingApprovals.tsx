@@ -51,14 +51,14 @@ const AdminPendingApproval: React.FC = () => {
   const verifyCompany = async (
     companyId: string,
     selectedAction: "reject" | "approve",
-    reason?: string
+    reason?: string,
   ) => {
     try {
       const response = await changeStatusUsersAPI(
         companyId,
         role,
         selectedAction,
-        reason
+        reason,
       );
       if (response.success) {
         toast.success("Company Verified Successfully");

@@ -6,7 +6,7 @@ export type IRole = "admin" | "company" | "investor" | "customer";
 
 export const getNotifications = async (role: IRole, userId: string) => {
   try {
-    const response = await api.get( NOTIFICATION_ROUTES.GET_ALL(role, userId),);
+    const response = await api.get(NOTIFICATION_ROUTES.GET_ALL(role, userId));
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -25,7 +25,9 @@ export const updateNotification = async (
     "roel and notificaiton id respectively in seriver",
   );
   try {
-    const response = await api.put( NOTIFICATION_ROUTES.UPDATE(role, notificationId));
+    const response = await api.put(
+      NOTIFICATION_ROUTES.UPDATE(role, notificationId),
+    );
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {

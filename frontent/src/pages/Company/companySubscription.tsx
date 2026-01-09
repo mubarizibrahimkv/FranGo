@@ -1,13 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/CompanyComponents/Sidebar";
 import Navbar from "../../components/CompanyComponents/Navbar";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import {
   createSubscriptionOrder,
+  fetchCompany,
   verifySubscriptionOrder,
 } from "../../services/company/companyProfile";
+import { setUser } from "../../redux/slice/authSlice";
+import { Check, Crown, Sparkles } from "lucide-react";
+import type { Company } from "../../types/company";
 
 export interface RazorpayPaymentResponse {
   razorpay_payment_id: string;
@@ -17,7 +21,22 @@ export interface RazorpayPaymentResponse {
 
 const CompanySubscription: React.FC = () => {
   const company = useSelector((state: RootState) => state.user);
-  useEffect(() => {});
+  const dispatch = useDispatch();
+  const [profile, setProfile] = useState<Partial<Company>>({});
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const res = await fetchCompany(company._id);
+      setProfile(res.data);
+      dispatch(
+        setUser({
+          ...company,
+          isSubscribed: res.data.subscription.isActive,
+        }),
+      );
+    };
+    fetchProfile();
+  }, [company._id, company, dispatch]);
 
   const handleSubscriptionPayment = async (amount: number) => {
     try {
@@ -40,6 +59,12 @@ const CompanySubscription: React.FC = () => {
               response.razorpay_signature,
               amount,
             );
+            dispatch(
+              setUser({
+                ...company,
+                isSubscribed: true,
+              }),
+            );
             toast.success("Subscription Activated!");
           } catch (error) {
             console.error("Verification failed:", error);
@@ -53,7 +78,7 @@ const CompanySubscription: React.FC = () => {
         theme: { color: "#0C2340" },
       };
 
-      const razor = new (window as any).Razorpay(options);
+      const razor = new window.Razorpay(options);
       razor.open();
     } catch (error) {
       console.error("Subscription payment failed:", error);
@@ -71,73 +96,108 @@ const CompanySubscription: React.FC = () => {
         <main className="flex-1 p-6 overflow-y-auto">
           <div className="flex flex-col items-center justify-center px-6 py-10 w-full">
             <div className="w-full max-w-7xl">
-              {/* 
-          <section>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Your Plan</h2>
-            <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6 flex justify-between items-start hover:shadow-lg transition-shadow duration-200">
-              <div>
-                <p className="text-sm font-medium text-gray-600 mb-1">PRO</p>
-                <p className="text-3xl font-bold text-gray-900">500 Rupees</p>
-                <p className="text-sm text-gray-500">Every 1 Year</p>
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-700 mb-2">
-                  This plan price includes:
-                </p>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  <li>Unlimited Chats</li>
-                  <li>Video call</li>
-                  <li>Advance Dashboard Analytics</li>
-                  <li>Catalog Management</li>
-                </ul>
-              </div>
-            </div>
-          </section> 
-          */}
-
               <div className="border-t border-gray-200 my-8"></div>
 
-              {/* All Plans Section */}
               <section className="px-6 py-10">
                 <h2 className="text-lg font-semibold text-gray-800 mb-6">
                   All Plans
                 </h2>
 
                 <div className="flex flex-wrap gap-6 justify-start">
-                  {/* CARD 1 */}
-                  <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-8 pt-10 flex flex-col items-center text-center relative hover:shadow-lg transition duration-200 flex-grow min-w-[250px] max-w-[300px]">
-                    <div className="absolute top-0 left-0 w-full h-3 bg-[#1F3C58] rounded-t-2xl"></div>
-                    <p className="text-lg font-semibold text-[#1F3C58] mt-2">
+                  <div
+                    className={`relative bg-white rounded-2xl shadow-lg border p-8 pt-12 flex flex-col items-center text-center transition-all duration-500 w-full max-w-sm
+                    ${
+                      profile.subscription?.isActive
+                        ? "border-green-300 animate-pulse"
+                        : "border-gray-200 hover:shadow-xl hover:-translate-y-1"
+                    }`}
+                  >
+                    <div
+                      className={`absolute top-0 left-0 w-full h-2 rounded-t-2xl ${
+                        profile.subscription?.isActive
+                          ? "bg-green-500"
+                          : "bg-[#1F3C58]"
+                      }`}
+                    />
+
+                    {profile.subscription?.isActive && (
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white px-4 py-1.5 rounded-full text-sm font-semibold flex items-center gap-1.5 shadow-md">
+                        <Check className="w-4 h-4" />
+                        Active Plan
+                      </div>
+                    )}
+
+                    <div
+                      className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 ${
+                        profile.subscription?.isActive
+                          ? "bg-green-100"
+                          : "bg-[#e7f0f8]"
+                      }`}
+                    >
+                      {profile.subscription?.isActive ? (
+                        <Crown className="w-7 h-7 text-green-600" />
+                      ) : (
+                        <Sparkles className="w-7 h-7 text-[#1F3C58]" />
+                      )}
+                    </div>
+
+                    <p
+                      className={`text-lg font-semibold ${
+                        profile.subscription?.isActive
+                          ? "text-green-600"
+                          : "text-[#1F3C58]"
+                      }`}
+                    >
                       Enterprise
                     </p>
-                    <p className="text-4xl font-bold text-gray-900 mt-3">
-                      500 Rs
-                      <span className="text-base font-medium text-gray-400">
-                        {" "}
-                        / Year
+
+                    <div className="mt-3 mb-6">
+                      <span className="text-4xl font-bold text-gray-900">
+                        ₹500
                       </span>
-                    </p>
-                    <ul className="text-gray-600 text-sm space-y-3 mt-6 mb-8 w-full">
+                      <span className="text-gray-400 ml-1">/ Year</span>
+                    </div>
+
+                    <ul className="w-full space-y-3 mb-8 text-sm text-gray-600">
                       {[
-                        "Unlimted Chat",
-                        "Video call",
+                        "Unlimited Chat",
+                        "Video Call",
                         "Dashboard Analytics",
-                        "Catelog Management",
-                      ].map((item, index) => (
-                        <li key={index} className="flex items-center gap-2">
-                          <span className="w-4 h-4 flex items-center justify-center rounded-full bg-indigo-300 text-white text-xs">
+                        "Product Management",
+                      ].map((feature, index) => (
+                        <li key={index} className="flex items-center gap-3">
+                          <span
+                            className={`w-5 h-5 flex items-center justify-center rounded-full text-xs ${
+                              company.isSubscribed
+                                ? "bg-green-500 text-white"
+                                : "bg-indigo-300 text-white"
+                            }`}
+                          >
                             ✓
                           </span>
-                          {item}
+                          {feature}
                         </li>
                       ))}
                     </ul>
-                    <button
-                      onClick={() => handleSubscriptionPayment(500)}
-                      className="w-full bg-[#e7f0f8] text-[#1F3C58] py-2.5 rounded-4xl font-medium hover:bg-[#1F3C58] hover:text-white transition"
-                    >
-                      Subscribe
-                    </button>
+
+                    {profile.subscription?.isActive ? (
+                      <div className="w-full">
+                        <div className="w-full bg-green-100 text-green-700 py-3 rounded-xl font-semibold flex items-center justify-center gap-2">
+                          <Check className="w-5 h-5" />
+                          Subscribed
+                        </div>
+                        <p className="text-xs text-gray-400 mt-3">
+                          Your subscription is active
+                        </p>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleSubscriptionPayment(500)}
+                        className="w-full bg-[#e7f0f8] text-[#1F3C58] py-3 rounded-xl font-semibold hover:bg-[#1F3C58] hover:text-white transition-all duration-300"
+                      >
+                        Subscribe Now
+                      </button>
+                    )}
                   </div>
                 </div>
               </section>

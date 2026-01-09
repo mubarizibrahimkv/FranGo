@@ -1,5 +1,5 @@
 import type { ProductCategory } from "../pages/Company/CompanyProductCategory";
-import type { IIndustryCategory } from "./admin";
+import type { IIndustryCategory, ISubCategory, ISubSubCategory } from "./admin";
 import type { Investor } from "./investor";
 
 export interface Company {
@@ -7,7 +7,8 @@ export interface Company {
   brandName?: string;
   companyName?: string;
   ownerName?: string;
-  industryCategory?: string | IIndustryCategory;
+  industryCategory?: IIndustryCategory;
+  industryCategoryString?: string;
   industrySubCategory?: string;
   yearFounded?: number;
   country?: string;
@@ -26,15 +27,19 @@ export interface Company {
   about?: string;
   isBlocked?: string;
   status?: "approve" | "reject" | "pending";
+  subscription?: {
+    isActive: boolean;
+  };
 }
 
 export interface IFranchise {
   _id?: string;
   franchiseName?: string;
-  industryCategory?: string;
+  industryCategory?: IIndustryCategory;
+  industryCategoryString?: string;
   monthlyRevenue?: number;
-  industrySubCategory?: string;
-  industrySubSubCategory?: string[];
+  industrySubCategory?: ISubCategory;
+  industrySubSubCategory?: ISubSubCategory[];
 
   company?: {
     _id?: string;

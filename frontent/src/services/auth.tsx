@@ -1,10 +1,7 @@
 import api from "./api";
 import type { Role } from "../types/common";
 import axios, { AxiosError } from "axios";
-import {
-  AUTH_ROUTES,
-  COMPANY_AUTH_ROUTES,
-} from "../constants/apiRoutes";
+import { AUTH_ROUTES, COMPANY_AUTH_ROUTES } from "../constants/apiRoutes";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 interface signUpData {
@@ -22,7 +19,10 @@ export const signupApi = async (data: signUpData) => {
 
 export const loginApi = async (email: string, password: string, role: Role) => {
   try {
-    const response = await api.post(AUTH_ROUTES.LOGIN(role), { email, password });
+    const response = await api.post(AUTH_ROUTES.LOGIN(role), {
+      email,
+      password,
+    });
     return response.data;
   } catch (error) {
     console.log(error);
@@ -57,15 +57,11 @@ export const resendOtpApi = async (email: string, role: Role) => {
 
 export const companySignupApi = async (formData: FormData) => {
   try {
-    const result = await api.post(
-      AUTH_ROUTES.COMPANY_REGISTER,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+    const result = await api.post(AUTH_ROUTES.COMPANY_REGISTER, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
       },
-    );
+    });
     return result.data;
   } catch (error) {
     console.log(error);
@@ -75,9 +71,7 @@ export const companySignupApi = async (formData: FormData) => {
 
 export const verifyEmail = async (token: string) => {
   try {
-    const company = await api.get(
-     AUTH_ROUTES.VERIFY_EMAIL(token),
-    );
+    const company = await api.get(AUTH_ROUTES.VERIFY_EMAIL(token));
     return company.data;
   } catch (error) {
     console.log(error);
@@ -103,10 +97,10 @@ export const resendLink = async ({
   purpose?: string;
 }) => {
   try {
-    const res = await api.post(
-      COMPANY_AUTH_ROUTES.RESEND_LINK,
-      { email, purpose },
-    );
+    const res = await api.post(COMPANY_AUTH_ROUTES.RESEND_LINK, {
+      email,
+      purpose,
+    });
     return res.data;
   } catch (error) {
     console.log(error);
@@ -127,10 +121,7 @@ export const forgotPassword = async (email: string, role: string) => {
 };
 export const forgotPasswordCumpany = async (email: string) => {
   try {
-    const res = await api.post(
-      COMPANY_AUTH_ROUTES.FORGOT_PASSWORD,
-      { email },
-    );
+    const res = await api.post(COMPANY_AUTH_ROUTES.FORGOT_PASSWORD, { email });
     return res.data;
   } catch (error) {
     console.log(error);
@@ -163,13 +154,16 @@ export const googleLogin = (role: string) => {
 export const fetchGoogleUser = async (role: string) => {
   console.log("serojvin success ggoogle");
   try {
-    const response = await axios.get( `${apiUrl}${AUTH_ROUTES.GOOGLE_SUCCESS(role)}`, {
-      withCredentials: true,
-    });
+    const response = await axios.get(
+      `${apiUrl}${AUTH_ROUTES.GOOGLE_SUCCESS(role)}`,
+      {
+        withCredentials: true,
+      },
+    );
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Login Error:", error.response?.data);
-    }   
+    }
   }
 };

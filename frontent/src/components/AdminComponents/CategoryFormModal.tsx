@@ -109,8 +109,8 @@ const CategoryFormModal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-lg w-full max-w-xl p-6">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 overflow-auto">
+      <div className="bg-white rounded-xl shadow-lg w-full max-w-xl p-6 max-h-[90vh] overflow-y-auto">
         <h2 className="text-lg font-semibold text-gray-800 mb-4">
           Add Category
         </h2>
@@ -119,6 +119,7 @@ const CategoryFormModal: React.FC<ModalProps> = ({
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Category Name
           </label>
+          <label htmlFor=""></label>
           <input
             type="text"
             name="categoryName"

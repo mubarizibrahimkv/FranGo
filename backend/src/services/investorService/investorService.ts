@@ -1,10 +1,10 @@
-import mongoose, { Types } from "mongoose";
+import mongoose, { FilterQuery, PipelineStage, Types } from "mongoose";
 import { Messages } from "../../constants/messages";
 import { IInvestorService } from "../../interface/service/investorServiceInterface";
 import { IFranchiseRepo } from "../../interface/ṛepository/franchiseRepoInterface";
 import { IFilters } from "../../types/addressInput";
 import HttpStatus from "../../utils/httpStatusCode";
-import Franchise from "../../models/franchiseModel";
+import Franchise, { IFranchise } from "../../models/franchiseModel";
 import { IInvestor } from "../../models/investorModel";
 import { IProfileRepo } from "../../interface/ṛepository/profileRepoInterface";
 import { IApplicationRepo } from "../../interface/ṛepository/applicationRepoInterface";
@@ -16,6 +16,9 @@ import crypto from "crypto";
 import { IRepoortRepo } from "../../interface/ṛepository/reportRepoInterface";
 import { IReport } from "../../models/reportModel";
 import { INotificationRepo } from "../../interface/ṛepository/notificationRepoInterface";
+import { FranchiseMapper } from "../../mappers/franchise.mapper";
+import { ApplicationMapper } from "../../mappers/application.mapper";
+import { ReportMapper } from "../../mappers/report.mapper";
 dotenv.config();
 
 
@@ -23,9 +26,9 @@ export class InvestorService implements IInvestorService {
     constructor(private _FranchiseRepo: IFranchiseRepo, private _profileRepo: IProfileRepo, private _applicationRepo: IApplicationRepo, private _reportRepo: IRepoortRepo, private _notificationRepo: INotificationRepo) { }
     getFranchises = async (filters: IFilters, page: number) => {
         const limit = 10;
-        const skip = (page - 1) * limit;
+        const skip = (page - 1) * limit; 
         try {
-            const match: any = {};
+                const match: FilterQuery<IFranchise> = {};
 
             if (filters.location) {
                 const locations = filters.location.split(",").map((loc) => loc.trim());
@@ -60,7 +63,7 @@ export class InvestorService implements IInvestorService {
                 }
             }
 
-            const pipeline: any[] = [
+            const pipeline:  PipelineStage[]= [
                 { $match: match },
                 {
                     $lookup: {
@@ -132,7 +135,7 @@ export class InvestorService implements IInvestorService {
 
             const totalPages = Math.ceil(totalFranchises / limit);
 
-            return { franchises, totalPages, totalFranchises };
+            return { franchises: FranchiseMapper.toResponseList(franchises), totalPages, totalFranchises };
         } catch (error) {
             console.error("Error in getFranchises:", error);
             throw error;
@@ -185,7 +188,7 @@ export class InvestorService implements IInvestorService {
                 message: "An investor has submitted a new application. Please review it.",
                 isRead: false,
             });
-            return apply;
+            return ;
         } catch (error) {
             console.log("Error in create application ", error);
             throw error;
@@ -199,7 +202,7 @@ export class InvestorService implements IInvestorService {
                     status: HttpStatus.BAD_REQUEST, message: Messages.FRANCHISE_NOT_FOUND
                 };
             }
-            return franchise;
+            return FranchiseMapper.toResponse(franchise);
         } catch (error) {
             console.log("Error in franchise details ", error);
             throw error;
@@ -217,7 +220,7 @@ export class InvestorService implements IInvestorService {
                 };
             }
             const totalPages = Math.ceil(totalApplications / limit);
-            return { application, totalPages };
+            return { application: ApplicationMapper.toResponseList(application), totalPages };
         } catch (error) {
             console.log("Error in get applications", error);
             throw error;
@@ -284,13 +287,13 @@ export class InvestorService implements IInvestorService {
                 status: "pending"
             };
             const createdReport = await this._reportRepo.create(data);
-            const adminId = "$2b$10$fRCoV5J/OXDVA2wGEPLPL.NLeAlt8wnUpyKygCDC31K5B4xfGh.em";
+            const adminId = "64f1c2a9a4b8e9c123456789";
             await this._notificationRepo.create({
                 userId: new mongoose.Types.ObjectId(adminId),
                 message: "An investor has applied a report. Please review it.",
                 isRead: false,
             });
-            return createdReport;
+            return ReportMapper.toResponse(createdReport);
         } catch (error) {
             console.log("Error in apply report", error);
             throw error;
@@ -316,7 +319,7 @@ export class InvestorService implements IInvestorService {
             console.log("Error update notification ",error);
             throw error;
         }
-    };
+    }; 
     getMyFranchises=async(investorId:string)=>{
         try {
             const investor=await this._profileRepo.findById(investorId);

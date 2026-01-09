@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import api from "./api";
-import {  MESSAGE_ROUTES } from "../constants/apiRoutes";
+import { MESSAGE_ROUTES } from "../constants/apiRoutes";
 
 export const sendMessage = async (
   channel: string,
@@ -38,12 +38,12 @@ export const fetchMessages = async (senderId: string, receiverId: string) => {
     }
   }
 };
-export const getConversation = async (userId: string,search:string) => {
+export const getConversation = async (userId: string, search?: string) => {
   try {
     const response = await api.get(MESSAGE_ROUTES.GET_CONVERSATION, {
-      params: { userId,search },
+      params: { userId, search },
     });
-    return response.data; 
+    return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Fetch conversation error :", error.response?.data);

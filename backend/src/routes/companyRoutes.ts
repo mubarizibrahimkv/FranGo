@@ -43,32 +43,32 @@ router.get("/google/success", authController.getGoogleUser);
 
 router.route("/auth/register").post(upload.fields([{ name: "registrationProof", maxCount: 1 },{ name: "companyLogo", maxCount: 1 }]),authController.register);
 
-router.get("/auth/verify-email", authController.verifyEmail);
+router.get("/auth/verify-email", authController.verifyEmail); 
 router.post("/auth/login/forgot-password", authController.forgotPassword);
 router.post("/auth/verify-email/resendLink", authController.resendLink);
 router.route("/auth/login").post(authController.login);
 router.route("/auth/login/changePassword").post(authController.changePassword);
 router.route("/profile/changePassword/:userId").put(profileController.changePassword);
-router.route("/profile/reapply/:companyId").put(profileController.reapply);
-router.route("/franchise/:companyId").get(profileController.getFranchise).post(profileController.addFranchise);
-router.route("/franchise/:franchiseId").put(profileController.editFranchise).delete(profileController.deleteFranchise);
-router.get("/franchise/getFranchise/:franchiseId",profileController.franchiseDetails);
+router.route("/profile/reapply/:companyId").put(companyAuth,profileController.reapply);
+router.route("/franchise/:companyId").get(companyAuth,profileController.getFranchise).post(companyAuth,profileController.addFranchise);
+router.route("/franchise/:franchiseId").put(companyAuth,profileController.editFranchise).delete(companyAuth,profileController.deleteFranchise);
+router.get("/franchise/getFranchise/:franchiseId",companyAuth,profileController.franchiseDetails);
 
 router
   .route("/profile/:companyId")
   .get(profileController.getProfile)
   .put(companyAuth,profileController.updateProfile);
 router.put("/profile/:companyId/changeLogo",companyAuth,upload.single("companyLogo"), profileController.updateLogo);
-router.route("/application/:companyId").get(profileController.getApplications);
-router.put("/application/:applicationId",profileController.changeApplicationStatus);
-router.route("/productCategory/:companyId").post(productManagementController.addProductCategory).get(productManagementController.getAllProductCategories);
-router.route("/productCategory/:companyId/:categoryId").put(productManagementController.editProductCategories).delete(productManagementController.deleteProductCategories);
-router.post("/subscription/:companyId",profileController.createSubscription);
-router.post("/subscription/verify/:companyId",profileController.verifySubscription);
-router.route("/product/:companyId").post(upload.array("images", 3),productManagementController.addProduct);
-router.route("/product/:companyId/:productId").put(upload.array("images", 3),productManagementController.editProduct);
-router.delete("/product/:productId",productManagementController.deleteProduct);
-router.get("/product/:companyId",productManagementController.getProducts);
+router.route("/application/:companyId").get(companyAuth,profileController.getApplications);
+router.put("/application/:applicationId",companyAuth,profileController.changeApplicationStatus);
+router.route("/productCategory/:companyId").post(companyAuth,productManagementController.addProductCategory).get(companyAuth,productManagementController.getAllProductCategories);
+router.route("/productCategory/:companyId/:categoryId").put(companyAuth,productManagementController.editProductCategories).delete(companyAuth,productManagementController.deleteProductCategories);
+router.post("/subscription/:companyId",companyAuth,profileController.createSubscription);
+router.post("/subscription/verify/:companyId",companyAuth,profileController.verifySubscription);
+router.route("/product/:companyId").post(companyAuth,upload.array("images", 3),productManagementController.addProduct);
+router.route("/product/:companyId/:productId").put(companyAuth,upload.array("images", 3),productManagementController.editProduct);
+router.delete("/product/:productId",companyAuth,productManagementController.deleteProduct);
+router.get("/product/:companyId",companyAuth,productManagementController.getProducts);
 router.get("/:userId/notifications",profileController.getNotifications);
 router.put("/notifications/:notificationId", profileController.updateNotification);
 

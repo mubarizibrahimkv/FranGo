@@ -19,9 +19,9 @@ export class ProductRepo extends BaseRepository<IProduct> implements IProductRep
   search: string,
   filter?: string
 ) {
-  const query: any = {
-    company: new mongoose.Types.ObjectId(companyId),
-  };
+  const query: FilterQuery<IProduct> = {
+      company: new mongoose.Types.ObjectId(companyId),
+    };
 
   if (search?.trim()) {
     query.$or = [

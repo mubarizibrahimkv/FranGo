@@ -1,3 +1,4 @@
+import { InvestorResponseDTO } from "../../dtos/investor/investor.response.dto";
 import { IInvestor } from "../../models/investorModel";
 
 
@@ -7,7 +8,7 @@ export interface IAuthService {
     email: string,
     password: string,
     role: string
-  ): Promise<{ user:IInvestor  | null;
+  ): Promise<{ user:InvestorResponseDTO  | null;
      token: string; 
      refreshToken: string; }>
 
@@ -16,7 +17,7 @@ export interface IAuthService {
     email: string,
     otp: string
   ): Promise<{
-    investor: IInvestor;
+    investor: InvestorResponseDTO;
     message: string;
   }>;
 
@@ -26,7 +27,7 @@ export interface IAuthService {
   email: string,
   password: string
 ): Promise<{
-  user: IInvestor;
+  user: InvestorResponseDTO;
   token: string;
   refreshToken: string;
 }>;

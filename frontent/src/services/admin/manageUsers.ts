@@ -1,21 +1,31 @@
 import { ADMIN_API } from "../../constants/apiRoutes";
 import api from "../api";
 
-export const getUsersAPI = async (role: string, page: number,search:string,filter?:string) => {
+export const getUsersAPI = async (
+  role: string,
+  page: number,
+  search: string,
+  filter?: string,
+) => {
   try {
-    const response = await api.get(ADMIN_API.USERS(role, page),{params:{search,filter}});
+    const response = await api.get(ADMIN_API.USERS(role, page), {
+      params: { search, filter },
+    });
     return response.data;
   } catch (error) {
     console.log(error);
     throw error;
   }
 };
-export const getPendingUsersAPI = async (role: string, page: number,search:string) => {
+export const getPendingUsersAPI = async (
+  role: string,
+  page: number,
+  search: string,
+) => {
   try {
-    const response = await api.get(
-      ADMIN_API.PENDING_USERS(role, page)
-      ,{params:{search}}
-    );
+    const response = await api.get(ADMIN_API.PENDING_USERS(role, page), {
+      params: { search },
+    });
     return response.data;
   } catch (error) {
     console.log(error);
@@ -95,33 +105,39 @@ export const editCategories = async (data: FormData) => {
     throw error;
   }
 };
-export const getCategories = async (search?:string,page?:number,filter?:string) => {
+export const getCategories = async (
+  search?: string,
+  page?: number,
+  filter?: string,
+) => {
   try {
-    const response = await api.get(ADMIN_API.CATEGORY,{params:{search,page,filter}});
+    const response = await api.get(ADMIN_API.CATEGORY, {
+      params: { search, page, filter },
+    });
     return response.data;
   } catch (error) {
-    console.log(error); 
+    console.log(error);
     throw error;
   }
 };
 
 export const deleteCategory = async (id: string) => {
   try {
-    const response = await api.delete(
-      ADMIN_API.DELETE_CATEGORY(id),
-    );
+    const response = await api.delete(ADMIN_API.DELETE_CATEGORY(id));
     return response.data;
   } catch (error) {
     console.log(error);
     throw error;
-  } 
+  }
 };
-export const getReports = async (search:string,page:number) => {
+export const getReports = async (search: string, page: number) => {
   try {
-    const response = await api.get(ADMIN_API.REPORTS,{params:{search,page}});
+    const response = await api.get(ADMIN_API.REPORTS, {
+      params: { search, page },
+    });
     return response.data;
   } catch (error) {
     console.log(error);
-    throw error;    
+    throw error;
   }
 };

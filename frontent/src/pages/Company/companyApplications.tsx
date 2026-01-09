@@ -2,7 +2,11 @@ import Sidebar from "../../components/CompanyComponents/Sidebar";
 import Navbar from "../../components/CompanyComponents/Navbar";
 import { useEffect, useState } from "react";
 import type { IApplication } from "../../types/company";
-import { fetchCompany, getApplications,handleApplicationStatus,} from "../../services/company/companyProfile";
+import {
+  fetchCompany,
+  getApplications,
+  handleApplicationStatus,
+} from "../../services/company/companyProfile";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import { toast } from "react-toastify";
@@ -18,11 +22,12 @@ const CompanyApplications = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState("");
-  const [industryCategories, setIndustryCategories] =useState<IIndustryCategory>();
-  const [selectedSubCategory, setSelectedSubCategory] = useState<ISubCategory>();
+  const [industryCategories, setIndustryCategories] =
+    useState<IIndustryCategory>();
+  const [selectedSubCategory, setSelectedSubCategory] =
+    useState<ISubCategory>();
   const [statusFilter, setStatusFilter] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-
 
   useEffect(() => {
     const getCategory = async () => {
@@ -34,13 +39,12 @@ const CompanyApplications = () => {
     getCategory();
   }, [company._id]);
 
-
   useEffect(() => {
     const filter: Record<string, string> = { status: statusFilter };
     if (selectedSubCategory?._id) {
       filter.subCategoryId = selectedSubCategory._id;
     }
-    console.log(filter,"filter in applicaiton in coampnay side")
+    console.log(filter, "filter in applicaiton in coampnay side");
     const fetchApplications = async () => {
       const res = await getApplications(company._id, page, searchText, filter);
       if (res.success) {
@@ -62,10 +66,9 @@ const CompanyApplications = () => {
     selectedSubCategory,
   ]);
 
-
   const handleStatusChange = async (
     applicationId: string,
-    status: "approved" | "rejected"
+    status: "approved" | "rejected",
   ) => {
     try {
       const res = await handleApplicationStatus(applicationId, status);
@@ -78,7 +81,6 @@ const CompanyApplications = () => {
       toast.error("Failed to update application status. Please try again.");
     }
   };
-
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -236,7 +238,7 @@ const CompanyApplications = () => {
                           setOpenDropdownId(
                             openDropdownId === application._id
                               ? null
-                              : application._id
+                              : application._id,
                           )
                         }
                       >

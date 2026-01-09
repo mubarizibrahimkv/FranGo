@@ -26,7 +26,7 @@ const PersonalInfoModal: React.FC<ModalProps> = ({
     if (!form?.userName?.trim()) newErrors.userName = "Full name is required";
     if (!form?.gender) newErrors.gender = "Gender is required";
 
-    if (!form?.dateOfBirth) { 
+    if (!form?.dateOfBirth) {
       newErrors.dateOfBirth = "Date of birth is required";
     } else {
       const selectedDate = new Date(form.dateOfBirth);

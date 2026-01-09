@@ -6,6 +6,7 @@ import { IAuthRepo } from "../interface/ṛepository/authRepositoryInterface";
 import { sendVerificationEmail } from "../utils/mailService";
 import HttpStatus from "../utils/httpStatusCode";
 import { Messages } from "../constants/messages";
+import { InvestorMapper } from "../mappers/investor.mapper";
 
 export class AuthService implements IAuthService {
   constructor(private _authRepo: IAuthRepo) { }
@@ -32,7 +33,7 @@ export class AuthService implements IAuthService {
       const token = generateToken(id, user.role);
       const refreshToken = generateRefreshToken(id, user.role);
 
-      return { user, token, refreshToken };
+      return { user:InvestorMapper.toResponse(user), token, refreshToken };
     } catch (error) {
       console.log("Error in register", error);
       throw error;
@@ -62,7 +63,7 @@ export class AuthService implements IAuthService {
 
     await this._authRepo.saveUser(investor);
     return {
-      investor,
+      investor:InvestorMapper.toResponse(investor),
       message: "OTP verified successfully",
     };
   }
@@ -113,7 +114,7 @@ export class AuthService implements IAuthService {
     const refreshToken = generateRefreshToken(id, user.role);
 
     return {
-      user,
+      user:InvestorMapper.toResponse(user),
       token,
       refreshToken,
     };

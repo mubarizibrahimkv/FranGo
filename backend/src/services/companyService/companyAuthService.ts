@@ -1,6 +1,5 @@
 import bcrypt from "bcrypt";
 import { generateRefreshToken, generateToken } from "../../utils/jwt";
-import { formData } from "../../controllers/company/authController";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
@@ -10,29 +9,32 @@ import { ICompanyAuthRepo } from "../../interface/ṛepository/companyAuthReposi
 import logger from "../../logger";
 import HttpStatus from "../../utils/httpStatusCode";
 import { Messages } from "../../constants/messages";
-dotenv.config();  
+import { CompanyRegisterDTO } from "../../dtos/company/company.register.dto";
+import { CompanyMapper } from "../../mappers/company.mapper";
+import { CompanyLoginDTO } from "../../dtos/company/company.login.dto";
+dotenv.config();
 
 export class CompanyAuthService implements ICompanyAuthService {
     constructor(private _authRepo: ICompanyAuthRepo) { }
-    register = async (formData: formData, registrationProof: string, companyLogo: string) => {
+    register = async (dto: CompanyRegisterDTO) => {
         try {
-            const existUser = await this._authRepo.findByEmail(formData.email);
+            const existUser = await this._authRepo.findByEmail(dto.email); 
             if (existUser) throw { status: HttpStatus.BAD_REQUEST, message: Messages.ALREADY_EXISTS } as IError;
-            const hashedPassword = await bcrypt.hash(formData.password, 10);
+            const hashedPassword = await bcrypt.hash(dto.password, 10);
 
             const verificationToken = crypto.randomBytes(32).toString("hex");
 
-            const company = await this._authRepo.registerUser(formData.companyName, formData.email, formData.role, registrationProof, companyLogo, hashedPassword, verificationToken);
- 
+            const company = await this._authRepo.registerUser(dto.companyName, dto.email, dto.role, dto.registrationProof, dto.companyLogo, hashedPassword, verificationToken);
+
             if (!company) {
                 throw { status: HttpStatus.BAD_REQUEST, message: Messages.COMPANY_NOT_FOUND } as IError;
             }
-            await this.sendVerificationEmail(formData.email, verificationToken, "");
+            await this.sendVerificationEmail(dto.email, verificationToken, "");
 
             const token = generateToken(String(company._id), "company");
             const refreshToken = generateRefreshToken(String(company._id), "company");
-            
-            return { company, token, refreshToken };
+
+            return { company: CompanyMapper.toResponse(company), token, refreshToken };
         } catch (error) {
             console.error("Register error:", error);
             throw error;
@@ -44,7 +46,7 @@ export class CompanyAuthService implements ICompanyAuthService {
             const company = await this._authRepo.findByVerificationToken(verificationToken);
 
             if (!company) {
-                throw { status: HttpStatus.BAD_REQUEST, message:Messages.PASSWORD_DO_NOT_MATCH} as IError;
+                throw { status: HttpStatus.BAD_REQUEST, message: Messages.PASSWORD_DO_NOT_MATCH } as IError;
             }
 
             if (!company.isVerified) {
@@ -53,7 +55,7 @@ export class CompanyAuthService implements ICompanyAuthService {
                 await company.save();
             }
 
-            return { user: company };
+            return { user: CompanyMapper.toResponse(company) };
 
         } catch (error) {
             console.error("Verify company error:", error);
@@ -105,20 +107,33 @@ export class CompanyAuthService implements ICompanyAuthService {
         }
     };
 
-    resendLink = async (email: string, purpose: string) => {
+    resendLink = async (
+        email: string,
+        purpose: string
+    ) => {
         try {
             const company = await this._authRepo.findByEmail(email);
-            if (!company) throw { status: HttpStatus.BAD_REQUEST, message:  Messages.COMPANY_NOT_FOUND } as IError;
+            if (!company) {
+                throw {
+                    status: HttpStatus.BAD_REQUEST,
+                    message: Messages.COMPANY_NOT_FOUND,
+                } as IError;
+            }
+
             const verificationToken = crypto.randomBytes(32).toString("hex");
-            await this.sendVerificationEmail(email, verificationToken, purpose);
+
             company.verificationToken = verificationToken;
             await company.save();
-            return company;
+
+            await this.sendVerificationEmail(email, verificationToken, purpose);
+
+            return CompanyMapper.toResponse(company);
         } catch (error) {
             console.error("Resend Link Error:", error);
             throw error;
         }
     };
+
     forgotPassword = async (email: string) => {
         try {
             const company = await this._authRepo.findByEmail(email);
@@ -136,54 +151,60 @@ export class CompanyAuthService implements ICompanyAuthService {
     };
 
 
-    async login(email: string, password: string) {
+    async login(dto: CompanyLoginDTO) {
+        try {
+            const company = await this._authRepo.findByEmail(dto.email);
 
-        const company = await this._authRepo.findByEmail(email);
+            if (!company) {
+                throw { status: HttpStatus.BAD_REQUEST, message: Messages.COMPANY_NOT_FOUND } as IError;
+            }
 
-        if (!company) {
-            throw { status: HttpStatus.BAD_REQUEST, message: Messages.COMPANY_NOT_FOUND } as IError;
+            if (company.isBlocked) {
+                throw { status: HttpStatus.BAD_REQUEST, message: Messages.ACCOUNT_BLOCKED } as IError;
+            }
+            if (!company.password) {
+                throw { status: HttpStatus.BAD_REQUEST, message: "Password is missing for this user" } as IError;
+            }
+
+            const isMatch = await bcrypt.compare(dto.password, company.password);
+            if (!isMatch) {
+                throw { status: HttpStatus.BAD_REQUEST, message: Messages.PASSWORD_DO_NOT_MATCH } as IError;
+            }
+            const id = typeof company._id === "string" ? company._id : String(company._id);
+            const token = generateToken(id, "company");
+            const refreshToken = generateRefreshToken(id, "company");
+
+            return {
+                company: CompanyMapper.toResponse(company),
+                token,
+                refreshToken,
+            };
+        } catch (error) {
+            console.log("Error in company login", error);
+            throw error;
         }
 
-        if(company.isBlocked){
-            throw { status: HttpStatus.BAD_REQUEST, message: Messages.ACCOUNT_BLOCKED } as IError;
-        }
-        if (!company.password) {
-            throw { status: HttpStatus.BAD_REQUEST, message: "Password is missing for this user" } as IError;
-        }
 
-        const isMatch = await bcrypt.compare(password, company.password);
-        if (!isMatch) {
-            throw { status: HttpStatus.BAD_REQUEST, message: Messages.PASSWORD_DO_NOT_MATCH } as IError;
-        }
-        const id = typeof company._id === "string" ? company._id : String(company._id);
-        const token = generateToken(id, "company");
-        const refreshToken = generateRefreshToken(id, "company");
-
-        return {
-            company,
-            token,
-            refreshToken,
-        };
     }
 
-    
+
     changePassword = async (email: string, password: string) => {
         try {
-          const investor = await this._authRepo.findByEmail(email);
-    
-          if (!investor) {
-            throw { status: HttpStatus.NOT_FOUND, message:  Messages.COMPANY_NOT_FOUND } as IError;
-          }
-    
-          const hashedPassword = await bcrypt.hash(password, 10);
-    
-          investor.password = hashedPassword;
+            const investor = await this._authRepo.findByEmail(email);
+
+            if (!investor) {
+                throw { status: HttpStatus.NOT_FOUND, message: Messages.COMPANY_NOT_FOUND } as IError;
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            investor.password = hashedPassword;
             await this._authRepo.saveUser(investor);
-    
-          return investor;
+
+            return investor;
         } catch (error) {
             console.error("Forgot password Error:", error);
-          throw error;
+            throw error;
         }
-      };
+    };
 }

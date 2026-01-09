@@ -10,6 +10,7 @@ import HttpStatus from "../../utils/httpStatusCode";
 import { Messages } from "../../constants/messages";
 import { INotificationRepo } from "../../interface/ṛepository/notificationRepoInterface";
 import dotenv from "dotenv";
+import { InvestorMapper } from "../../mappers/investor.mapper";
 dotenv.config();
 
 
@@ -37,7 +38,7 @@ export class ProfileService implements IProfileService {
             seekerObj.preferredFranchiseType = seekerObj.preferredFranchiseType?.map(
                 (cat: ICategory) => cat.categoryName
             );
-            return { seeker: seekerObj, industryCategory };
+            return { seeker:InvestorMapper.toResponse(seeker), industryCategory };
         } catch (error) {
             console.log(error);
             throw error;
@@ -82,7 +83,7 @@ export class ProfileService implements IProfileService {
                 isRead: false,
             });
 
-            return investor;
+            return investor; 
         } catch (error) {
             console.error("Error updating investor profile:", error);
             throw error;

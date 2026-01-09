@@ -15,6 +15,19 @@ dotenv.config();
 export class AuthController implements IAuthController {
 
   constructor(private _authService: IAuthService) { }
+   private handleError(res: Response, error: unknown) {
+
+    const err =
+      typeof error === "object" &&
+        error !== null &&
+        "status" in error &&
+        "message" in error
+        ? (error as { status: number; message: string })
+        : error instanceof Error
+          ? { status: HttpStatus.INTERNAL_SERVER_ERROR, message: error.message }
+          : { status: HttpStatus.INTERNAL_SERVER_ERROR, message: ERROR_MESSAGES.SERVER_ERROR };
+
+  }
 
   register = async (req: Request, res: Response) => {
     const { userName, email, password, role } = req.body;
@@ -36,11 +49,7 @@ export class AuthController implements IAuthController {
 
       res.status(HttpStatus.OK).json(user);
     } catch (error: unknown) {
-      const err = error as { status?: number; message?: string };
-
-      res.status(err.status ?? HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: err.message ?? ERROR_MESSAGES.SERVER_ERROR,
-      });
+      this.handleError(res, error); 
     }
   };
 
@@ -63,11 +72,7 @@ export class AuthController implements IAuthController {
       });
       res.status(HttpStatus.OK).json(user);
     } catch (error: unknown) {
-      const err = error as { status?: number; message?: string };
-
-      res.status(err.status ?? HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: err.message ?? ERROR_MESSAGES.SERVER_ERROR,
-      });
+     this.handleError(res, error); 
     }
   };
 
@@ -91,11 +96,7 @@ export class AuthController implements IAuthController {
 
       res.status(HttpStatus.OK).json({ accessToken: newAccessToken });
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-      } else {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
-      }
+     this.handleError(res, error); 
     }
 
   };
@@ -119,11 +120,7 @@ export class AuthController implements IAuthController {
         },
       });
     } catch (error: unknown) {
-      const err = error as { status?: number; message?: string };
-
-      res.status(err.status ?? HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: err.message ?? ERROR_MESSAGES.SERVER_ERROR,
-      });
+      this.handleError(res, error); 
     }
 
   };
@@ -134,11 +131,7 @@ export class AuthController implements IAuthController {
       const message = await this._authService.resendOtp(email);
       res.status(HttpStatus.OK).json({ message });
     } catch (error: unknown) {
-      const err = error as { status?: number; message?: string };
-
-      res.status(err.status ?? HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: err.message ?? ERROR_MESSAGES.SERVER_ERROR,
-      });
+     this.handleError(res, error); 
     }
   };
 
@@ -155,39 +148,27 @@ export class AuthController implements IAuthController {
 
       res.status(HttpStatus.OK).json({ message: Messages.LOGOUT_SUCCESS });
     } catch (error: unknown) {
-      const err = error as { status?: number; message?: string };
-
-      res.status(err.status ?? HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: err.message ?? ERROR_MESSAGES.SERVER_ERROR,
-      });
+      this.handleError(res, error); 
     }
   };
 
   forgetPassword = async (req: Request, res: Response) => {
     const { email } = req.body;
     try {
-      const investor = await this._authService.forgotPassword(email);
-      res.status(HttpStatus.OK).json({ success: true, message: Messages.PASSWORD_UPDATED_SUCCESSFULLY, investor });
+       await this._authService.forgotPassword(email);
+      res.status(HttpStatus.OK).json({ success: true, message: Messages.PASSWORD_UPDATED_SUCCESSFULLY });
     } catch (error: unknown) {
-      const err = error as { status?: number; message?: string };
-
-      res.status(err.status ?? HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: err.message ?? ERROR_MESSAGES.SERVER_ERROR,
-      });
+     this.handleError(res, error); 
     }
   };
 
   changePassword = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     try {
-      const investor = await this._authService.changePassword(email, password);
-      res.status(HttpStatus.OK).json({ success: true, message: Messages.PASSWORD_UPDATED_SUCCESSFULLY, investor });
+      await this._authService.changePassword(email, password);
+      res.status(HttpStatus.OK).json({ success: true, message: Messages.PASSWORD_UPDATED_SUCCESSFULLY });
     } catch (error: unknown) {
-      const err = error as { status?: number; message?: string };
-
-      res.status(err.status ?? HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: err.message ?? ERROR_MESSAGES.SERVER_ERROR,
-      });
+      this.handleError(res, error); 
     }
   };
 
@@ -235,11 +216,7 @@ export class AuthController implements IAuthController {
         token: req.cookies.access_token || null,
       });
     } catch (error: unknown) {
-      const err = error as { status?: number; message?: string };
-
-      res.status(err.status ?? HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: err.message ?? ERROR_MESSAGES.SERVER_ERROR,
-      });
+      this.handleError(res, error); 
     }
   };
 }

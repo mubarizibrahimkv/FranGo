@@ -2,15 +2,27 @@ import { Messages } from "../../constants/messages";
 import { IAdminService } from "../../interface/service/adminServiceInterface";
 import { IIndustryCategoryRepo } from "../../interface/ṛepository/adminIndustryCategoryInterface";
 import { INotificationRepo } from "../../interface/ṛepository/notificationRepoInterface";
-import { IProductCategoryRepo } from "../../interface/ṛepository/productCategoryInterface";
 import { IRepoortRepo } from "../../interface/ṛepository/reportRepoInterface";
+import { IndustryCategoryMapper } from "../../mappers/industryCategory.mapper";
+import { ReportMapper } from "../../mappers/report.mapper";
 import IndustryCategory, { IIndustryCategory } from "../../models/industryCategoryModel";
 import Report from "../../models/reportModel";
+import HttpStatus from "../../utils/httpStatusCode";
 
 export class AdminService implements IAdminService {
-    constructor(private _IndustryCategoryRepo: IIndustryCategoryRepo, private _ProductCategoryRepo: IProductCategoryRepo, private _reportRepo: IRepoortRepo, private _notificationRepo: INotificationRepo) { }
+    constructor(private _IndustryCategoryRepo: IIndustryCategoryRepo,  private _reportRepo: IRepoortRepo, private _notificationRepo: INotificationRepo) { }
     addIndustryCategory = async (data: IIndustryCategory) => {
         try {
+            const existingCategory =
+                await this._IndustryCategoryRepo.findOne(data.categoryName.trim());
+
+            if (existingCategory) {
+                throw {
+                    status: HttpStatus.BAD_REQUEST,
+                    message: "Industry category already exists",
+                };
+            }
+
             const industry = await this._IndustryCategoryRepo.create(data);
             return industry;
         } catch (error) {
@@ -25,6 +37,15 @@ export class AdminService implements IAdminService {
             if (!category) {
                 throw ({ success: false, message: Messages.INDUSTRY_CATEGORY_NOT_FOUND });
             }
+            const existingCategory =
+                await this._IndustryCategoryRepo.findOne(data.categoryName.trim());
+
+            if (existingCategory) {
+                throw {
+                    status: HttpStatus.BAD_REQUEST,
+                    message: "Industry category already exists",
+                };
+            }
             const updated = await this._IndustryCategoryRepo.update(id, data);
             if (!updated) {
                 throw ({ success: false, message: Messages.UPDATE_FAILED });
@@ -35,14 +56,14 @@ export class AdminService implements IAdminService {
             throw error;
         }
     };
-    getIndustryCategory = async (search: string,page:number,filter?:string) => {
+    getIndustryCategory = async (search: string, page: number, filter?: string) => {
         const limit = 7;
         const skip = (Number(page) - 1) * limit;
         try {
-            const industries = await this._IndustryCategoryRepo.findBySearch(limit,skip,search,filter);
+            const industries = await this._IndustryCategoryRepo.findBySearch(limit, skip, search, filter);
             const total = await IndustryCategory.countDocuments();
             const totalPages = Math.ceil(total / limit);
-            return {industries,totalPages};
+            return { industries:IndustryCategoryMapper.toResponseList(industries), totalPages };
         } catch (error) {
             console.error("Get Industry category Error:", error);
             throw error;
@@ -71,7 +92,7 @@ export class AdminService implements IAdminService {
             const reports = await this._reportRepo.findAllWithCompanyAndInvestor(limit, skip, search);
             const total = await Report.countDocuments();
             const totalPages = Math.ceil(total / limit);
-            return {reports,totalPages};
+            return { reports:ReportMapper.toResponseList(reports), totalPages };
         } catch (error) {
             console.error("Get Reports Error:", error);
             throw error;

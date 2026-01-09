@@ -45,7 +45,6 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
 
     setForm((prev) => ({ ...prev, [name]: updatedValue }));
 
-    // ✅ Validate this field immediately
     validateField(name, updatedValue);
   };
 
@@ -256,10 +255,9 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
 
                 setForm((prev) => ({
                   ...prev,
-                  industrySubCategory: selectedSubId, // store ID
+                  industrySubCategory: selectedSubId,
                 }));
 
-                // find the selected subcategory directly from the array
                 const selectedObj = category.find(
                   (sub) => sub._id === selectedSubId,
                 );
@@ -305,7 +303,9 @@ const FranchiseModal: React.FC<FranchiseModalProps> = ({
                     type="checkbox"
                     value={sub._id}
                     checked={
-                      form.industrySubSubCategory?.includes(sub._id) || false
+                      form.industrySubSubCategory?.includes(
+                        sub._id as string,
+                      ) || false
                     }
                     onChange={(e) => {
                       const { value, checked } = e.target;

@@ -2,17 +2,6 @@ import mongoose, { PipelineStage, Types } from "mongoose";
 import { IProductCategoryRepo } from "../interface/ṛepository/productCategoryInterface";
 import ProductCategory, { IProductCategory } from "../models/productCategory";
 
-interface CategoryDetails {
-  industryName: string;
-  subCategoryName: string;
-  subSubCategoryName: string;
-}
-
-interface ProductCategoryWithDetails extends IProductCategory {
-  categoryDetails: CategoryDetails;
-}
-
-
 export class ProductCategoryRepo implements IProductCategoryRepo {
   constructor() { }
 

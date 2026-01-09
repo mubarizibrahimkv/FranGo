@@ -4,6 +4,7 @@ import { IAdminInvestorService } from "../../interface/service/adminInvestorServ
 import { IAdminInvestorRepo } from "../../interface/ṛepository/adminInvestorRepoInterface";
 import Investor from "../../models/investorModel";
 import { INotificationRepo } from "../../interface/ṛepository/notificationRepoInterface";
+import { InvestorMapper } from "../../mappers/investor.mapper";
 
 export class AdminInvestorService implements IAdminInvestorService {
     constructor(private _investorRepo: IAdminInvestorRepo,private _notificationRepo:INotificationRepo) {}
@@ -18,7 +19,7 @@ export class AdminInvestorService implements IAdminInvestorService {
             if (!investor) {
                 throw { success: false, message: Messages.INVESTOR_NOT_FOUND };
             }
-            return { investor, totalPages };
+            return { investor:InvestorMapper.toResponseList(investor), totalPages };
         } catch (err: unknown) {
             if (err instanceof Error) {
                 throw err;
@@ -37,7 +38,7 @@ export class AdminInvestorService implements IAdminInvestorService {
             if (!investor) {
                 throw { success: false, message: Messages.INVESTOR_NOT_FOUND };
             }
-            return { investor, totalPages };
+            return { investor:InvestorMapper.toResponseList(investor), totalPages };
         } catch (err: unknown) {
             if (err instanceof Error) {
                 throw err;
@@ -95,7 +96,7 @@ export class AdminInvestorService implements IAdminInvestorService {
             if (!investor) {
                 throw { success: false, message: Messages.INVESTOR_NOT_FOUND };
             }
-            return investor;
+            return InvestorMapper.toResponse(investor);
         } catch (err: unknown) {
             if (err instanceof Error) {
                 throw err;

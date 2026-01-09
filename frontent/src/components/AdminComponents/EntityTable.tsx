@@ -10,7 +10,7 @@ interface User {
   companyName?: string;
   userName?: string;
   email: string;
-  phoneNo: string;
+  phoneNumber?: string;
   createdAt: Date;
   isBlocked: boolean;
   role?: "investor" | "company" | "customer";
@@ -72,9 +72,7 @@ const EntityTable: React.FC<Props> = ({
             <th className="px-5 py-3  font-semibold">Email</th>
             <th className="px-5 py-3  font-semibold">Mobile No</th>
             <th className="px-5 py-3  font-semibold">Registered</th>
-            <th className="px-5 py-3  font-semibold rounded-tr-lg">
-              Action
-            </th>
+            <th className="px-5 py-3  font-semibold rounded-tr-lg">Action</th>
           </tr>
         </thead>
 
@@ -100,7 +98,9 @@ const EntityTable: React.FC<Props> = ({
                 {user.role === "company" ? user.companyName : user.userName}
               </td>
               <td className="px-5 py-2">{user.email}</td>
-              <td className="px-5 py-2">{user.phoneNo || "Not Provided"}</td>
+              <td className="px-5 py-2">
+                {user.phoneNumber || "Not Provided"}
+              </td>
               <td className="px-5 py-2">
                 {new Date(user.createdAt).toLocaleDateString("en-GB")}
               </td>

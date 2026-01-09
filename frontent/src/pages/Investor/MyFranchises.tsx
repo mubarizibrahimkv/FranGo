@@ -17,10 +17,10 @@ const MyFranchises = () => {
   const [franchises, setFranchises] = useState<IMyFranchises[] | []>([]);
   const investorId = useSelector((state: RootState) => state.user._id);
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchMyFranchises = async () => {
       const franchises = await getMyFranchises(investorId);
-      console.log(franchises.franchises, "my fanchisess");
       setFranchises(franchises.franchises);
     };
     fetchMyFranchises();
@@ -101,7 +101,8 @@ const MyFranchises = () => {
                 <div className="flex items-center justify-center gap-2 mt-4">
                   <button
                     onClick={() =>
-                      franchise._id && handleNaviagation(franchise._id)
+                      franchise.franchise._id &&
+                      handleNaviagation(franchise.franchise._id)
                     }
                     className="border border-black text-[#023430] w-28 h-10 rounded-[10px] px-3 py-1 font-semibold hover:bg-[#DBFDFA] transition-colors duration-200 text-xs"
                   >

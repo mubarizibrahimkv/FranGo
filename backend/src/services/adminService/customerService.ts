@@ -1,6 +1,7 @@
 import { Messages } from "../../constants/messages";
 import { IAdminCustomerService } from "../../interface/service/adminCustomerServiceInterface";
 import { IAdminCustomerRepo } from "../../interface/ṛepository/adminCustomerRepoInterface";
+import { CustomerMapper } from "../../mappers/customer.mapper";
 import Customer from "../../models/customerModel";
 
 export class AdminCustomerService implements IAdminCustomerService {
@@ -18,7 +19,7 @@ export class AdminCustomerService implements IAdminCustomerService {
         throw new Error(Messages.CUSTOMER_NOT_FOUND);
       }
 
-      return { customers, totalPages };
+      return { customers:CustomerMapper.toDTOList(customers), totalPages };
     } catch (error: unknown) {
       if (error instanceof Error) throw new Error(error.message);
       throw new Error("Failed to fetch customers");

@@ -1,20 +1,21 @@
-import { formData } from "../../controllers/company/authController";
+import { CompanyLoginDTO } from "../../dtos/company/company.login.dto";
+import { CompanyRegisterDTO } from "../../dtos/company/company.register.dto";
+import { CompanyResponseDTO } from "../../dtos/company/company.response.dto";
 import { ICompany } from "../../models/companyModel";
 
 export interface ICompanyAuthService {
   register(
-    formData: formData,
-    registrationProof: string,
-    companyLogo: string,
-  ): Promise<{ company: ICompany ;
+    dto: CompanyRegisterDTO,
+  ): Promise<{ 
+    company: CompanyResponseDTO;
      token: string; 
      refreshToken: string; }>
 
 
   verifyCompany(
     verificationToken: string,
-  ): Promise<{
-    user: ICompany;
+  ): Promise<{ 
+    user: CompanyResponseDTO;
   }>;
 
   sendVerificationEmail(
@@ -23,12 +24,12 @@ export interface ICompanyAuthService {
   purpose?:string|undefined
 ): Promise<boolean>;
 
-  resendLink(email: string,purpose:string|undefined): Promise<ICompany>;
+  resendLink(email: string,purpose:string|undefined): Promise<CompanyResponseDTO>;
   forgotPassword(email:string):Promise<ICompany>
   changePassword(email:string,password:string):Promise<ICompany>
   
-  login(email:string,password:string):Promise<{
-    company:ICompany,
+  login(dto: CompanyLoginDTO):Promise<{
+    company:CompanyResponseDTO,
     token:string,
     refreshToken:string
   }>

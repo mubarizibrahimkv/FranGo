@@ -8,9 +8,7 @@ import AdminNavbar from "../../components/AdminComponents/AdminNavbar";
 import { FaUser } from "react-icons/fa6";
 
 const CompanyDetails = () => {
-  const [user, setUser] = useState<Company>({
-    _id: new Date().getTime() as unknown as any,
-  });
+  const [user, setUser] = useState<Company | null>(null);
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
@@ -40,7 +38,7 @@ const CompanyDetails = () => {
             <div className="bg-white shadow rounded-lg p-6 flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="relative w-32 h-32 bg-[#1F3C58] rounded-full flex items-center justify-center text-4xl text-white shadow-md overflow-visible">
-                  {user.companyLogo ? (
+                  {user?.companyLogo ? (
                     <img
                       src={user.companyLogo}
                       alt="Profile"
@@ -52,9 +50,9 @@ const CompanyDetails = () => {
                 </div>
 
                 <div>
-                  <h1 className="text-2xl font-bold">{user.companyName}</h1>
+                  <h1 className="text-2xl font-bold">{user?.companyName}</h1>
                   <p className="text-sm text-gray-600">
-                    Owned by : {user.ownerName || "Not Provided"}
+                    Owned by : {user?.ownerName || "Not Provided"}
                   </p>
                 </div>
               </div>
@@ -65,7 +63,7 @@ const CompanyDetails = () => {
                 <h2 className="text-xl font-semibold">About</h2>
               </div>
               <p className="text-gray-700 text-sm leading-relaxed">
-                {user.about || "Not Provided"}
+                {user?.about || "Not Provided"}
               </p>
             </div>
 
@@ -81,43 +79,45 @@ const CompanyDetails = () => {
                   <div>
                     <p className="text-gray-500">Brand Name</p>
                     <p className="text-black font-medium">
-                      {user.brandName || "Not Provided"}
+                      {user?.brandName || "Not Provided"}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Company Name</p>
                     <p className="text-black font-medium">
-                      {user.companyName || "Not Provided"}
+                      {user?.companyName || "Not Provided"}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Industry Category</p>
                     <p className="text-black font-medium">
-                      {/* {user.industryCategory || "Not Provided"} */}
+                      {user?.industryCategory
+                        ? user.industryCategory.categoryName
+                        : "Not Provided"}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Industry Sub Category</p>
                     <p className="text-black font-medium">
-                      {user.industrySubCategory || "Not Provided"}
+                      {user?.industrySubCategory || "Not Provided"}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Year Founded</p>
                     <p className="text-black font-medium">
-                      {user.yearFounded || "Not Provided"}
+                      {user?.yearFounded || "Not Provided"}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Country</p>
                     <p className="text-black font-medium">
-                      {user.country || "Not Provided"}
+                      {user?.country || "Not Provided"}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Year Commenced Franchising</p>
                     <p className="text-black font-medium">
-                      {user.yearCommencedFranchising || "Not Provided"}
+                      {user?.yearCommencedFranchising || "Not Provided"}
                     </p>
                   </div>
                 </div>
@@ -133,31 +133,31 @@ const CompanyDetails = () => {
                   <div>
                     <p className="text-gray-500">Contact Person Name</p>
                     <p className="text-black font-medium">
-                      {user.contactPerson || "Not Provided"}
+                      {user?.contactPerson || "Not Provided"}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Designation</p>
                     <p className="text-black font-medium">
-                      {user.designation || "Not Provided"}
+                      {user?.designation || "Not Provided"}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Email</p>
                     <p className="text-black font-medium">
-                      {user.email || "Not Provided"}
+                      {user?.email || "Not Provided"}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Phone Number</p>
                     <p className="text-black font-medium">
-                      {user.phoneNumber || "Not Provided"}
+                      {user?.phoneNumber || "Not Provided"}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Website</p>
                     <p className="text-black font-medium">
-                      {user.website || "Not Provided"}
+                      {user?.website || "Not Provided"}
                     </p>
                   </div>
                 </div>
@@ -173,7 +173,7 @@ const CompanyDetails = () => {
                   <div>
                     <p className="text-gray-500">Number of Retail Outlets</p>
                     <p className="text-black font-medium">
-                      {user.numberOfRetailOutlets?.toString().trim()
+                      {user?.numberOfRetailOutlets?.toString().trim()
                         ? user.numberOfRetailOutlets
                         : "Not Provided"}
                     </p>
@@ -182,7 +182,7 @@ const CompanyDetails = () => {
                   <div>
                     <p className="text-gray-500">Number of Franchise Outlets</p>
                     <p className="text-black font-medium">
-                      {user.numberOfFranchiseOutlets?.toString().trim()
+                      {user?.numberOfFranchiseOutlets?.toString().trim()
                         ? user.numberOfFranchiseOutlets
                         : "Not Provided"}
                     </p>
@@ -191,7 +191,7 @@ const CompanyDetails = () => {
                   <div>
                     <p className="text-gray-500">Manager (Franchise) Name</p>
                     <p className="text-black font-medium">
-                      {user.franchiseManager?.trim()
+                      {user?.franchiseManager?.trim()
                         ? user.franchiseManager
                         : "Not Provided"}
                     </p>
@@ -207,7 +207,7 @@ const CompanyDetails = () => {
                 <br />
                 <div>
                   <p className="text-gray-500">Company Registration Proof</p>
-                  {user.companyRegistrationProof ? (
+                  {user?.companyRegistrationProof ? (
                     <a
                       href={user.companyRegistrationProof}
                       target="_blank"

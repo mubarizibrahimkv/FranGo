@@ -54,7 +54,7 @@ app.use("/api/message", messageRouter);
 
 setupSocket(server);
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT; 
 
 server.listen(PORT, () => {
     logger.info(`Server is running on port ${PORT}`);

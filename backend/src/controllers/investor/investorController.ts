@@ -69,7 +69,7 @@ export class InvestorController {
       const franchise = await this._investorService.getFranchiseDetails(franchiseId);
       res.status(HttpStatus.OK).json({ success: true, franchise });
     } catch (error: unknown) {
-      this.handleError(res, error);
+      this.handleError(res, error); 
     }
   };
 
@@ -78,13 +78,13 @@ export class InvestorController {
     const { formData } = req.body;
 
     try {
-      const application = await this._investorService.createApplication(
+      await this._investorService.createApplication(
         formData,
         investorId,
         franchiseId
       );
 
-      res.status(HttpStatus.OK).json({ success: true, application });
+      res.status(HttpStatus.OK).json({ success: true });
     } catch (error: unknown) {
       this.handleError(res, error);
     }

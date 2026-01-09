@@ -6,10 +6,7 @@ import type { Investor } from "../types/investor";
 
 export const getFranchises = async (params?: IApiParams, page?: number) => {
   try {
-    const res = await api.get(
-       INVESTOR_ROUTES.GET_FRANCHISES(page),
-      { params },
-    );
+    const res = await api.get(INVESTOR_ROUTES.GET_FRANCHISES(page), { params });
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -17,10 +14,10 @@ export const getFranchises = async (params?: IApiParams, page?: number) => {
       throw error;
     }
   }
-}; 
+};
 export const getFranchiseDetails = async (id: string) => {
   try {
-    const res = await api.get( INVESTOR_ROUTES.GET_FRANCHISE_DETAILS(id));
+    const res = await api.get(INVESTOR_ROUTES.GET_FRANCHISE_DETAILS(id));
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -36,10 +33,7 @@ export const applyAApplication = async (
 ) => {
   try {
     const res = await api.post(
-      INVESTOR_ROUTES.APPLY_APPLICATION(
-        investorId,
-        franchiseId,
-      ),
+      INVESTOR_ROUTES.APPLY_APPLICATION(investorId, franchiseId),
       { formData },
     );
     return res.data;
@@ -50,10 +44,16 @@ export const applyAApplication = async (
     }
   }
 };
-export const getAApplication = async (investorId: string, page: number,search:string,filter:string) => {
+export const getAApplication = async (
+  investorId: string,
+  page: number,
+  search: string,
+  filter: string,
+) => {
   try {
     const res = await api.get(
-      INVESTOR_ROUTES.GET_APPLICATIONS(investorId, page),{params:{search,filter}}
+      INVESTOR_ROUTES.GET_APPLICATIONS(investorId, page),
+      { params: { search, filter } },
     );
     return res.data;
   } catch (error) {
@@ -65,9 +65,7 @@ export const getAApplication = async (investorId: string, page: number,search:st
 };
 export const getMyFranchises = async (investorId: string) => {
   try {
-    const res = await api.get(
-     INVESTOR_ROUTES.GET_MY_FRANCHISES(investorId),
-    );
+    const res = await api.get(INVESTOR_ROUTES.GET_MY_FRANCHISES(investorId));
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -100,10 +98,7 @@ export const payAdvance = async (
 ) => {
   try {
     const res = await api.post(
-      INVESTOR_ROUTES.PAY_ADVANCE(
-        investorId,
-        applicationId,
-      ),
+      INVESTOR_ROUTES.PAY_ADVANCE(investorId, applicationId),
       { data },
     );
     return res.data;
@@ -125,10 +120,7 @@ export const verifyPayAdvanceOrder = async (
 ) => {
   try {
     const res = await api.post(
-           INVESTOR_ROUTES.VERIFY_PAY_ADVANCE(
-        investorId,
-        applicationId,
-      ),
+      INVESTOR_ROUTES.VERIFY_PAY_ADVANCE(investorId, applicationId),
 
       { paymentId, orderId, signature, amount },
     );
@@ -147,10 +139,10 @@ export const applyReport = async (
   reason: string,
 ) => {
   try {
-    const res = await api.post(
-      INVESTOR_ROUTES.APPLY_REPORT(investorId),
-      { franchiseId, reason },
-    );
+    const res = await api.post(INVESTOR_ROUTES.APPLY_REPORT(investorId), {
+      franchiseId,
+      reason,
+    });
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError) {

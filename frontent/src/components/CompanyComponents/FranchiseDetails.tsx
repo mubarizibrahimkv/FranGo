@@ -8,7 +8,6 @@ interface FranchiseDetailsProps {
 const FranchiseDetails: React.FC<FranchiseDetailsProps> = ({ franchise }) => {
   return (
     <div className="p-6 bg-white rounded-lg shadow-md space-y-6">
-      {/* Basic Information */}
       <div>
         <h2 className="text-lg font-semibold mb-2">Basic Information</h2>
         <div className="grid grid-cols-2 gap-4">
@@ -18,16 +17,18 @@ const FranchiseDetails: React.FC<FranchiseDetailsProps> = ({ franchise }) => {
           </div>
           <div>
             <span className="font-semibold">Industry Category:</span>{" "}
-            {franchise.industryCategory || "N/A"}
+            {franchise.industryCategory?.categoryName ||
+              franchise.company?.industryCategory?.categoryName ||
+              "N/A"}
           </div>
           <div>
             <span className="font-semibold">Average Monthly Revenue:</span>{" "}
             {franchise.monthlyRevenue || "N/A"}
           </div>
-          <div>
+          {/* <div>
             <span className="font-semibold">Industry Sub Category:</span>{" "}
             {franchise.industrySubCategory || "N/A"}
-          </div>
+          </div> */}
         </div>
       </div>
 

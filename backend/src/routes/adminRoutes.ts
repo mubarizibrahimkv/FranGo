@@ -12,7 +12,6 @@ import { adminAuth } from "../middleware/adminAuth";
 import { IndustryCategoryRepo } from "../repository/industryCategoryRepository";
 import { AdminService } from "../services/adminService/adminService";
 import { Admincontroller } from "../controllers/admin/adminController";
-import { ProductCategoryRepo } from "../repository/productCategoryRepository";
 import { ReportRepo } from "../repository/reportRepository";
 import upload from "../config/multer";
 import { NotificationRepo } from "../repository/notificationRepository";
@@ -23,14 +22,13 @@ const notificationRepo=new NotificationRepo();
 const companyService=new AdminCompanyService(companyRepo,notificationRepo); 
 const companyController=new AdminConmpanyController(companyService);
 
-const customerRepo=new AdminCustomerRepo();
+const customerRepo=new AdminCustomerRepo(); 
 const customerService=new AdminCustomerService(customerRepo);
 const customerController=new AdminCustomerController(customerService);
 
 const reportRepo=new ReportRepo();
-const productCategoryRepo=new ProductCategoryRepo();
 const industryCategoryRepo=new IndustryCategoryRepo();
-const adminService=new AdminService(industryCategoryRepo,productCategoryRepo,reportRepo,notificationRepo);
+const adminService=new AdminService(industryCategoryRepo,reportRepo,notificationRepo);
 const adminController=new Admincontroller(adminService);
 
 const investorRepo=new AdminInvestorRepo();

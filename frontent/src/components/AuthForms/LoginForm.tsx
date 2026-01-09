@@ -60,6 +60,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
           _id: user._id,
           role: user.role,
           isAuthenticated: true,
+          isSubscribed:
+            user.subscription && user.subscription.isActive
+              ? user.subscription.isActive
+              : false,
           status: user.status,
           profileImage: user.companyLogo,
         }),

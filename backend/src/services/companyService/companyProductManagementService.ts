@@ -6,6 +6,8 @@ import { ISubCategory, ISubSubCategory } from "../../models/industryCategoryMode
 import { Messages } from "../../constants/messages";
 import HttpStatus from "../../utils/httpStatusCode";
 import { IProductRepo } from "../../interface/ṛepository/productRepoInterface";
+import { ProductMapper } from "../../mappers/product.mapper";
+import { ProductCategoryHierarchyMapper, ProductCategoryMapper } from "../../mappers/product-category.mapper";
 
 export class ProductManagementService implements ICompanyProductManagementService {
     constructor(private _productCategoryRepo: IProductCategoryRepo, private _industryCategoryRepo: IIndustryCategoryRepo, private _productRepo: IProductRepo) { }
@@ -73,7 +75,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
 
             return {
                 success: true,
-                createdProducts,
+                createdProducts: ProductCategoryMapper.toResponseList(createdProducts),
                 message: "Product categories added successfully",
             };
         } catch (error) {
@@ -81,15 +83,23 @@ export class ProductManagementService implements ICompanyProductManagementServic
             throw error;
         }
     };
-    async getAllProductCategories(companyId: string,search:string,filter?:string) {
+    async getAllProductCategories(companyId: string, search: string, filter?: string) {
         try {
-            const products = await this._productCategoryRepo.findAllWithCategoryHierarchy(companyId,search,filter);
-            return products;
+            const products =
+                await this._productCategoryRepo.findAllWithCategoryHierarchy(
+                    companyId,
+                    search,
+                    filter
+                );
+
+            return ProductCategoryHierarchyMapper.toResponseList(products);
+
         } catch (error) {
             console.error("Get all Product category Error:", error);
-            throw error;  
+            throw error;
         }
     }
+
     async editProductCategory(companyId: string, categoryId: string, newName: string) {
         try {
             const existingCategory = await this._productCategoryRepo.findById(categoryId);
@@ -101,7 +111,6 @@ export class ProductManagementService implements ICompanyProductManagementServic
                 existingCategory.subSubCategoryId.toString(),
                 companyId
             );
-            console.log(duplicate);
             if (duplicate?._id && duplicate._id.toString() !== categoryId) {
                 throw { success: false, message: "A category with this name already exists" };
             }
@@ -110,7 +119,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
             if (!updatedCategory) {
                 throw { status: HttpStatus.BAD_REQUEST, message: Messages.UPDATE_FAILED };
             }
-            return updatedCategory;
+            return ProductCategoryMapper.toResponse(updatedCategory);
         } catch (error) {
             console.error("Edit Product category Error:", error);
             throw error;
@@ -174,7 +183,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
             };
             const product = await this._productRepo.create(data);
 
-            return product;
+            return ProductMapper.toResponse(product);
         } catch (error) {
             console.error("Add Product Error:", error);
             throw error;
@@ -226,7 +235,8 @@ export class ProductManagementService implements ICompanyProductManagementServic
             });
 
             if (!updatedProduct) throw new Error("Product not updated");
-            return updatedProduct;
+            return ProductMapper.toResponse(updatedProduct);
+
 
         } catch (err) {
             console.error("Update Product Error:", err);
@@ -240,21 +250,21 @@ export class ProductManagementService implements ICompanyProductManagementServic
                 throw new Error("Product not found");
             } return product;
         } catch (error) {
-           console.error("Delete Product Error:", error);
+            console.error("Delete Product Error:", error);
             throw error;
         }
     };
-    getProducts = async (companyId: string, page: number,search:string,filter?:string) => {
+    getProducts = async (companyId: string, page: number, search: string, filter?: string) => {
         const limit = 10;
         const skip = (page - 1) * limit;
         try {
             const totalProducts = await this._productRepo.countByCompanyId(companyId);
-            const products = await this._productRepo.findByCompanyId(companyId, skip, limit,search,filter);
+            const products = await this._productRepo.findByCompanyId(companyId, skip, limit, search, filter);
             if (!products) {
                 throw { status: HttpStatus.BAD_REQUEST, message: "Cannot find Products" };
             }
             const totalPages = Math.ceil(totalProducts / limit);
-            return { products, totalPages };
+            return { products: ProductMapper.toResponseList(products), totalPages };
         } catch (error) {
             console.error("Get Products Error:", error);
             throw error;

@@ -21,6 +21,7 @@ const CompanyDetails: React.FC = () => {
       if (id) {
         const result = await getFranchiseDetails(id);
         setFranchise(result.franchise);
+        console.log(result.franchise);
       }
     };
     fetchFranhise();
@@ -46,7 +47,7 @@ const CompanyDetails: React.FC = () => {
                 {franchise?.company?.brandName}
               </h2>
               <p className="text-gray-600 text-sm">
-                {/* Industry: {franchise?.company?.industryCategory?.categoryName} */}
+                Industry: {franchise?.company?.industryCategory?.categoryName}
               </p>
             </div>
           </div>
@@ -66,9 +67,9 @@ const CompanyDetails: React.FC = () => {
                 companyName={franchise.company?.companyName}
               />
             )}
-            <button className="bg-[#0C2340] text-white px-6 py-2 rounded-lg hover:bg-[#092032] transition text-sm">
+            {/* <button className="bg-[#0C2340] text-white px-6 py-2 rounded-lg hover:bg-[#092032] transition text-sm">
               Apply now
-            </button>
+            </button> */}
           </div>
         </div>
 

@@ -10,22 +10,33 @@ dotenv.config();
 
 export class ProfileController implements IcompanyProfileController {
   constructor(private _companyService: IcompanyService) { }
+  private handleError(res: Response, error: unknown) {
+
+    const err =
+      typeof error === "object" &&
+        error !== null &&
+        "status" in error &&
+        "message" in error
+        ? (error as { status: number; message: string })
+        : error instanceof Error
+          ? { status: HttpStatus.INTERNAL_SERVER_ERROR, message: error.message }
+          : { status: HttpStatus.INTERNAL_SERVER_ERROR, message: ERROR_MESSAGES.SERVER_ERROR };
+
+    res.status(err.status).json({ success: false, message: err.message });
+  }
 
   getProfile = async (req: Request, res: Response) => {
     const { companyId } = req.params;
 
     try {
-      const { company, message } = await this._companyService.getProfiles(companyId);
+      const  company  = await this._companyService.getProfiles(companyId);
       res.status(HttpStatus.OK).json({
         success: true,
         data: company,
-        message: message || Messages.FETCH_SUCCESS,
+        message: Messages.FETCH_SUCCESS,
       });
     } catch (error) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: error instanceof Error ? error.message : Messages.FETCH_FAILED,
-      });
+      this.handleError(res, error); 
     }
   };
 
@@ -36,8 +47,7 @@ export class ProfileController implements IcompanyProfileController {
       await this._companyService.reapply(companyId);
       res.status(HttpStatus.OK).json({ success: true });
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : Messages.UPDATE_FAILED;
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message });
+      this.handleError(res, error); 
     }
   };
 
@@ -55,18 +65,14 @@ export class ProfileController implements IcompanyProfileController {
         return;
       }
 
-      const updatedCompany = await this._companyService.updateLogo(file.path, companyId);
+      await this._companyService.updateLogo(file.path, companyId);
 
       res.status(HttpStatus.OK).json({
         success: true,
-        data: updatedCompany,
         message: "Logo updated successfully",
       });
     } catch (error) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Failed to update logo",
-      });
+       this.handleError(res, error); 
     }
   };
 
@@ -82,10 +88,7 @@ export class ProfileController implements IcompanyProfileController {
         message: Messages.PROFILE_UPDATED_SUCCESSFULLY,
       });
     } catch (error) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Failed to update company profile",
-      });
+      this.handleError(res, error); 
     }
   };
 
@@ -97,9 +100,7 @@ export class ProfileController implements IcompanyProfileController {
       await this._companyService.changePassword(userId, data.oldPassword, data.newPassword);
       res.status(HttpStatus.OK).json({ success: true, message: Messages.PASSWORD_UPDATED_SUCCESSFULLY });
     } catch (error: unknown) {
-      console.error("Change password error:", error);
-      const message = error instanceof Error ? error.message : ERROR_MESSAGES.SERVER_ERROR;
-      res.status(HttpStatus.BAD_REQUEST).json({ message });
+      this.handleError(res, error); 
     }
   };
 
@@ -128,9 +129,7 @@ export class ProfileController implements IcompanyProfileController {
       const { companyIndustryCategory, franchises, totalPages } = await this._companyService.getFranchises(companyId, page, searchStr,filter);
       res.status(HttpStatus.OK).json({ success: true, companyIndustryCategory, franchises, currentPage: page, totalPages });
     } catch (error: unknown) {
-      console.error("Get franchise error:", error);
-      const message = error instanceof Error ? error.message : ERROR_MESSAGES.SERVER_ERROR;
-      res.status(HttpStatus.BAD_REQUEST).json({ message });
+      this.handleError(res, error); 
     }
   };
 
@@ -141,8 +140,7 @@ export class ProfileController implements IcompanyProfileController {
       await this._companyService.addFranchise(companyId, data);
       res.status(HttpStatus.OK).json({ success: true, message: Messages.FRANCHISE_CREATED });
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : Messages.CREATE_FAILED;
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
+       this.handleError(res, error); 
     }
   };
 
@@ -153,8 +151,7 @@ export class ProfileController implements IcompanyProfileController {
       await this._companyService.editFranchise(franchiseId, data);
       res.status(HttpStatus.OK).json({ success: true, message: Messages.FRANCHISE_UPDATED });
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : Messages.UPDATE_FAILED;
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
+       this.handleError(res, error); 
     }
   };
 
@@ -164,8 +161,7 @@ export class ProfileController implements IcompanyProfileController {
       await this._companyService.deleteFranchise(franchiseId);
       res.status(HttpStatus.OK).json({ success: true, message: Messages.FRANCHISE_DELETED });
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : Messages.DELETE_FAILED;
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
+       this.handleError(res, error); 
     }
   };
 
@@ -175,16 +171,7 @@ export class ProfileController implements IcompanyProfileController {
       const franchise = await this._companyService.franchiseDetails(franchiseId);
       res.status(HttpStatus.OK).json({ success: true, franchise });
     } catch (error: unknown) {
-      if (typeof error === "object" && error !== null && "message" in error) {
-        const errObj = error as { status?: number; message?: string };
-        res
-          .status(errObj.status || HttpStatus.INTERNAL_SERVER_ERROR)
-          .json({ success: false, message: errObj.message || Messages.FRANCHISE_FETCH_FAILED });
-      } else {
-        res
-          .status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .json({ success: false, message: Messages.FRANCHISE_FETCH_FAILED });
-      }
+      this.handleError(res, error); 
     }
   };
 
@@ -207,16 +194,7 @@ export class ProfileController implements IcompanyProfileController {
       const { application, totalPages } = await this._companyService.getApplications(companyId, page, searchStr, filter);
       res.status(HttpStatus.OK).json({ success: true, application, currentPage: page, totalPages });
     } catch (error: unknown) {
-      if (typeof error === "object" && error !== null && "message" in error) {
-        const errObj = error as { status?: number; message?: string };
-        res
-          .status(errObj.status || HttpStatus.INTERNAL_SERVER_ERROR)
-          .json({ success: false, message: errObj.message || Messages.FRANCHISE_FETCH_FAILED });
-      } else {
-        res
-          .status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .json({ success: false, message: Messages.FRANCHISE_FETCH_FAILED });
-      }
+      this.handleError(res, error); 
     }
   };
 
@@ -228,16 +206,7 @@ export class ProfileController implements IcompanyProfileController {
       await this._companyService.changeApplicationStatus(applicationId, status);
       res.status(HttpStatus.OK).json({ success: true });
     } catch (error: unknown) {
-      if (typeof error === "object" && error !== null && "message" in error) {
-        const errObj = error as { status?: number; message?: string };
-        res
-          .status(errObj.status || HttpStatus.INTERNAL_SERVER_ERROR)
-          .json({ success: false, message: errObj.message || Messages.FRANCHISE_FETCH_FAILED });
-      } else {
-        res
-          .status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .json({ success: false, message: Messages.FRANCHISE_FETCH_FAILED });
-      }
+       this.handleError(res, error); 
     }
   };
 
@@ -260,11 +229,7 @@ export class ProfileController implements IcompanyProfileController {
         key: process.env.RAZORPAY_KEY_ID,
       });
     } catch (error: unknown) {
-      console.error("Error pay advance:", error);
-      if (error instanceof Error) {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-      }
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
+       this.handleError(res, error); 
     }
   };
 
@@ -287,11 +252,7 @@ export class ProfileController implements IcompanyProfileController {
 
       res.status(HttpStatus.OK).json({ success: true, message: "Subscription activated" });
     } catch (error: unknown) {
-      console.error("Error pay advance:", error);
-      if (error instanceof Error) {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-      }
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: ERROR_MESSAGES.SERVER_ERROR });
+      this.handleError(res, error); 
     }
   };
   getNotifications = async (req: Request, res: Response) => {
@@ -301,10 +262,7 @@ export class ProfileController implements IcompanyProfileController {
       res.status(HttpStatus.OK).json({ success: true, notifications });
       return;
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      console.error("getnotification error:", error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
-      return;
+      this.handleError(res, error); 
     }
   };
   updateNotification = async (req: Request, res: Response) => {
@@ -314,10 +272,7 @@ export class ProfileController implements IcompanyProfileController {
       res.status(HttpStatus.OK).json({ success: true });
       return;
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      console.error("updatenotification error:", error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message });
-      return;
+      this.handleError(res, error); 
     }
   };
 }

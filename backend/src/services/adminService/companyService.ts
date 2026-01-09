@@ -4,6 +4,7 @@ import { IAdminCompanyService } from "../../interface/service/adminCompanyServic
 import { IAdminCompanyRepo } from "../../interface/ṛepository/adminCompanyRepoInterface";
 import { INotificationRepo } from "../../interface/ṛepository/notificationRepoInterface";
 import Company from "../../models/companyModel";
+import { CompanyMapper } from "../../mappers/company.mapper";
 
 export class AdminCompanyService implements IAdminCompanyService {
   constructor(private _companyRepo: IAdminCompanyRepo, private _notificationRepo: INotificationRepo) { }
@@ -18,7 +19,7 @@ export class AdminCompanyService implements IAdminCompanyService {
       if (!users) {
         throw new Error(Messages.COMPANY_NOT_FOUND);
       }
-      return { users, totalPages };
+      return { users:CompanyMapper.toResponseList(users), totalPages };
     } catch (error: unknown) {
       if (error instanceof Error) throw new Error(error.message);
       throw new Error("Failed to get pending companies");
@@ -35,7 +36,7 @@ export class AdminCompanyService implements IAdminCompanyService {
       if (!companies) {
         throw new Error(Messages.COMPANY_NOT_FOUND);
       }
-      return { companies, totalPages };
+      return { companies:CompanyMapper.toResponseList(companies), totalPages };
     } catch (error: unknown) {
       if (error instanceof Error) throw new Error(error.message);
       throw new Error("Failed to get approved companies");
@@ -88,7 +89,7 @@ export class AdminCompanyService implements IAdminCompanyService {
       if (!company) {
         throw new Error(Messages.COMPANY_NOT_FOUND);
       }
-      return company;
+      return CompanyMapper.toProfile(company);
     } catch (error: unknown) {
       if (error instanceof Error) throw new Error(error.message);
       throw new Error("Failed to fetch company details");

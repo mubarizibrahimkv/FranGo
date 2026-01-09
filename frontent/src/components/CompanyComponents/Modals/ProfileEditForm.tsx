@@ -203,21 +203,21 @@ const ProfileEditModal: React.FC<ModalProps> = ({
               value={
                 typeof form.industryCategory === "object"
                   ? form.industryCategory._id
-                  : form.industryCategory || ""
+                  : form.industryCategoryString || ""
               }
               onChange={(e) => {
                 const selectedId = e.target.value;
+
                 setForm((prev) => ({
                   ...prev,
-                  industryCategory: selectedId,
+                  industryCategoryString: selectedId,
+                  industryCategory: selectedId
+                    ? ({ _id: selectedId } as IIndustryCategory)
+                    : undefined,
                   industrySubCategory: "",
                 }));
               }}
-              className={`w-full border rounded-md px-3 py-2 text-sm outline-none focus:ring-2 ${
-                errors.industryCategory
-                  ? "border-red-500 focus:ring-red-400"
-                  : "focus:ring-[#1F3C58]"
-              }`}
+              className="w-full border rounded-md px-3 py-2 text-sm"
             >
               <option value="">Select Industry Category</option>
               {categories.map((category) => (

@@ -1,0 +1,32 @@
+export interface InvestorResponseDTO {
+  _id: string;
+  userName: string;
+  email: string;
+  role: "customer" | "admin" | "investor" | "company";
+  isBlocked: boolean;
+  gender?: "Male" | "Female" | "Other";
+  dateOfBirth?: Date;
+  nationality?: string;
+  phoneNumber?: string;
+  location?: string;
+  qualifications: string[];
+  ownProperty: boolean;
+  floorArea?: string;
+  investmentRange?: string;
+  fundingSource?: string;
+  previousBusiness?: string[];
+  jobExperience?: string;
+  yearsOfExperience?: string;
+  numberOfEmployees?: number;
+  preferredFranchiseType?: string[];
+  reasonForSeeking?: string;
+  ownershipTimeframe?: string;
+  findingSource?: string;
+  status?: "pending" | "approve" | "reject";
+  rejectionReason?: string;
+  profileImage: string;
+  isAdmin: boolean;
+  isVerifiedByAdmin: boolean;
+  googleId?: string;
+  createdAt: Date;
+}
