@@ -53,8 +53,8 @@ export class CompanyAuthController implements ICompanyAuthController {
         res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.MISSING_FIELDS });
         return;
       }
-      formData.companyLogo=companyLogoFile.path
-      formData.registrationProof=registrationProofFile.path
+      formData.companyLogo=companyLogoFile.path;
+      formData.registrationProof=registrationProofFile.path;
 
       const { token, refreshToken } =
         await this._companyAuthSerice.register(

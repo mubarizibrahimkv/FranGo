@@ -8,7 +8,7 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 import type { IFranchise } from "../../types/company";
 import { useNavigate } from "react-router-dom";
 
-interface IMyFranchises {
+export interface IMyFranchises {
   _id: string;
   franchise: IFranchise;
 }

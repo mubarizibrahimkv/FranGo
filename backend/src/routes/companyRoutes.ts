@@ -16,6 +16,10 @@ import { ProductManagementController } from "../controllers/company/productManag
 import { IndustryCategoryRepo } from "../repository/industryCategoryRepository";
 import { ProductRepo } from "../repository/productRepository";
 import { NotificationRepo } from "../repository/notificationRepository";
+import { CouponRepository } from "../repository/couponRepository";
+import { OfferRepository } from "../repository/offerRepository";
+import { DiscountService } from "../services/companyService/discountService";
+import { DiscountController } from "../controllers/company/discountController";
 const router=Express.Router();
 
 const companyAuthRepo=new CompanyAuthRepository();
@@ -34,6 +38,12 @@ const productRepo=new ProductRepo();
 const industryCategoryRepo=new IndustryCategoryRepo();
 const productManagementService=new ProductManagementService(productCategoryRepo,industryCategoryRepo,productRepo);
 const productManagementController=new ProductManagementController(productManagementService);
+
+
+const couponRepo=new CouponRepository();
+const offerRepo=new OfferRepository();
+const discountService=new DiscountService(companyRepo,offerRepo,couponRepo);
+const discountController=new DiscountController(discountService);
 
 setupGoogleStrategy("company");
 
@@ -71,5 +81,9 @@ router.delete("/product/:productId",companyAuth,productManagementController.dele
 router.get("/product/:companyId",companyAuth,productManagementController.getProducts);
 router.get("/:userId/notifications",profileController.getNotifications);
 router.put("/notifications/:notificationId", profileController.updateNotification);
+router.get("/subscription/status/:companyId", profileController.getSubscriptionStatus);
+
+router.route("/offer/:companyId").post(discountController.addOffer).get(discountController.getOffer).patch(discountController.deleteOffer).put(discountController.updateOffer);
+router.route("/coupon/:companyId").post(discountController.addCoupon).get(discountController.getCoupon).patch(discountController.deleteCoupon).put(discountController.updateCoupon);
 
 export default router; 

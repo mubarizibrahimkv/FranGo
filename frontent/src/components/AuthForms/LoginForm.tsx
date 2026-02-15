@@ -53,6 +53,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
     }
     try {
       const user = await loginApi(formData.email, formData.password, role);
+      console.log("new user in after login ", user);
       dispatch(
         setUser({
           userName: user.userName || user.companyName,
@@ -60,11 +61,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
           _id: user._id,
           role: user.role,
           isAuthenticated: true,
+          isAdmin: user.isAdmin,
           isSubscribed:
             user.subscription && user.subscription.isActive
               ? user.subscription.isActive
               : false,
-          status: user.status,
+          status: user.status || "pending",
           profileImage: user.companyLogo,
         }),
       );

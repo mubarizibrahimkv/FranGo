@@ -1,3 +1,5 @@
+import { CompanyIndustryCategoryDTO } from "./company.indutryCategory.dto";
+
 export interface CompanyProfileDTO {
   _id: string;
 
@@ -5,7 +7,7 @@ export interface CompanyProfileDTO {
   companyName?: string;
   ownerName?: string;
 
-  industryCategory?: string;
+  industryCategory?: CompanyIndustryCategoryDTO;
   industrySubCategory?: string;
 
   yearFounded?: number;

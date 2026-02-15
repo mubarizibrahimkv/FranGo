@@ -21,7 +21,6 @@ const CompanyDetails: React.FC = () => {
       if (id) {
         const result = await getFranchiseDetails(id);
         setFranchise(result.franchise);
-        console.log(result.franchise);
       }
     };
     fetchFranhise();

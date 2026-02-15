@@ -6,17 +6,23 @@ import { CustomerProfileController } from "../controllers/customer/customerProfi
 import { CustomerAuthService } from "../services/customerService/customerAuthService";
 import { CustomerAuthController } from "../controllers/customer/customerAuthController";
 import passport, { setupGoogleStrategy } from "../config/passport";
+import { CustomerCommerceService } from "../services/customerService/customerService";
+import { FranchiseRepo } from "../repository/franchiseRepository";
+import { CustomerCommerceController } from "../controllers/customer/customerCommerceController";
 const router = Express.Router();
 
 
 const authRepo = new CustomerAuthRepo();
-const authService=new CustomerAuthService(authRepo);
-const authController=new CustomerAuthController(authService);
+const authService = new CustomerAuthService(authRepo);
+const authController = new CustomerAuthController(authService);
 
 const addressRepo = new CustomerAddressRepo();
 const profileService = new CustomerProfileService(addressRepo, authRepo);
 const profileController = new CustomerProfileController(profileService);
 
+const franchiseRepo = new FranchiseRepo()
+const commerceService = new CustomerCommerceService(franchiseRepo)
+const commerceController = new CustomerCommerceController(commerceService)
 
 router.route("/auth/register").post(authController.register);
 router.route("/auth/verify-otp").post(authController.verifyOtp);
@@ -46,11 +52,13 @@ router.route("/profile/:customerId").get(profileController.getCustomer);
 
 
 router.route("/profile/address/:customerId")
-    .post(profileController.addAddress)
-    .get(profileController.getAddress);
+  .post(profileController.addAddress)
+  .get(profileController.getAddress);
 
 router.route("/profile/address/:addressId")
-    .put(profileController.editAddress)
-    .delete(profileController.deleteAddress);
+  .put(profileController.editAddress)
+  .delete(profileController.deleteAddress);
+
+router.get("/franchise", commerceController.getFranchisesByCategory)
 
 export default router;

@@ -6,33 +6,61 @@ import Company from "../models/companyModel";
 import { Iconver } from "../models/conversationsModel";
 import Investor from "../models/investorModel";
 import { io } from "../config/socket";
+import dotenv from "dotenv";
+dotenv.config();
 
 export class MessageService implements IMessageService {
     constructor(private _conversationRepo: IConvestionRepo, private _messageRepo: IMessageRepo) { }
     generateChannel = (u1: string, u2: string) => {
         return [u1, u2].sort().join("_");
     };
-    sendMessage = async (channel: string, message: string, senderId: string, senderRole: "company" | "investor", receiverId: string, imageUrl?: string) => {
+    sendMessage = async (
+        channel: string,
+        message: string,
+        senderId: string,
+        senderRole: "company" | "investor",
+        receiverId: string,
+        imageUrl?: string
+    ) => {
         try {
             let finalChannel = channel;
 
             if (!channel) {
                 finalChannel = this.generateChannel(senderId, receiverId);
 
-                const existConversation = await this._conversationRepo.findByChannel(finalChannel);
+                const existConversation =
+                    await this._conversationRepo.findByChannel(finalChannel);
 
                 if (!existConversation) {
-                    const receiverRole = senderRole === "investor" ? "company" : "investor";
+
+                    // if (senderRole === "company") {
+                       
+                    //     if (!company?.subscription?.isActive) {
+                    //         const totalChats = await this._conversationRepo.countByCompany(senderId);
+                    //         const FREE_CHAT_LIMIT = Number(process.env.FREE_CHAT_LIMIT || 0);
+
+                    //         if (totalChats >= FREE_CHAT_LIMIT) {
+                    //             throw {
+                    //                 status: HttpStatus.FORBIDDEN,
+                    //                 message: "Free chat limit exceeded. Please subscribe."
+                    //             };
+                    //         }
+                    //     }
+                    // }
+
+                    const receiverRole =senderRole === "investor" ? "company" : "investor";
+
                     const conversationData: Iconver = {
                         channel: finalChannel,
                         participants: [
                             { userId: senderId, role: senderRole },
                             { userId: receiverId, role: receiverRole }
                         ],
-                        lastMessage: message, 
+                        lastMessage: message,
                         lastSender: senderId,
                         timestamps: new Date()
                     };
+
                     await this._conversationRepo.create(conversationData);
                 }
             }
@@ -44,14 +72,17 @@ export class MessageService implements IMessageService {
                 read: false,
                 timestamp: new Date()
             };
-            await this._conversationRepo.updateLastMessage(finalChannel, senderId, message);
+
+            await this._conversationRepo.updateLastMessage(
+                finalChannel,
+                senderId,
+                message
+            );
 
             const createdMessage = await this._messageRepo.create(messageData);
-            const unreadCount = await this._messageRepo.unreadCount(finalChannel, senderId);
 
-            console.log("undread count is ", unreadCount);
-            console.log("last message ", message);
-            console.log("recievef id that is company id in send message",receiverId);
+            const unreadCount =await this._messageRepo.unreadCount(finalChannel, senderId);
+
             if (io) {
                 io.to(receiverId).emit("unread_count_update", {
                     channel: finalChannel,
@@ -65,9 +96,10 @@ export class MessageService implements IMessageService {
             throw error;
         }
     };
-    getConversations = async (userId: string,search:string) => {
+
+    getConversations = async (userId: string, search: string) => {
         try {
-            const conversations = await this._conversationRepo.findByUserId(userId,search);
+            const conversations = await this._conversationRepo.findByUserId(userId, search);
             const result = [];
 
             if (conversations) {
@@ -77,7 +109,7 @@ export class MessageService implements IMessageService {
 
                     if (!other) throw new Error("Other participant not found");
 
-                    const unreadCount=await this._messageRepo.unreadCount(convo.channel,other.userId);
+                    const unreadCount = await this._messageRepo.unreadCount(convo.channel, other.userId);
                     let userName = "";
                     let profileImage = "";
                     const user = await Investor.findById(other.userId);

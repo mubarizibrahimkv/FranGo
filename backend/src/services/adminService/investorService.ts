@@ -5,40 +5,41 @@ import { IAdminInvestorRepo } from "../../interface/ṛepository/adminInvestorRe
 import Investor from "../../models/investorModel";
 import { INotificationRepo } from "../../interface/ṛepository/notificationRepoInterface";
 import { InvestorMapper } from "../../mappers/investor.mapper";
+import { io } from "../../config/socket";
 
 export class AdminInvestorService implements IAdminInvestorService {
-    constructor(private _investorRepo: IAdminInvestorRepo,private _notificationRepo:INotificationRepo) {}
+    constructor(private _investorRepo: IAdminInvestorRepo, private _notificationRepo: INotificationRepo) { }
 
-    getPendingInvestors = async (page: number,search:string) => {
+    getPendingInvestors = async (page: number, search: string) => {
         const limit = 10;
         const skip = (page - 1) * limit;
         try {
-            const investor = await this._investorRepo.getPendingInvestors(limit, skip,search);
+            const investor = await this._investorRepo.getPendingInvestors(limit, skip, search);
             const totalInvestors = await Investor.countDocuments({ status: "pending" });
             const totalPages = Math.ceil(totalInvestors / limit);
             if (!investor) {
                 throw { success: false, message: Messages.INVESTOR_NOT_FOUND };
             }
-            return { investor:InvestorMapper.toResponseList(investor), totalPages };
+            return { investor: InvestorMapper.toResponseList(investor), totalPages };
         } catch (err: unknown) {
             if (err instanceof Error) {
                 throw err;
-            } 
+            }
             throw new Error("An unknown error occurred while fetching pending investors.");
         }
     };
 
-    getApprovedInvestors = async (page: number,search:string) => {
+    getApprovedInvestors = async (page: number, search: string) => {
         const limit = 10;
         const skip = (page - 1) * limit;
         try {
-            const investor = await this._investorRepo.getApprovedInvestors(limit, skip,search);
+            const investor = await this._investorRepo.getApprovedInvestors(limit, skip, search);
             const totalInvestors = await Investor.countDocuments({ status: "approve" });
             const totalPages = Math.ceil(totalInvestors / limit);
             if (!investor) {
                 throw { success: false, message: Messages.INVESTOR_NOT_FOUND };
             }
-            return { investor:InvestorMapper.toResponseList(investor), totalPages };
+            return { investor: InvestorMapper.toResponseList(investor), totalPages };
         } catch (err: unknown) {
             if (err instanceof Error) {
                 throw err;
@@ -47,24 +48,31 @@ export class AdminInvestorService implements IAdminInvestorService {
         }
     };
 
-    changeStatusInvestor = async (investorId: string, status: "approve" | "reject",reason?:string) => {
+    changeStatusInvestor = async (investorId: string, status: "approve" | "reject", reason?: string) => {
         try {
             const investor = await this._investorRepo.findInvestorById(investorId);
             if (!investor) {
                 throw { success: false, message: Messages.INVESTOR_NOT_FOUND };
             }
             investor.status = status;
-            if(reason){
-                investor.rejectionReason=reason.trim();
+            if (reason) {
+                investor.rejectionReason = reason.trim();
             }
-            const notificationMessage=status==="approve"?"Your registration has been approved!":"Your registration has been rejected!";
-                 
-                  await this._notificationRepo.create({
-                    userId: new mongoose.Types.ObjectId(investorId),
-                    message: notificationMessage,
-                    isRead: false,
-                  });
-            
+            const notificationMessage = status === "approve" ? "Your registration has been approved!" : "Your registration has been rejected!";
+
+            const notification=await this._notificationRepo.create({
+                userId: new mongoose.Types.ObjectId(investorId),
+                message: notificationMessage,
+                isRead: false,
+            });
+
+            io.to(investorId).emit("receive_notification", {
+                id: notification._id,
+                message: notification.message,
+                createdAt: notification.createdAt,
+                isRead: false,
+            });
+
             await investor.save();
             return;
         } catch (err: unknown) {

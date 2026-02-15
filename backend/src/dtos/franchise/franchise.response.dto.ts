@@ -1,3 +1,5 @@
+import { CompanyResponseDTO } from "../company/company.response.dto";
+
 export interface FranchiseResponseDTO {
   _id: string;
 
@@ -36,9 +38,29 @@ export interface FranchiseResponseDTO {
   email?: string;
   phone?: string;
 
-  companyId?: string;
+  company?: string|CompanyResponseDTO;
 }
 export interface FranchiseListDTO {
   franchises: FranchiseResponseDTO[];
   totalPages: number;
+}
+
+
+export interface FranchiseListItemDTO {
+  _id: string;
+  franchiseName?: string;
+  monthlyRevenue?: number;
+  franchisefee?: number;
+  totalInvestement?: number;
+  preferedLocation?: string[];
+  ownershipModel?: string;
+  createdAt?: Date;
+
+  company?: {
+    companyName?: string;
+    companyLogo?: string;
+    industryCategory?: {
+      categoryName?: string;
+    };
+  };
 }

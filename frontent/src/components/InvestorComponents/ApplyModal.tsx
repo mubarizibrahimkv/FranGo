@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import type { IFranchise } from "../../types/company";
 import type { Investor } from "../../types/investor";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../redux/store/store";
 
 interface ApplyModalProps {
   investorData: Partial<Investor>;
@@ -19,6 +21,9 @@ const ApplyModal: React.FC<ApplyModalProps> = ({
     investorData || {},
   );
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const investor=useSelector((state:RootState)=>state.user)
+  const investorStatus=investor.status
+  console.log("investor status ",investorStatus)
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
@@ -78,6 +83,7 @@ const ApplyModal: React.FC<ApplyModalProps> = ({
     }
   };
 
+
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 px-3">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl p-8 relative overflow-y-auto max-h-[90vh]">
@@ -91,6 +97,7 @@ const ApplyModal: React.FC<ApplyModalProps> = ({
         <h2 className="text-2xl font-bold text-[#0C2340] mb-6 text-center">
           Apply for Franchise
         </h2>
+
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-[#F5F7FB] rounded-xl shadow-sm p-5 border border-gray-200">

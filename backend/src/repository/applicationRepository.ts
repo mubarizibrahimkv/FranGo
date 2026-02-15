@@ -63,14 +63,25 @@ export class ApplicationRepo extends BaseRepository<IApplication> implements IAp
 
             {
                 $project: {
-                    "franchise.franchiseName": 1,
-                    "franchise.advancefee": 1,
-                    "investor.email": 1,
+                    _id: 1,
+
+                    investor: {
+                        _id: "$investor._id",
+                        email: "$investor.email",
+                    },
+
+                    franchise: {
+                        _id: "$franchise._id",
+                        franchiseName: "$franchise.franchiseName",
+                        advancefee: "$franchise.advancefee",
+                        company: "$franchise.company",
+                    },
+
                     status: 1,
                     paymentStatus: 1,
                     createdAt: 1,
                 },
-            },
+            }
         ];
 
         return Application.aggregate(pipeline);

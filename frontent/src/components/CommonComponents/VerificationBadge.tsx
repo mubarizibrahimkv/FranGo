@@ -2,6 +2,7 @@ import { AlertTriangle } from "lucide-react";
 
 const VerificationBanner = ({ status }: { status: string }) => {
   if (status === "approve") return null;
+  console.log("comapony verify status in banner", status);
   return (
     <div className="w-full bg-yellow-100 border-t border-yellow-300 text-yellow-800 text-center py-3 px-4 shadow-sm flex items-center justify-center gap-2">
       <AlertTriangle className="w-5 h-5 text-yellow-700" />

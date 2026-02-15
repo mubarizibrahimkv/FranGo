@@ -16,9 +16,11 @@ import crypto from "crypto";
 import { IRepoortRepo } from "../../interface/ṛepository/reportRepoInterface";
 import { IReport } from "../../models/reportModel";
 import { INotificationRepo } from "../../interface/ṛepository/notificationRepoInterface";
-import { FranchiseMapper } from "../../mappers/franchise.mapper";
 import { ApplicationMapper } from "../../mappers/application.mapper";
 import { ReportMapper } from "../../mappers/report.mapper";
+import { FranchiseListItemDTO } from "../../dtos/franchise/franchise.response.dto";
+import { io } from "../../config/socket";
+import { IStockRepo } from "../../interface/ṛepository/stockRepoInterface";
 dotenv.config();
 
 
@@ -26,9 +28,9 @@ export class InvestorService implements IInvestorService {
     constructor(private _FranchiseRepo: IFranchiseRepo, private _profileRepo: IProfileRepo, private _applicationRepo: IApplicationRepo, private _reportRepo: IRepoortRepo, private _notificationRepo: INotificationRepo) { }
     getFranchises = async (filters: IFilters, page: number) => {
         const limit = 10;
-        const skip = (page - 1) * limit; 
+        const skip = (page - 1) * limit;
         try {
-                const match: FilterQuery<IFranchise> = {};
+            const match: FilterQuery<IFranchise> = {};
 
             if (filters.location) {
                 const locations = filters.location.split(",").map((loc) => loc.trim());
@@ -63,7 +65,7 @@ export class InvestorService implements IInvestorService {
                 }
             }
 
-            const pipeline:  PipelineStage[]= [
+            const pipeline: PipelineStage[] = [
                 { $match: match },
                 {
                     $lookup: {
@@ -128,14 +130,27 @@ export class InvestorService implements IInvestorService {
                 }
             );
 
-            const franchises = await Franchise.aggregate(pipeline).skip(skip).limit(limit);
+            const franchises = await Franchise.aggregate(pipeline)
+                .skip(skip)
+                .limit(limit);
+
+            const mappedFranchises: FranchiseListItemDTO[] = franchises.map(f => ({
+                _id: f._id.toString(),
+                franchiseName: f.franchiseName,
+                monthlyRevenue: f.monthlyRevenue,
+                franchisefee: f.franchisefee,
+                totalInvestement: f.totalInvestement,
+                preferedLocation: f.preferedLocation,
+                ownershipModel: f.ownershipModel,
+                createdAt: f.createdAt,
+                company: f.company
+            }));
             const countPipeline = [...pipeline, { $count: "total" }];
             const countResult = await Franchise.aggregate(countPipeline);
             const totalFranchises = countResult.length > 0 ? countResult[0].total : 0;
 
             const totalPages = Math.ceil(totalFranchises / limit);
-
-            return { franchises: FranchiseMapper.toResponseList(franchises), totalPages, totalFranchises };
+            return { franchises: mappedFranchises, totalPages, totalFranchises };
         } catch (error) {
             console.error("Error in getFranchises:", error);
             throw error;
@@ -172,7 +187,7 @@ export class InvestorService implements IInvestorService {
                 investor: new mongoose.Types.ObjectId(investorId),
                 franchise: new mongoose.Types.ObjectId(franchiseId)
             };
-            const apply = await this._applicationRepo.create(application);
+            await this._applicationRepo.create(application);
             const companyId =
                 franchise.company instanceof mongoose.Types.ObjectId
                     ? franchise.company
@@ -188,7 +203,7 @@ export class InvestorService implements IInvestorService {
                 message: "An investor has submitted a new application. Please review it.",
                 isRead: false,
             });
-            return ;
+            return;
         } catch (error) {
             console.log("Error in create application ", error);
             throw error;
@@ -202,20 +217,20 @@ export class InvestorService implements IInvestorService {
                     status: HttpStatus.BAD_REQUEST, message: Messages.FRANCHISE_NOT_FOUND
                 };
             }
-            return FranchiseMapper.toResponse(franchise);
+            return franchise;
         } catch (error) {
             console.log("Error in franchise details ", error);
             throw error;
         }
     };
-    getApplications = async (investorId: string, page: number,search:string,filter:string) => {
+    getApplications = async (investorId: string, page: number, search: string, filter: string) => {
         const limit = 10;
-        const skip = (page - 1) * limit;    
+        const skip = (page - 1) * limit;
         try {
-            const application = await this._applicationRepo.findByInvestorId(investorId, skip, limit,search,filter);
+            const application = await this._applicationRepo.findByInvestorId(investorId, skip, limit, search, filter);
             const totalApplications = await this._applicationRepo.countByInvestorId(investorId);
             if (!application) {
-                throw { 
+                throw {
                     status: HttpStatus.BAD_REQUEST, message: Messages.APPLICATION_NOT_FOUND
                 };
             }
@@ -269,6 +284,9 @@ export class InvestorService implements IInvestorService {
         });
         application.paymentStatus = "paid";
         application.save();
+         
+        
+
         return payment;
     };
     applyReport = async (franchiseId: string, investorId: string, reason: string) => {
@@ -287,12 +305,21 @@ export class InvestorService implements IInvestorService {
                 status: "pending"
             };
             const createdReport = await this._reportRepo.create(data);
-            const adminId = "64f1c2a9a4b8e9c123456789";
-            await this._notificationRepo.create({
+            const adminId = "68f0bf2164923c8d4dac326b";
+            const notification = await this._notificationRepo.create({
                 userId: new mongoose.Types.ObjectId(adminId),
                 message: "An investor has applied a report. Please review it.",
                 isRead: false,
             });
+
+            io.to(adminId).emit("receive_notification", {
+                id: notification._id,
+                message: notification.message,
+                createdAt: notification.createdAt,
+                isRead: false,
+            });
+
+
             return ReportMapper.toResponse(createdReport);
         } catch (error) {
             console.log("Error in apply report", error);
@@ -316,36 +343,36 @@ export class InvestorService implements IInvestorService {
             }
             return notification;
         } catch (error) {
-            console.log("Error update notification ",error);
+            console.log("Error update notification ", error);
             throw error;
         }
-    }; 
-    getMyFranchises=async(investorId:string)=>{
+    };
+    getMyFranchises = async (investorId: string) => {
         try {
-            const investor=await this._profileRepo.findById(investorId);
+            const investor = await this._profileRepo.findById(investorId);
             if (!investor) {
                 throw {
                     status: HttpStatus.BAD_REQUEST, message: Messages.INVESTOR_NOT_FOUND
                 };
             };
-            const franchises=await this._applicationRepo.getApprovedFranchisesByInvestor(investorId);
+            const franchises = await this._applicationRepo.getApprovedFranchisesByInvestor(investorId);
             return franchises;
         } catch (error) {
-            console.log("Error get my franchises ",error);
+            console.log("Error get my franchises ", error);
             throw error;
         }
     };
-    deleteAplication=async(applicationId:string)=>{
+    deleteAplication = async (applicationId: string) => {
         try {
-            const deleted=await this._applicationRepo.delete(applicationId);
-            if(!deleted){
+            const deleted = await this._applicationRepo.delete(applicationId);
+            if (!deleted) {
                 throw {
                     status: HttpStatus.BAD_REQUEST, message: Messages.APPLICATION_NOT_FOUND
                 };
             }
             return deleted;
         } catch (error) {
-            console.log("Error delete application ",error);
+            console.log("Error delete application ", error);
             throw error;
         }
     };

@@ -86,6 +86,8 @@ const CompanyFranchises: React.FC = () => {
         setFranchises(res.franchises);
         setCategory(res.companyIndustryCategory.subCategories || []);
         setIndustryCategoryId(res.companyIndustryCategory._id || "");
+        console.log(res.franchises);
+        console.log(res.companyIndustryCategory.subCategories);
         setPage(res.currentPage);
         setTotalPages(res.totalPages);
       } catch (err) {
@@ -109,8 +111,17 @@ const CompanyFranchises: React.FC = () => {
     ownershipModel,
     investmentRange.min,
     investmentRange.max,
-    filter,
   ]);
+
+  useEffect(() => {
+    const getCategory = async () => {
+      const res = await fetchCompany(company._id);
+      if (res.success) {
+        setIndustryCategories(res.data.industryCategory);
+      }
+    };
+    getCategory();
+  }, [company._id]);
 
   const handleSubmit = async (data: IFranchise) => {
     try {
@@ -144,16 +155,6 @@ const CompanyFranchises: React.FC = () => {
       }
     }
   };
-
-  useEffect(() => {
-    const getCategory = async () => {
-      const res = await fetchCompany(company._id);
-      if (res.success) {
-        setIndustryCategories(res.data.industryCategory);
-      }
-    };
-    getCategory();
-  }, [company._id]);
 
   const handleDelete = async (franchiseId: string) => {
     try {

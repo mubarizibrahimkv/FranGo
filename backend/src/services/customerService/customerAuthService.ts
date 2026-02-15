@@ -130,8 +130,7 @@ export class CustomerAuthService implements ICustomerAuthService {
 
     forgotPassword = async (email: string) => {
         try {
-            const customer = await this._authRepo.findByEmail(email);
-
+            const customer = await this._authRepo.findByEmail(email);   
             if (!customer) {
                 throw { status: HttpStatus.NOT_FOUND, message: Messages.USER_NOT_FOUND };
             }

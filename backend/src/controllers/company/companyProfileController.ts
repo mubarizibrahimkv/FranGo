@@ -275,4 +275,14 @@ export class ProfileController implements IcompanyProfileController {
       this.handleError(res, error); 
     }
   };
+  getSubscriptionStatus = async (req: Request, res: Response) => {
+    const { companyId } = req.params;
+    try {
+      const status=await this._companyService.getSubscriptionStatus(companyId);
+      res.status(HttpStatus.OK).json({ success: true,status });
+      return;
+    } catch (error: unknown) {
+      this.handleError(res, error); 
+    }
+  };
 }

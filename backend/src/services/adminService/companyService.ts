@@ -5,38 +5,39 @@ import { IAdminCompanyRepo } from "../../interface/ṛepository/adminCompanyRepo
 import { INotificationRepo } from "../../interface/ṛepository/notificationRepoInterface";
 import Company from "../../models/companyModel";
 import { CompanyMapper } from "../../mappers/company.mapper";
+import { io } from "../../config/socket";
 
 export class AdminCompanyService implements IAdminCompanyService {
   constructor(private _companyRepo: IAdminCompanyRepo, private _notificationRepo: INotificationRepo) { }
 
-  getPendingCompanies = async (page: number,search:string) => {
+  getPendingCompanies = async (page: number, search: string) => {
     const limit = 10;
     const skip = (page - 1) * limit;
     try {
       const totalCompanies = await Company.countDocuments({ status: "pending" });
       const totalPages = Math.ceil(totalCompanies / limit);
-      const users = await this._companyRepo.getPendingCompanies(limit, skip,search);
+      const users = await this._companyRepo.getPendingCompanies(limit, skip, search);
       if (!users) {
         throw new Error(Messages.COMPANY_NOT_FOUND);
       }
-      return { users:CompanyMapper.toResponseList(users), totalPages };
+      return { users: CompanyMapper.toResponseList(users), totalPages };
     } catch (error: unknown) {
       if (error instanceof Error) throw new Error(error.message);
       throw new Error("Failed to get pending companies");
     }
   };
 
-  getApprovedCompanies = async (page: number,search:string,filter:string) => {
+  getApprovedCompanies = async (page: number, search: string, filter: string) => {
     const limit = 10;
-    const skip = (page - 1) * limit; 
+    const skip = (page - 1) * limit;
     try {
-      const companies = await this._companyRepo.getApprovedCompanies(limit, skip,search,filter);
+      const companies = await this._companyRepo.getApprovedCompanies(limit, skip, search, filter);
       const totalCompanies = await Company.countDocuments({ status: "approve" });
       const totalPages = Math.ceil(totalCompanies / limit);
       if (!companies) {
         throw new Error(Messages.COMPANY_NOT_FOUND);
       }
-      return { companies:CompanyMapper.toResponseList(companies), totalPages };
+      return { companies: CompanyMapper.toResponseList(companies), totalPages };
     } catch (error: unknown) {
       if (error instanceof Error) throw new Error(error.message);
       throw new Error("Failed to get approved companies");
@@ -54,12 +55,20 @@ export class AdminCompanyService implements IAdminCompanyService {
         company.rejectionReason = reason.trim();
       }
       await company.save();
-      
-      const notificationMessage=status==="approve"?"Your company registration has been approved!":"Your company registration has been rejected!";
-     
-      await this._notificationRepo.create({
+
+      const notificationMessage = status === "approve" ? "Your company registration has been approved!" : "Your company registration has been rejected!";
+
+      const notification = await this._notificationRepo.create({
         userId: new mongoose.Types.ObjectId(companyId),
         message: notificationMessage,
+        isRead: false,
+      });
+
+
+      io.to(companyId).emit("receive_notification", {
+        id: notification._id,
+        message: notification.message,
+        createdAt: notification.createdAt,
         isRead: false,
       });
 

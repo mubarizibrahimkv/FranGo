@@ -11,6 +11,7 @@ import { Messages } from "../../constants/messages";
 import { INotificationRepo } from "../../interface/ṛepository/notificationRepoInterface";
 import dotenv from "dotenv";
 import { InvestorMapper } from "../../mappers/investor.mapper";
+import { io } from "../../config/socket";
 dotenv.config();
 
 
@@ -38,7 +39,7 @@ export class ProfileService implements IProfileService {
             seekerObj.preferredFranchiseType = seekerObj.preferredFranchiseType?.map(
                 (cat: ICategory) => cat.categoryName
             );
-            return { seeker:InvestorMapper.toResponse(seeker), industryCategory };
+            return { seeker: InvestorMapper.toResponse(seeker), industryCategory };
         } catch (error) {
             console.log(error);
             throw error;
@@ -77,13 +78,20 @@ export class ProfileService implements IProfileService {
             if (!adminId || !mongoose.Types.ObjectId.isValid(adminId)) {
                 throw new Error("Invalid or missing ADMIN_ID in environment variables");
             }
-            await this._notificationRepo.create({
+            const notification=await this._notificationRepo.create({
                 userId: new mongoose.Types.ObjectId(adminId),
                 message: "A investor has completed its profile. Please review and verify.",
                 isRead: false,
             });
 
-            return investor; 
+            io.to(adminId).emit("receive_notification", {
+                id: notification._id,
+                message: notification.message,
+                createdAt: notification.createdAt,
+                isRead: false,
+            });
+
+            return investor;
         } catch (error) {
             console.error("Error updating investor profile:", error);
             throw error;

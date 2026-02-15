@@ -13,6 +13,10 @@ import { fetchGoogleUser, logout } from "../../services/auth";
 import { toast } from "react-toastify";
 import ConfirmAlert from "../CommonComponents/ConfirmationModal";
 import VerificationBanner from "../CommonComponents/VerificationBadge";
+import Notification from "../CommonComponents/Notification";
+import { getNotifications } from "../../services/notificationService";
+import type { INotification } from "../../types/common";
+import { socket } from "../../utils/socket";
 
 interface NavLinkItem {
   name: string;
@@ -28,6 +32,32 @@ const Navbar: React.FC = () => {
   const investor = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isOpenNotification, setIsOpenNotification] = useState(false);
+  const closeNotificationComponent = () => {
+    setIsOpenNotification(false);
+  };
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const res = await getNotifications(investor.role, investor._id);
+        const unread = res.notifications.filter(
+          (n: INotification) => !n.isRead,
+        ).length;
+        setUnreadCount(unread);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    if (investor.isAuthenticated) fetchUnreadCount();
+  }, [
+    investor.role,
+    investor._id,
+    isOpenNotification,
+    investor.isAuthenticated,
+  ]);
 
   useEffect(() => {
     const handleGoogleUser = async () => {
@@ -44,6 +74,7 @@ const Navbar: React.FC = () => {
               isAdmin: response.isAdmin || false,
               token: response.token,
               isAuthenticated: true,
+              status: response.status || "pending",
             }),
           );
         }
@@ -55,6 +86,24 @@ const Navbar: React.FC = () => {
 
     if (!investor.isAuthenticated) handleGoogleUser();
   }, [dispatch, navigate, investor.isAuthenticated]);
+
+  useEffect(() => {
+    socket.on("connect", () => {});
+  }, []);
+
+  useEffect(() => {
+    if (!investor.isAuthenticated) return;
+
+    const handleNotification = () => {
+      setUnreadCount((prev) => prev + 1);
+    };
+
+    socket.on("receive_notification", handleNotification);
+
+    return () => {
+      socket.off("receive_notification", handleNotification);
+    };
+  }, [investor.isAuthenticated]);
 
   const openLoginModale = () => {
     setIsOpenLoginModal(true);
@@ -136,9 +185,25 @@ const Navbar: React.FC = () => {
               <a href="/messages" className="text-gray-600 hover:text-gray-800">
                 <LuMessageSquareText size={20} />
               </a>
-              <a href="/" className="text-gray-600 hover:text-gray-800">
+              <button
+                onClick={() => setIsOpenNotification(true)}
+                className="relative text-gray-600 hover:text-gray-800"
+              >
                 <IoMdNotificationsOutline size={20} />
-              </a>
+
+                {unreadCount > 0 && (
+                  <span
+                    className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] 
+                    font-bold rounded-full h-4 w-4 flex items-center justify-center"
+                  >
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {isOpenNotification && (
+                <Notification onClose={closeNotificationComponent} />
+              )}
 
               <div
                 className="relative"

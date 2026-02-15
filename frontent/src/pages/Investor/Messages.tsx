@@ -42,17 +42,13 @@ const Chat: React.FC = () => {
     } catch (err) {
       console.log("Error fetching conversations:", err);
     }
-  }, [investorId]); // dependencies needed inside fetchConversations
+  }, [investorId]);
 
-  // Fetch conversations when senderIdChatBox changes
   useEffect(() => {
     fetchConversations();
   }, [senderIdChatBox, fetchConversations]);
 
-  // Handle socket "conversation_changed" updates
   useEffect(() => {
-    socket.connect();
-
     const refresh = () => {
       console.log("Parent: conversation update received");
       fetchConversations();
@@ -65,17 +61,12 @@ const Chat: React.FC = () => {
     };
   }, [fetchConversations]);
 
-  // Join investor room
-  useEffect(() => {
-    socket.emit("join_room", investorId);
-  }, [investorId]);
+  // useEffect(() => {
+  //   socket.emit("join_room", investorId);
+  // }, [investorId]);
 
-  // Handle unread_count_update event
   useEffect(() => {
-    socket.connect();
-
     const handleUnreadUpdate = ({ channel, unreadCount }: UnreadUpdate) => {
-      console.log("CHANNEL:", channel, "COUNT:", unreadCount);
       setUnreadCounts((prev) => ({
         ...prev,
         [channel]: unreadCount,
@@ -89,7 +80,6 @@ const Chat: React.FC = () => {
     };
   }, []);
 
-  // Optional: Debug re-renders
   useEffect(() => {
     console.log("RERENDER — unreadCounts:", unreadCounts);
   }, [unreadCounts]);
@@ -135,7 +125,7 @@ const Chat: React.FC = () => {
                     </div>
 
                     <span className="text-xs text-green-600 font-semibold">
-                      {u.createdAt ? formatChatTimestamp(u.createdAt) : "N/A"}
+                      {u.updatedAt ? formatChatTimestamp(u.updatedAt) : "N/A"}
                     </span>
                   </div>
                 ))}

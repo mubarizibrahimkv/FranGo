@@ -30,6 +30,11 @@ const AdminPendingApproval: React.FC = () => {
   const [searchText, setSearchText] = useState("");
 
   if (!role) return null;
+  useEffect(() => {
+    if (!role) return;
+    fetchCompanies();
+  }, [role, page, searchText]);
+
   const fetchCompanies = async () => {
     try {
       const response = await getPendingUsersAPI(role, page, searchText);
@@ -42,11 +47,6 @@ const AdminPendingApproval: React.FC = () => {
       toast.error(message);
     }
   };
-
-  useEffect(() => {
-    if (!role) return;
-    fetchCompanies();
-  }, [role, page, fetchCompanies, searchText]);
 
   const verifyCompany = async (
     companyId: string,

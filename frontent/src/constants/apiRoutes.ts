@@ -116,7 +116,7 @@ export const COMPANY = {
     EDIT: (companyId: string, productId: string) =>
       `/company/product/${companyId}/${productId}`,
     DELETE: (productId: string) => `/company/product/${productId}`,
-    GET: (companyId: string, page: number) =>
+    GET: (companyId: string, page?: number) =>
       `/company/product/${companyId}?page=${page}`,
   },
 

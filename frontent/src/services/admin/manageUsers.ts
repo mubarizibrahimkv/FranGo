@@ -85,9 +85,7 @@ export const getInvestorDetails = async (id: string) => {
 
 export const addCategories = async (data: FormData) => {
   try {
-    const response = await api.post(ADMIN_API.CATEGORY, {
-      data,
-    });
+    const response = await api.post(ADMIN_API.CATEGORY, data);
     return response.data;
   } catch (error) {
     console.log(error);

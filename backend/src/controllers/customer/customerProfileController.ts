@@ -18,6 +18,10 @@ export class CustomerProfileController implements ICustomerProfileController {
                 : error instanceof Error
                     ? { status: HttpStatus.INTERNAL_SERVER_ERROR, message: error.message }
                     : { status: HttpStatus.INTERNAL_SERVER_ERROR, message: ERROR_MESSAGES.SERVER_ERROR };
+                    return res.status(err.status).json({
+    success: false,
+    message: err.message,
+  });
 
     }
     addAddress = async (req: Request, res: Response) => {

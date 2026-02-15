@@ -93,7 +93,6 @@ export class ProductManagementService implements ICompanyProductManagementServic
                 );
 
             return ProductCategoryHierarchyMapper.toResponseList(products);
-
         } catch (error) {
             console.error("Get all Product category Error:", error);
             throw error;
@@ -256,7 +255,7 @@ export class ProductManagementService implements ICompanyProductManagementServic
     };
     getProducts = async (companyId: string, page: number, search: string, filter?: string) => {
         const limit = 10;
-        const skip = (page - 1) * limit;
+        const skip = (page - 1) * limit; 
         try {
             const totalProducts = await this._productRepo.countByCompanyId(companyId);
             const products = await this._productRepo.findByCompanyId(companyId, skip, limit, search, filter);

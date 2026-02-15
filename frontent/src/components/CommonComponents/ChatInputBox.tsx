@@ -35,7 +35,7 @@ const ChatModal = ({
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [isOpen]);
 
   const handleQuickMessage = async () => {
     try {

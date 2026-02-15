@@ -226,14 +226,11 @@ const Home = () => {
           </div>
         </div>
       </div>
-
-      {/* Reviews */}
       <div>
         <h1 className="text-3xl font-bold mb-8 text-start">Why Choose Us</h1>
         <h2>Class not found</h2>
       </div>
 
-      {/* Footer */}
       <Footer />
     </>
   );

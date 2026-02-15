@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { ProductCategoryHierarchyResponseDTO, ProductCategoryResponseDTO } from "../dtos/productCategory/product-category-response.dto";
 import { IProductCategory } from "../models/productCategory";
 
@@ -24,25 +25,47 @@ export class ProductCategoryMapper {
   }
 }
 
-
+interface ProductCategoryHierarchyRaw {
+  _id?: Types.ObjectId | string;
+  name?: string;
+  status?: string;
+  isListed?: boolean;
+  categoryDetails?: {
+    industryName?: string;
+    subCategoryName?: string;
+    subSubCategoryName?: string;
+  };
+}
 
 
 export class ProductCategoryHierarchyMapper {
-  static toResponse(raw: any): ProductCategoryHierarchyResponseDTO {
+  static toResponse(
+    raw: ProductCategoryHierarchyRaw
+  ): ProductCategoryHierarchyResponseDTO {
     return {
-      _id: raw._id.toString(),
-      name: raw.name,
-      status: raw.status,
-      isListed: raw.isListed,
+      _id: raw._id
+        ? raw._id instanceof Types.ObjectId
+          ? raw._id.toString()
+          : raw._id
+        : "",
+
+      name: raw.name ?? "",
+      status: raw.status ?? "inactive",
+      isListed: raw.isListed ?? false,
+
       categoryDetails: {
-        industryName: raw.categoryDetails.industryName,
-        subCategoryName: raw.categoryDetails.subCategoryName,
-        subSubCategoryName: raw.categoryDetails.subSubCategoryName,
+        industryName: raw.categoryDetails?.industryName ?? "",
+        subCategoryName: raw.categoryDetails?.subCategoryName ?? "",
+        subSubCategoryName: raw.categoryDetails?.subSubCategoryName ?? "",
       },
     };
   }
-
-  static toResponseList(rawList: any[]): ProductCategoryHierarchyResponseDTO[] {
-    return rawList.map(this.toResponse);
+  static toResponseList(
+    raws: ProductCategoryHierarchyRaw[]
+  ): ProductCategoryHierarchyResponseDTO[] {
+    return raws.map(raw =>
+      ProductCategoryHierarchyMapper.toResponse(raw)
+    );
   }
 }
+

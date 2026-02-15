@@ -7,6 +7,7 @@ import {
   getNotifications,
   updateNotification,
 } from "../../services/notificationService.js";
+import { useSocket } from "../../utils/socketProvider.js";
 
 interface notificationProp {
   onClose(): void;
@@ -17,12 +18,29 @@ const Notification: React.FC<notificationProp> = ({ onClose }) => {
   const user = useSelector((state: RootState) => state.user);
   const userId = user?._id || "";
   const userRole = user.isAdmin ? "admin" : user.role;
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewNotification = (data: INotification) => {
+      console.log("🔔 Realtime notification:", data);
+      setNotifications((prev) => (prev ? [data, ...prev] : [data]));
+    };
+
+    socket.on("receive_notification", handleNewNotification);
+
+    return () => {
+      socket.off("receive_notification", handleNewNotification);
+    };
+  }, [socket]);
 
   useEffect(() => {
     const handleNotifications = async () => {
       try {
         const response = await getNotifications(userRole, userId || "");
         setNotifications(response.notifications);
+        console.log(response.notifications);
       } catch (error) {
         console.error("the error ", error);
       }
@@ -31,8 +49,6 @@ const Notification: React.FC<notificationProp> = ({ onClose }) => {
   }, [userId, userRole]);
 
   const handeUpdate = async (notificationId: string) => {
-    console.log(notificationId, "notification id");
-    console.log(notificationId, "notification id");
     try {
       const response = await updateNotification(userRole, notificationId);
       if (response.success) {

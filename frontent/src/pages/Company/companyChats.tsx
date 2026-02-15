@@ -186,8 +186,6 @@ const Chat: React.FC = () => {
                 profileImage={profileImage}
               />
             )}
-
-            {/* render chat full */}
           </div>
         </main>
       </div>

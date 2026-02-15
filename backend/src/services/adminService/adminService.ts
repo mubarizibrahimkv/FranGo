@@ -105,7 +105,7 @@ export class AdminService implements IAdminService {
         } catch (error) {
             console.error("Get admin Notification Error:", error);
             throw error;
-        }
+        } 
     };
     updateNotification = async (notificationId: string) => {
         try {
@@ -118,5 +118,5 @@ export class AdminService implements IAdminService {
             console.error("Edit admin Notification Error:", error);
             throw error;
         }
-    };
+    }; 
 }   

@@ -56,7 +56,6 @@ const VerifyOtp = () => {
       setLoading(true);
       const result = await verifyOtp({ otp, email, role });
       const { user, message } = result;
-      console.log(purpose, "purose in frotntn");
       dispatch(
         setUser({
           userName: user.userName,
@@ -69,7 +68,6 @@ const VerifyOtp = () => {
       );
 
       toast.success(message);
-      console.log(result, "result in fonrnrrt");
       if (result) {
         if (purpose === "forgotPassword") {
           navigate("/changePassword", { state: { email, role } });

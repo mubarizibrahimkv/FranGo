@@ -73,7 +73,6 @@ const ExploreFranchise = () => {
     useState<IFranchise | null>(null);
 
   const handleReport = (franchise: IFranchise) => {
-    console.log(franchise, "selected franchise for report");
     setSelectedFranchiseId(franchise);
     setReportModalOpen(true);
     setOpenMenuId(null);

@@ -3,13 +3,13 @@ import { ICompany } from "./companyModel";
 
 
 export interface IFranchise extends Document {
+  _id:Types.ObjectId
   franchiseName?: string;
   industryCategory?: Types.ObjectId;
   monthlyRevenue?: number;
   franchiseType?: string;
   industrySubCategory?: string;
   industrySubSubCategory?: string[];
-
   franchisefee?: number;
   advancefee?: number;
   royaltyfee?: number;

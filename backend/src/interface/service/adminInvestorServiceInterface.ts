@@ -1,5 +1,4 @@
 import { InvestorResponseDTO } from "../../dtos/investor/investor.response.dto";
-import { IInvestor } from "../../models/investorModel";
 
 export interface IAdminInvestorService{
     getPendingInvestors(page:number,search:string):Promise<{investor: InvestorResponseDTO[],totalPages: number}>

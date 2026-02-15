@@ -278,8 +278,8 @@ export const createSubscriptionOrder = async (
 };
 export const getProducts = async (
   companyId: string,
-  page: number,
-  search: string,
+  page?: number,
+  search?: string,
   filter?: string,
 ) => {
   try {

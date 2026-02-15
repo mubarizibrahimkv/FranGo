@@ -42,6 +42,7 @@ const VerifyEmailPage = () => {
                 isAdmin: company.isAdmin,
                 isAuthenticated: true,
                 profileImage: company.companyLogo,
+                status: company.status,
               }),
             );
 
@@ -76,7 +77,6 @@ const VerifyEmailPage = () => {
     setIsResending(true);
 
     try {
-      console.log("Resending link for:", email, purpose);
       const res = await resendLink({ email, purpose });
       if (res.success) {
         const company = res.company;
@@ -89,6 +89,7 @@ const VerifyEmailPage = () => {
             isAdmin: company.isAdmin,
             isAuthenticated: true,
             profileImage: company.companyLogo,
+            status: company.status || "pending",
           }),
         );
         toast.info("A new verification email has been sent to your inbox");

@@ -1,8 +1,7 @@
-import { ApplicationListDTO, ApplicationResponseDTO } from "../../dtos/application/application.response.dto";
+import {  ApplicationResponseDTO } from "../../dtos/application/application.response.dto";
 import { CompanyIndustryCategoryDTO } from "../../dtos/company/company.indutryCategory.dto";
 import { CompanyProfileDTO } from "../../dtos/company/company.profile.dto";
 import {  FranchiseResponseDTO } from "../../dtos/franchise/franchise.response.dto";
-import { IApplication } from "../../models/applicationModel";
 import { ICompany } from "../../models/companyModel";
 import { IFranchise } from "../../models/franchiseModel";
 import { INotification } from "../../models/notificationModel";
@@ -22,5 +21,6 @@ export default interface IcompanyService{
     updateProfile(data:Partial<ICompany>,companyId:string): Promise<CompanyProfileDTO | null>
     getNotification(userId:string): Promise<INotification[]>
     updateNotification(notificationId:string): Promise<INotification>
+    getSubscriptionStatus(companyId:string): Promise<Boolean>
     verifyPayment(companyId:string,razorpayOrderId: string,razorpayPaymentId: string,razorpaySignature: string,amount:string): Promise<{message:string}>
 };

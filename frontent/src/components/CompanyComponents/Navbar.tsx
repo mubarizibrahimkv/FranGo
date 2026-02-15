@@ -7,6 +7,8 @@ import { setUser } from "../../redux/slice/authSlice";
 import type { RootState } from "../../redux/store/store";
 import VerificationBanner from "../CommonComponents/VerificationBadge";
 import Notification from "../CommonComponents/Notification";
+import { getNotifications } from "../../services/notificationService";
+import { socket } from "../../utils/socket";
 
 interface prop {
   heading: string;
@@ -19,6 +21,40 @@ const Navbar: React.FC<prop> = ({ heading }) => {
   const closeNotificationComponent = () => {
     setIsOpenNotification(false);
   };
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const res = await getNotifications(company.role, company._id);
+        const unread = res.notifications.filter((n: any) => !n.isRead).length;
+        setUnreadCount(unread);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    if (company.isAuthenticated) fetchUnreadCount();
+  }, [company.role, company._id, company.isAuthenticated]);
+
+  useEffect(() => {
+    socket.on("connect", () => {});
+  }, []);
+
+  useEffect(() => {
+    if (!company.isAuthenticated) return;
+
+    const handleNotification = () => {
+      setUnreadCount((prev) => prev + 1);
+    };
+
+    socket.on("receive_notification", handleNotification);
+
+    return () => {
+      socket.off("receive_notification", handleNotification);
+    };
+  }, [company.isAuthenticated]);
+
   useEffect(() => {
     const handleGoogleUser = async () => {
       try {
@@ -34,7 +70,7 @@ const Navbar: React.FC<prop> = ({ heading }) => {
               isAdmin: response.isAdmin || false,
               token: response.token,
               isAuthenticated: true,
-              status: response.status,
+              status: response.status || "pending",
             }),
           );
         } else {
@@ -49,6 +85,7 @@ const Navbar: React.FC<prop> = ({ heading }) => {
     if (!company.isAuthenticated) handleGoogleUser();
   }, [dispatch, navigate, company.isAuthenticated]);
 
+  console.log("comapny details in navabar", company);
   return (
     <>
       <header className="w-full h-14 flex items-center justify-between px-6 shadow-md">
@@ -63,9 +100,18 @@ const Navbar: React.FC<prop> = ({ heading }) => {
 
           <button
             onClick={() => setIsOpenNotification(true)}
-            className="p-2 text-gray-600 hover:text-gray-900"
+            className="relative p-2 text-gray-600 hover:text-gray-900"
           >
             <Bell className="w-6 h-6" />
+
+            {unreadCount > 0 && (
+              <span
+                className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px]
+                font-bold rounded-full h-4 w-4 flex items-center justify-center"
+              >
+                {unreadCount}
+              </span>
+            )}
           </button>
 
           {isOpenNotification && (

@@ -21,3 +21,6 @@ export const formatChatTimestamp = (dateInput: string | Date) => {
   }
   return date.toLocaleDateString();
 };
+
+export const formatDate = (date?: string | Date) =>
+  date ? new Date(date).toLocaleDateString() : "—";

@@ -47,26 +47,33 @@ const AdminProductCategory = () => {
   const [subCategory, setSubCategory] = useState("");
 
   useEffect(() => {
+    if (!company?._id) return;
+
     const getCategory = async () => {
       const res = await fetchCompany(company._id);
       if (res.success) {
         setIndustryCategories(res.data.industryCategory);
       }
     };
+
     getCategory();
-  }, [company._id]);
+  }, [company?._id]);
 
   useEffect(() => {
+    if (!company?._id) return;
     const filter = subCategory;
+
     const getProductCategory = async () => {
       const res = await getProductCategories(company._id, searchText, filter);
+
       if (res.success) {
         setTotalPages(res.totalPages);
         setProductCategories(res.data);
       }
     };
+
     getProductCategory();
-  }, [company._id, searchText, page, subCategory, editedName]);
+  }, [company?._id, searchText, page, subCategory, editedName]);
 
   const handleProductCategory = async (data: {
     industryCategoryId: string;
@@ -185,7 +192,7 @@ const AdminProductCategory = () => {
                       All
                     </button>
 
-                    {industryCategories?.subCategories.map((item) => (
+                    {industryCategories?.subCategories?.map((item) => (
                       <button
                         key={item._id}
                         onClick={() => setSubCategory(item._id ? item._id : "")}
@@ -221,9 +228,9 @@ const AdminProductCategory = () => {
 
             <tbody>
               {productCategories.length > 0 ? (
-                productCategories.map((category, index) => (
+                productCategories.map((category) => (
                   <tr
-                    key={index}
+                    key={category._id}
                     className="bg-white text-[13px] font-semibold hover:shadow-md transition-all text-center"
                   >
                     <td className="px-5 py-2">
@@ -233,56 +240,22 @@ const AdminProductCategory = () => {
                       {category.categoryDetails.subSubCategoryName || "N/A"}
                     </td>
                     <td className="px-5 py-2">{category.name || "N/A"}</td>
-                    <td className="px-5 py-2 flex items-center justify-center gap-3">
-                      <button
-                        className="text-red-400 hover:underline"
-                        onClick={() => handleDelete(category._id)}
-                      >
-                        <FaTrashAlt size={18} />
-                      </button>
-                      <Edit
-                        size={18}
-                        onClick={() => handleEditClick(category)}
-                        className="text-green-400 cursor-pointer"
-                      />
-                    </td>
+                    <td className="px-5 py-2">
+                      <div className="flex items-center justify-center gap-3">
+                        <button
+                          className="text-red-400 hover:underline"
+                          onClick={() => handleDelete(category._id)}
+                        >
+                          <FaTrashAlt size={18} />
+                        </button>
 
-                    {isModalOpen && (
-                      <div className="fixed inset-0  backdrop-blur-xs flex justify-center items-center z-50">
-                        <div className="bg-white rounded-2xl p-6 w-[400px] shadow-lg">
-                          <h2 className="text-lg font-semibold mb-4 text-center">
-                            Edit Product Category
-                          </h2>
-
-                          <input
-                            type="text"
-                            value={editedName}
-                            onChange={(e) => setEditedName(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 outline-none"
-                            placeholder="Enter new category name"
-                          />
-
-                          {error && (
-                            <p className="text-xs text-red-500 mt-1">{error}</p>
-                          )}
-
-                          <div className="flex justify-end gap-3">
-                            <button
-                              onClick={() => setIsModalOpen(false)}
-                              className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              onClick={handleUpdate}
-                              className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
-                            >
-                              Save
-                            </button>
-                          </div>
-                        </div>
+                        <Edit
+                          size={18}
+                          onClick={() => handleEditClick(category)}
+                          className="text-green-400 cursor-pointer"
+                        />
                       </div>
-                    )}
+                    </td>
                   </tr>
                 ))
               ) : (
@@ -294,6 +267,41 @@ const AdminProductCategory = () => {
               )}
             </tbody>
           </table>
+
+          {isModalOpen && (
+            <div className="fixed inset-0  backdrop-blur-xs flex justify-center items-center z-50">
+              <div className="bg-white rounded-2xl p-6 w-[400px] shadow-lg">
+                <h2 className="text-lg font-semibold mb-4 text-center">
+                  Edit Product Category
+                </h2>
+
+                <input
+                  type="text"
+                  value={editedName}
+                  onChange={(e) => setEditedName(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 outline-none"
+                  placeholder="Enter new category name"
+                />
+
+                {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleUpdate}
+                    className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="flex justify-center items-center gap-2 mb-4">
             {page > 1 && (

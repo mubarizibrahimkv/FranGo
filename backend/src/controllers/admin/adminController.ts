@@ -9,7 +9,7 @@ export class Admincontroller implements IAdminControler {
     private handleError(res: Response, error: unknown) {
 
         const err =
-            typeof error === "object" &&
+            typeof error === "object" && 
                 error !== null &&
                 "status" in error &&
                 "message" in error
@@ -29,13 +29,14 @@ export class Admincontroller implements IAdminControler {
             if (file) {
                 data.image = file.path;
             }
+            console.log(data,"this is data in admin controller")
             await this._adminService.addIndustryCategory(data);
             res.status(HttpStatus.OK).json({ success: true });
             return;
         } catch (error: unknown) {
             this.handleError(res,error);
         }
-    };
+    }; 
     editIndustryCategory = async (req: Request, res: Response) => {
         try {
             let data = req.body.data;
@@ -88,7 +89,7 @@ export class Admincontroller implements IAdminControler {
             this.handleError(res, error);
         }
     };
-    getNotifications = async (req: Request, res: Response) => {
+    getNotifications = async (req: Request, res: Response) => { 
         const { userId } = req.params;
         try {
             const notifications = await this._adminService.getNotification(userId);
@@ -96,7 +97,7 @@ export class Admincontroller implements IAdminControler {
             return;
         } catch (error: unknown) {
            this.handleError(res, error);
-        }
+        } 
     };
     updateNotification = async (req: Request, res: Response) => {
         const { notificationId } = req.params;
