@@ -6,7 +6,13 @@ export class CouponRepository extends BaseRepository<IStock> implements IStockRe
     constructor() {
         super(Stock);
     }
-    async updateStock(productId:string,stock:number){
-      return await Stock.findOneAndUpdate({productId},{quantity:stock},{new:true})
-    }   
+    async updateStock(applicationId: string, productId: string, stock: number) {
+        return await Stock.findOneAndUpdate({ application: applicationId, product: productId }, { quantity: stock }, { new: true })
+    }
+    async existStock(applicationId: string, productId: string) {
+        return await Stock.findOne({
+            product: productId,
+            application: applicationId
+        });
+    }
 }

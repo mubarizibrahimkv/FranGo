@@ -2,8 +2,8 @@ import mongoose, { Document, model, Types } from "mongoose";
 
 export interface IStock extends Document {
     product: Types.ObjectId;
-    ivestor: Types.ObjectId;
-    franchise: Types.ObjectId;
+    investor: Types.ObjectId;
+    application: Types.ObjectId;
     quantity: number;
     createdAt: Date;
     updatedAt: Date;
@@ -17,9 +17,9 @@ const StockSchema = new mongoose.Schema({
         ref: "Product",
         required: true,
     },
-    franchise: {
+    application: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Franchise",
+        ref: "Application",
         required: true
     },
     investor: {
@@ -35,7 +35,7 @@ const StockSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-StockSchema.index({ product: 1, franchise: 1 }, { unique: true });
+StockSchema.index({ product: 1, application: 1 }, { unique: true });
 
 
 const Stock = model<IStock>("Stock", StockSchema);
