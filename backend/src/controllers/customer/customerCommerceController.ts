@@ -41,4 +41,22 @@ export class CustomerCommerceController {
             this.handleError(res, error);
         }
     };
+    getProducts = async (req: Request, res: Response) => {
+        const { applicationId, page = "1", search = "" } = req.query;
+        if (!applicationId) {
+            res.status(HttpStatus.OK).json({ message: "application id required" });
+        }
+        const pageNumber = Number(page);
+        try {
+            const { products, totalPages } =
+                await this._customerCommerceService.getProducts(
+                    applicationId as string,
+                    pageNumber,
+                    search as string
+                );
+            res.status(HttpStatus.OK).json({products,totalPages,currentPage:page});
+        } catch (error: unknown) {
+            this.handleError(res, error);
+        }
+    };
 }

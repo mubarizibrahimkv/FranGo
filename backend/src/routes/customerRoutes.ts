@@ -9,6 +9,8 @@ import passport, { setupGoogleStrategy } from "../config/passport";
 import { CustomerCommerceService } from "../services/customerService/customerService";
 import { FranchiseRepo } from "../repository/franchiseRepository";
 import { CustomerCommerceController } from "../controllers/customer/customerCommerceController";
+import { InventoryRepository } from "../repository/stockRepository";
+import { ApplicationRepo } from "../repository/applicationRepository";
 const router = Express.Router();
 
 
@@ -20,8 +22,9 @@ const addressRepo = new CustomerAddressRepo();
 const profileService = new CustomerProfileService(addressRepo, authRepo);
 const profileController = new CustomerProfileController(profileService);
 
-const franchiseRepo = new FranchiseRepo()
-const commerceService = new CustomerCommerceService(franchiseRepo)
+const applicationRepo = new ApplicationRepo()
+const stockRepo=new InventoryRepository()
+const commerceService = new CustomerCommerceService(applicationRepo,stockRepo)
 const commerceController = new CustomerCommerceController(commerceService)
 
 router.route("/auth/register").post(authController.register);

@@ -215,4 +215,84 @@ export class ApplicationRepo extends BaseRepository<IApplication> implements IAp
                 };
             })[];
     }
+    async getApplicationsByIndustryCategory (industryCategoryId:string, search = "", limit = 10, skip = 0){
+        const searchFilter: any = {};
+        if (search) {
+            searchFilter["$or"] = [
+                { "franchiseDetails.franchiseName": { $regex: search, $options: "i" } },
+                { "companyDetails.companyName": { $regex: search, $options: "i" } }
+            ];
+        }
+
+        const result = await Application.aggregate([
+            {
+                $lookup: {
+                    from: "franchises",
+                    localField: "franchise",
+                    foreignField: "_id",
+                    as: "franchiseDetails"
+                }
+            },
+            { $unwind: "$franchiseDetails" },
+
+            {
+                $lookup: {
+                    from: "companies",
+                    localField: "franchiseDetails.company",
+                    foreignField: "_id",
+                    as: "companyDetails"
+                }
+            },
+            { $unwind: "$companyDetails" },
+
+            {
+                $lookup: {
+                    from: "industrycategories",
+                    localField: "franchiseDetails.industrySubCategory",
+                    foreignField: "_id",
+                    as: "industryCategoryDetails"
+                }
+            },
+            { $unwind: "$industryCategoryDetails" },
+
+            {
+                $match: {
+                    "industryCategoryDetails._id": new mongoose.Types.ObjectId(industryCategoryId),
+                    ...searchFilter
+                }
+            },
+
+            {
+                $facet: {
+                    data: [
+                        { $skip: skip },
+                        { $limit: limit },
+                        {
+                            $project: {
+                                _id: 1,
+                                status: 1,
+                                createdAt: 1,
+                                updatedAt: 1,
+                                "companyDetails.companyName": 1,
+                                "companyDetails.companyLogo": 1,
+                                "companyDetails.email": 1,
+                                "franchiseDetails.franchiseName": 1,
+                                "franchiseDetails.monthlyRevenue": 1,
+                                "franchiseDetails.subCategories": 1,
+                                "industryCategoryDetails.categoryName": 1,
+                            }
+                        }
+                    ],
+                    totalCount: [
+                        { $count: "count" }
+                    ]
+                }
+            }
+        ]);
+
+        return {
+            applications: result[0].data,
+            totalCount: result[0].totalCount[0] ? result[0].totalCount[0].count : 0
+        };
+    };
 }

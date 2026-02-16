@@ -10,5 +10,4 @@ export interface IFranchiseRepo{
     findAll():Promise<IFranchise[]|[]>
     findAllWithCompany(query:any,sortOption:any):Promise<IFranchise[]|[]>
     findByIdWithComapny(franchiseId:string):Promise<IFranchise|null>
-    findAllByIndustryCategory(industryCategoryId: string, limit: number, skip: number, search: string):Promise<{data:IFranchise[]|null,totalCount:number}>
 }

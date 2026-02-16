@@ -11,4 +11,5 @@ export interface IApplicationRepo {
     findByInvestorAndFranchise(investoId: string,franchiseId:string):Promise<IApplication|null> 
     delete(id:string):Promise<IApplication|null> 
     getApprovedFranchisesByInvestor(investorId:string):Promise<(IApplication&{franchise:IFranchise})[]|null> 
+    getApplicationsByIndustryCategory (industryCategoryId:string, search:string, limit :number, skip : number):Promise<{applications:IApplication[]|null,totalCount:number}> 
 }   

@@ -1,7 +1,8 @@
 import mongoose, { Document, model, Types } from "mongoose";
+import { IProduct } from "./productModel";
 
 export interface IStock extends Document {
-    product: Types.ObjectId;
+    product: Types.ObjectId|IProduct;
     investor: Types.ObjectId;
     application: Types.ObjectId;
     quantity: number;

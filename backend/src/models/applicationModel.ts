@@ -1,8 +1,9 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
+import { IFranchise } from "./franchiseModel";
 
 export interface IApplication extends Document {
     investor: Types.ObjectId;
-    franchise: Types.ObjectId;
+    franchise: Types.ObjectId|IFranchise;
     status: "pending" | "approved" | "rejected";
     payment: Types.ObjectId;
     paymentStatus?: "unpaid" | "paid";
