@@ -11,6 +11,7 @@ import { FranchiseRepo } from "../repository/franchiseRepository";
 import { CustomerCommerceController } from "../controllers/customer/customerCommerceController";
 import { InventoryRepository } from "../repository/stockRepository";
 import { ApplicationRepo } from "../repository/applicationRepository";
+import { OfferRepository } from "../repository/offerRepository";
 const router = Express.Router();
 
 
@@ -24,7 +25,8 @@ const profileController = new CustomerProfileController(profileService);
 
 const applicationRepo = new ApplicationRepo()
 const stockRepo=new InventoryRepository()
-const commerceService = new CustomerCommerceService(applicationRepo,stockRepo)
+const offerRepo=new OfferRepository()
+const commerceService = new CustomerCommerceService(applicationRepo,stockRepo,offerRepo)
 const commerceController = new CustomerCommerceController(commerceService)
 
 router.route("/auth/register").post(authController.register);
@@ -54,14 +56,8 @@ router.get("/google/success", authController.getGoogleUser);
 router.route("/profile/:customerId").get(profileController.getCustomer);
 
 
-router.route("/profile/address/:customerId")
-  .post(profileController.addAddress)
-  .get(profileController.getAddress);
-
-router.route("/profile/address/:addressId")
-  .put(profileController.editAddress)
-  .delete(profileController.deleteAddress);
-
+router.route("/profile/address/:customerId").post(profileController.addAddress).get(profileController.getAddress);
+router.route("/profile/address/:addressId").put(profileController.editAddress).delete(profileController.deleteAddress);
 router.get("/franchise", commerceController.getFranchisesByCategory)
 
 export default router;

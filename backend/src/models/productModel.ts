@@ -1,6 +1,7 @@
 import { Schema, model, Types, Document } from "mongoose";
 
 export interface IProduct extends Document {
+  _id: Types.ObjectId;
   name: string;
   description: string;
   price: number;
@@ -27,7 +28,7 @@ const productSchema = new Schema<IProduct>(
     images: [{ type: String, required: true }],
     company: { type: Schema.Types.ObjectId, ref: "Company", required: true },
     productCategory: { type: Schema.Types.ObjectId, ref: "ProductCategory", required: true },
-    subSubCategory: { type: Schema.Types.ObjectId},
+    subSubCategory: { type: Schema.Types.ObjectId },
     subCategory: { type: Schema.Types.ObjectId },
     industryCategory: { type: Schema.Types.ObjectId, ref: "IndustryCategory", required: true },
     isListed: { type: Boolean, default: true },

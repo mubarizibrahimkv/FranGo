@@ -10,6 +10,11 @@ export interface IStock extends Document {
     updatedAt: Date;
 }
 
+export interface IStockWithProduct extends Omit<IStock, "product"> {
+    product: IProduct;
+}
+
+
 
 
 const StockSchema = new mongoose.Schema({

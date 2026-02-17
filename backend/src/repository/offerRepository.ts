@@ -7,18 +7,32 @@ export class OfferRepository extends BaseRepository<IOffer> implements IOfferRep
     constructor() {
         super(Offer);
     }
-    async findAllByCompanyId(companyId: string, skip: number, limit: number, search: string) {
+    async findAllByCompanyId(
+        companyId: string,
+        skip?: number,
+        limit?: number,
+        search?: string
+    ) {
         const filter: FilterQuery<IOffer> = {
             company: companyId,
+            isActive: true,
         };
-        if (search) {
+
+        if (search?.trim()) {
             filter.offerName = { $regex: search, $options: "i" };
         }
-        filter.isActive = true;
-        const offers = await Offer.find(filter)
-            .skip(skip)
-            .limit(limit)
-            .sort({ createdAt: -1 });
+
+        const query = Offer.find(filter).sort({ createdAt: -1 });
+
+        if (typeof skip === "number") {
+            query.skip(skip);
+        }
+
+        if (typeof limit === "number") {
+            query.limit(limit);
+        }
+
+        const offers = await query.lean();
 
         const totalCount = await Offer.countDocuments(filter);
 

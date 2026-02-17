@@ -14,6 +14,7 @@ export enum DiscountApplicableOn {
 
 
 export interface IOffer extends Document {
+  _id: Types.ObjectId;
   company: Types.ObjectId;
   offerName: string;
   maxDiscountAmount?: number;
