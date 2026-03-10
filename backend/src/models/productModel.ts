@@ -4,7 +4,6 @@ export interface IProduct extends Document {
   name: string;
   description: string;
   price: number;
-  stock: number;
   images: string[];
   isListed: boolean;
   status: "active" | "inactive";
@@ -22,7 +21,6 @@ const productSchema = new Schema<IProduct>(
     name: { type: String, required: true, trim: true },
     description: { type: String, required: true, trim: true },
     price: { type: Number, required: true },
-    stock: { type: Number, default: 0 },
 
     images: [{ type: String, required: true }],
     company: { type: Schema.Types.ObjectId, ref: "Company", required: true },
@@ -39,3 +37,22 @@ const productSchema = new Schema<IProduct>(
 const Product = model<IProduct>("Product", productSchema);
 
 export default Product;
+
+
+
+
+export interface ProductWithQuantity {
+    _id: Types.ObjectId;
+    name: string;
+    description: string;
+    price: number;
+    images: string[];
+    status: "active" | "inactive";
+    isListed: boolean;
+    company: Types.ObjectId;
+    productCategory: Types.ObjectId;
+    industryCategory: Types.ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+    quantity: number;
+}

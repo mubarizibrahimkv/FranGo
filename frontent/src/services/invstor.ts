@@ -151,3 +151,30 @@ export const applyReport = async (
     }
   }
 };
+
+
+export const getProductsByfranchise = async (companyId: string,applicationId:string, page: number, search: string) => {
+  try {
+    const response = await api.get(`/investor/franchise/product/${companyId}/${applicationId}`, {
+      params: {  page, search },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error getting franchises in cusotmer side :", error);
+    throw error;
+  }
+};
+
+export const updateQuantity = async (applicationId:string,productId: string, quantity: number) => {
+  try {
+    const response = await api.patch(`/investor/inventory/update-stock`,{
+      applicationId,
+      productId,
+      quantity,
+    });
+    return response.data; 
+  } catch (error) {
+    console.log("Error getting franchises in cusotmer side :", error);
+    throw error;
+  }
+};

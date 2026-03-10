@@ -11,7 +11,7 @@ export interface ProductResponseDTO {
   company: string;
   productCategory: string;
   industryCategory: string;
-
+  quantity: number;
   createdAt: Date;
   updatedAt: Date;
 }

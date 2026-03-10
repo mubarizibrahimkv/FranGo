@@ -21,6 +21,7 @@ const MyFranchises = () => {
   useEffect(() => {
     const fetchMyFranchises = async () => {
       const franchises = await getMyFranchises(investorId);
+      console.log(franchises);
       setFranchises(franchises.franchises);
     };
     fetchMyFranchises();
@@ -28,6 +29,12 @@ const MyFranchises = () => {
 
   const handleNaviagation = (id: string) => {
     navigate(`/franchise/${id}`);
+  };
+  const handleNavigationToProducts = (
+    applicationId: string,
+    companyId: string,
+  ) => {
+    navigate(`/franchise/products/${applicationId}/${companyId}`);
   };
 
   return (
@@ -107,6 +114,19 @@ const MyFranchises = () => {
                     className="border border-black text-[#023430] w-28 h-10 rounded-[10px] px-3 py-1 font-semibold hover:bg-[#DBFDFA] transition-colors duration-200 text-xs"
                   >
                     View Details
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (franchise._id && franchise.franchise?.company?._id) {
+                        handleNavigationToProducts(
+                          franchise._id,
+                          franchise.franchise.company._id,
+                        );
+                      }
+                    }}
+                    className="border border-black text-[#023430] w-28 h-10 rounded-[10px] px-3 py-1 font-semibold hover:bg-[#DBFDFA] transition-colors duration-200 text-xs"
+                  >
+                    Manage Products
                   </button>
                 </div>
               </div>

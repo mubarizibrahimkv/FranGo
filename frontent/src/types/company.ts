@@ -107,6 +107,7 @@ export interface IProduct {
   productCategory?: ProductCategory;
   category?: string;
   status?: "active" | "inactive";
+  quantity?:number
   createdAt?: Date;
   updatedAt?: Date;
 }

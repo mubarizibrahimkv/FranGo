@@ -21,24 +21,29 @@ export class InventoryController {
         res.status(err.status).json({ success: false, message: err.message });
     }
     getProducts = async (req: Request, res: Response) => {
-        const { companyId } = req.params;
+        const { companyId, applicationId } = req.params;
+        const page = parseInt(req.query.page as string);
+        const searchStr = typeof req.query.search === "string" ? req.query.search : "";
         try {
-            const products = await this._inventoryService.getProducts(companyId)
-            res.status(HttpStatus.OK).json({ success: true, products });
+            const { products, totalPages } = await this._inventoryService.getProducts(companyId, applicationId, page, searchStr)
+            res.status(HttpStatus.OK).json({ success: true, products, currentPage: page, totalPages });
         } catch (error) {
             this.handleError(res, error);
         }
     }
-    updateStock = async (req: AuthenticatedRequest, res: Response) => {
-        const investorId = req.user?.id;
+    updateStock = async (req: Request, res: Response): Promise<void> => {
+        const authReq = req as AuthenticatedRequest;
+
+        const investorId = authReq.user?.id;
         if (!investorId) {
             res.status(HttpStatus.OK).json({ message: "productId, quantity, and applicationId are required" });
             return
         }
-        const { productId, quantity, applicationId } = req.body;
+        const { applicationId, productId, quantity } = req.body;
+          console.log(productId,quantity,applicationId,investorId,"productId,stock,applicationId,investorId in controller")
         try {
             const stock = await this._inventoryService.updateStock(productId, quantity, applicationId, investorId);
-            res.status(HttpStatus.BAD_REQUEST).json({
+            res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Stock updated successfully",
                 data: stock,

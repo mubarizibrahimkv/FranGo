@@ -15,6 +15,10 @@ import { InvestorController } from "../controllers/investor/investorController";
 import { ApplicationRepo } from "../repository/applicationRepository";
 import { ReportRepo } from "../repository/reportRepository";
 import { NotificationRepo } from "../repository/notificationRepository";
+import { InventoryController } from "../controllers/investor/inventoryController";
+import { InvestorInventoryService } from "../services/investorService/inventoryService";
+import { ProductRepo } from "../repository/productRepository";
+import { InventoryRepository } from "../repository/stockRepository";
 const router = express.Router();
  
 const authRepo = new AuthRepository();
@@ -32,6 +36,11 @@ const franchiseRepo=new FranchiseRepo();
 const applicationRepo=new ApplicationRepo();
 const investorService=new InvestorService(franchiseRepo,profileRepo,applicationRepo,reportRepo,notificationRepo);
 const investorController=new InvestorController(investorService);
+
+const productRepo=new ProductRepo()
+const inventoryRepo=new InventoryRepository()
+const inventoryService=new InvestorInventoryService(productRepo,inventoryRepo)
+const inventoryController=new InventoryController(inventoryService)
 
 setupGoogleStrategy("investor");
 router.get("/google",passport.authenticate("investor-google", { scope: ["profile", "email"] }));
@@ -62,5 +71,7 @@ router.put("/notifications/:notificationId", investorController.updateNotificati
 router.get("/myFranchises/:investorId",investorController.getMyFranchises);
 router.delete("/applications/:applicationId",investorController.deleteApplication);
 
+router.route("/franchise/product/:companyId/:applicationId").get(inventoryController.getProducts);
+router.patch("/inventory/update-stock", investorAuth,inventoryController.updateStock);
 
 export default router;

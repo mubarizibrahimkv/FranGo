@@ -72,9 +72,12 @@ const InvestorMyFranchises = lazy(
 const CompanyOffer = lazy(() => import("../pages/Company/CompanyOffer"));
 const CompanyCoupon = lazy(() => import("../pages/Company/CompanyCoupon"));
 const CompanyMeeting = lazy(() => import("../pages/Company/CompanyMeeting"));
-const InvestorInventory = lazy(() => import("../pages/Investor/Inventory"));
-const CusotmerFranchiseList = lazy(() => import("../pages/Customer/FranchiseList"));
-
+const CusotmerFranchiseList = lazy(
+  () => import("../pages/Customer/FranchiseList"),
+);
+const InvestorProductsStockManagement = lazy(
+  () => import("../pages/Investor/Products"),
+);
 
 const AppRoutes = () => {
   return (
@@ -99,11 +102,17 @@ const AppRoutes = () => {
           <Route path="/changePassword" element={<ChangePassword />} />
           <Route path="/company/register" element={<CompanyRegister />} />
           <Route path="/customer/register" element={<CustomerRegister />} />
-          <Route path="/customer/franchise" element={<CusotmerFranchiseList />} />
+          <Route
+            path="/customer/franchise"
+            element={<CusotmerFranchiseList />}
+          />
           <Route path="/company/verifyEmail" element={<VerifyEmail />} />
           <Route path="/franchise/:id" element={<CompanyDetails />} />
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/inventory/:id" element={<InvestorInventory />} />
+          <Route
+            path="/franchise/products/:applicationId/:companyId"
+            element={<InvestorProductsStockManagement />}
+          />
 
           <Route element={<ProtectedRoute allowedRoles={["customer"]} />}>
             <Route path="/customer/profile" element={<CustomerProfile />} />
